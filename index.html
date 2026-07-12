@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ぴよぴよランド</title>
+  <meta name="description" content="4さいの あそびの いりぐち。すきな ゲームを えらんでね。">
+
+  <!-- スマホ表示・ホーム画面追加まわり -->
+  <meta name="theme-color" content="#FFF6E5">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="ぴよぴよランド">
+
+  <!-- 絵文字ファビコン（インラインSVG data URI・🐥） -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text x='50' y='54' font-size='78' text-anchor='middle' dominant-baseline='central'>🐥</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23FFF6E5'/><text x='50' y='55' font-size='68' text-anchor='middle' dominant-baseline='central'>🐥</text></svg>">
+
+  <style>
+    /* ── いろ・かたち。既存2アプリ（otsukai-meiro / piyopiyo-sansu の theme.ts）に合わせる ── */
+    :root {
+      --bg: #FFF6E5;          /* やわらかいクリーム背景 */
+      --surface: #FFFFFF;     /* カード */
+      --text: #5B3A1E;        /* こげ茶 */
+      --subtext: #9B7B57;
+      --border: #F0D9A8;      /* やさしい枠線 */
+      --orange: #FF9F45;      /* メインのオレンジ */
+      --green: #5FBF7A;       /* 前向きなグリーン */
+      --shadow: 0 10px 26px rgba(214, 158, 78, 0.28);
+      --shadow-press: 0 4px 12px rgba(214, 158, 78, 0.30);
+      --radius: 28px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro",
+                   "Hiragino Sans", "Yu Gothic", "YuGothic", "Meiryo", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    .app {
+      min-height: 100svh;               /* 端末の実表示高さいっぱい */
+      display: flex;
+      flex-direction: column;
+      padding: max(16px, env(safe-area-inset-top)) 16px
+               max(16px, env(safe-area-inset-bottom));
+      gap: 14px;
+    }
+
+    /* ── みだし ── */
+    .header {
+      flex: 0 0 auto;
+      text-align: center;
+      padding: 4px 0 2px;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: clamp(30px, 8vw, 46px);
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      color: var(--text);
+    }
+    .header h1 .chick { margin-right: 0.12em; }
+    .header p {
+      margin: 4px 0 0;
+      font-size: clamp(15px, 4vw, 20px);
+      color: var(--subtext);
+      font-weight: 700;
+    }
+
+    /* ── カード2枚 ── */
+    .cards {
+      flex: 1 1 auto;
+      display: grid;
+      grid-template-columns: 1fr;       /* たて持ち=たてに2枚 */
+      gap: 14px;
+      min-height: 0;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(10px, 3vmin, 22px);
+      text-decoration: none;
+      background: var(--surface);
+      border: 3px solid var(--accent);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      min-height: 150px;
+      color: var(--text);
+      transition: transform .08s ease, box-shadow .08s ease;
+    }
+    /* おした感じ（タップ/クリック時に すこし沈む） */
+    .card:active {
+      transform: translateY(2px) scale(0.99);
+      box-shadow: var(--shadow-press);
+    }
+    .card:focus-visible {
+      outline: 4px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    .card .emoji {
+      font-size: clamp(72px, 26vmin, 168px);
+      line-height: 1;
+      filter: drop-shadow(0 4px 6px rgba(91, 58, 30, 0.15));
+    }
+
+    /* なまえは アクセント色の まるいプレートに 白文字で（4歳でも見わけやすい） */
+    .card .name {
+      display: inline-block;
+      background: var(--accent);
+      color: #FFFFFF;
+      font-weight: 800;
+      font-size: clamp(26px, 7vmin, 46px);
+      line-height: 1.1;
+      padding: 0.28em 0.9em;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    /* カードごとの色わけ */
+    .card--maze { --accent: var(--green); }
+    .card--math { --accent: var(--orange); }
+
+    /* ── 横持ち／よこ長画面：カードを よこに2枚ならべて 崩れないように ── */
+    @media (orientation: landscape) {
+      .cards { grid-template-columns: 1fr 1fr; }
+      .card .emoji { font-size: clamp(56px, 20vmin, 150px); }
+      .card .name { font-size: clamp(22px, 5.4vmin, 40px); }
+    }
+
+    /* せの ひくい画面（よこ持ちスマホ など）で みだしを コンパクトに */
+    @media (max-height: 480px) {
+      .header p { display: none; }
+      .header h1 { font-size: clamp(24px, 6vw, 34px); }
+      .app { gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <h1><span class="chick">🐥</span>ぴよぴよランド</h1>
+      <p>すきな あそびを えらんでね</p>
+    </header>
+
+    <nav class="cards">
+      <a class="card card--maze" href="https://kerokero-1245.github.io/otsukai-meiro/"
+         aria-label="おつかいめいろ であそぶ">
+        <span class="emoji" aria-hidden="true">🍎</span>
+        <span class="name">おつかいめいろ</span>
+      </a>
+
+      <a class="card card--math" href="https://kerokero-1245.github.io/piyopiyo-sansu/"
+         aria-label="ぴよぴよさんすう であそぶ">
+        <span class="emoji" aria-hidden="true">🔢</span>
+        <span class="name">ぴよぴよさんすう</span>
+      </a>
+    </nav>
+  </main>
+</body>
+</html>
