@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>ぴよぴよランド</title>
-  <meta name="description" content="4さいの あそびの いりぐち。すきな ゲームを えらんでね。">
+  <meta name="description" content="4さいの あそびの まち。⭐で まちが そだつよ。">
 
   <!-- スマホ表示・ホーム画面追加まわり -->
   <meta name="theme-color" content="#FFF6E5">
@@ -18,22 +18,29 @@
   <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23FFF6E5'/><text x='50' y='55' font-size='68' text-anchor='middle' dominant-baseline='central'>🐥</text></svg>">
 
   <style>
-    /* ── いろ・かたち。既存2アプリ（otsukai-meiro / piyopiyo-sansu の theme.ts）に合わせる ── */
+    /* ═══════════════════════════════════════════════════════════
+       ぴよぴよランド ―「⭐で そだつ まち」（街MVP）
+       ・ビルド不要の静的 index.html 1枚（インラインCSS/JS/絵文字/SVG）
+       ・外部CDN・外部送信ゼロ。保存は localStorage のみ
+       ・設計の正典は docs/WORLD.md。数値・キー・文言はそこに従う
+       ─ いろ・かたちは既存2アプリ（otsukai-meiro / piyopiyo-sansu）と統一
+       ═══════════════════════════════════════════════════════════ */
     :root {
-      --bg: #FFF6E5;          /* やわらかいクリーム背景 */
+      --bg: #FFF6E5;          /* やわらかいクリーム背景（額縁） */
       --surface: #FFFFFF;     /* カード */
       --text: #5B3A1E;        /* こげ茶 */
       --subtext: #9B7B57;
       --border: #F0D9A8;      /* やさしい枠線 */
       --orange: #FF9F45;      /* メインのオレンジ */
       --green: #5FBF7A;       /* 前向きなグリーン */
+      --yellow: #FFD23F;      /* アクセント黄 */
       --shadow: 0 10px 26px rgba(214, 158, 78, 0.28);
+      --shadow-soft: 0 8px 20px rgba(91, 58, 30, 0.15);
       --shadow-press: 0 4px 12px rgba(214, 158, 78, 0.30);
       --radius: 28px;
     }
 
     * { box-sizing: border-box; }
-
     html, body { height: 100%; }
 
     body {
@@ -45,131 +52,834 @@
       -webkit-font-smoothing: antialiased;
       -webkit-tap-highlight-color: transparent;
       -webkit-text-size-adjust: 100%;
+      overflow: hidden;                    /* 横スクロール厳禁・1画面完結 */
     }
 
     .app {
-      min-height: 100svh;               /* 端末の実表示高さいっぱい */
+      height: 100svh;
       display: flex;
       flex-direction: column;
-      padding: max(16px, env(safe-area-inset-top)) 16px
-               max(16px, env(safe-area-inset-bottom));
-      gap: 14px;
+      padding: max(8px, env(safe-area-inset-top)) 10px
+               max(8px, env(safe-area-inset-bottom));
+      gap: 8px;
     }
 
-    /* ── みだし ── */
-    .header {
+    /* ── うえの おび（ちいさなタイトル・🌙 おやすみ ボタン） ── */
+    .topbar {
       flex: 0 0 auto;
-      text-align: center;
-      padding: 4px 0 2px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 0 4px;
     }
-    .header h1 {
-      margin: 0;
-      font-size: clamp(30px, 8vw, 46px);
-      font-weight: 800;
-      letter-spacing: 0.02em;
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25em;
+      background: var(--surface);
       color: var(--text);
+      border: 2px solid var(--border);
+      border-radius: 999px;
+      padding: 5px 14px;
+      font-weight: 800;
+      font-size: clamp(15px, 4.2vw, 20px);
+      box-shadow: var(--shadow-soft);
+      white-space: nowrap;
     }
-    .header h1 .chick { margin-right: 0.12em; }
-    .header p {
-      margin: 4px 0 0;
-      font-size: clamp(15px, 4vw, 20px);
-      color: var(--subtext);
-      font-weight: 700;
-    }
+    .brand .b-chick { font-size: 1.15em; }
 
-    /* ── カード2枚 ── */
-    .cards {
+    .moon-btn {
+      appearance: none;
+      border: 2px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      width: 46px; height: 46px;
+      border-radius: 999px;
+      font-size: 24px;
+      line-height: 1;
+      cursor: pointer;
+      box-shadow: var(--shadow-soft);
+      transition: transform .1s ease, box-shadow .1s ease;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .moon-btn:active { transform: scale(0.92); box-shadow: var(--shadow-press); }
+    .moon-btn:focus-visible { outline: 4px solid var(--orange); outline-offset: 3px; }
+
+    /* ── まち（1まいの ふうけい）──────────────────────────── */
+    .scene {
+      position: relative;
       flex: 1 1 auto;
-      display: grid;
-      grid-template-columns: 1fr;       /* たて持ち=たてに2枚 */
-      gap: 14px;
-      min-height: 0;
+      width: 100%;
+      max-width: 920px;
+      margin: 0 auto;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-soft);
+      isolation: isolate;
+      /* ひるの そら（うえ→ちへい で あたたかく） */
+      background: linear-gradient(#AEE4FF 0%, #CFF0FF 34%, #EAF7EA 58%, #EAF7EA 60%);
+      transition: background 1.4s ease;
+      touch-action: manipulation;
+    }
+    /* ── よる ── */
+    .scene.night {
+      background: linear-gradient(#141634 0%, #23244a 40%, #3a2b55 70%, #3a2b55 100%);
     }
 
-    .card {
+    /* じめん（みどり） */
+    .ground {
+      position: absolute; left: 0; right: 0; bottom: 0; top: 58%;
+      background: linear-gradient(#8FD79B 0%, #6FC886 40%, #5FBF7A 100%);
+      border-top-left-radius: 60% 22px;
+      border-top-right-radius: 60% 22px;
+      transition: filter 1.4s ease, background 1.4s ease;
+      z-index: 2;
+    }
+    .scene.night .ground {
+      background: linear-gradient(#2f5a49 0%, #274c40 100%);
+      filter: brightness(0.9);
+    }
+
+    /* ── ほし（よるだけ ひかる） ── */
+    .stars { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+    .star {
+      position: absolute; width: 5px; height: 5px; border-radius: 50%;
+      background: #FFF7C7;
+      opacity: 0; transform: scale(0.4);
+      transition: opacity 1s ease, transform 1s ease;
+      box-shadow: 0 0 6px 1px rgba(255,247,199,.7);
+    }
+    .scene.night .star { opacity: .95; transform: scale(1); animation: twinkle 3.2s ease-in-out infinite; }
+
+    /* ── みち（だんかい5で でる） ── */
+    .path {
+      position: absolute; left: 50%; bottom: 0; transform: translateX(-50%);
+      width: 40%; height: 30%;
+      background: linear-gradient(#F3E2B8, #EBD3A0);
+      clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%);
+      opacity: 0; z-index: 3;
+      transition: opacity .8s ease;
+    }
+    .path.on { opacity: .85; }
+    .scene.night .path { filter: brightness(0.7); }
+
+    /* ── かざり（絵文字スロット）──
+       すべて DOM に あるが、reachedStage 以下だけ .on で みえる。
+       あたらしく あいた ものは .grow で ぽん と とうじょう */
+    .deco {
+      position: absolute;
+      transform: translate(-50%, -50%) scale(0.2);
+      opacity: 0;
+      line-height: 1;
+      z-index: 4;
+      pointer-events: none;
+      filter: drop-shadow(0 4px 4px rgba(91,58,30,.18));
+      transition: opacity .5s ease, transform .5s ease;
+      will-change: transform;
+    }
+    .deco.on { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    .deco.grow { animation: pop 0.7s cubic-bezier(.2,1.4,.5,1) both; }
+    .scene.night .deco { filter: drop-shadow(0 4px 4px rgba(0,0,0,.3)) brightness(0.82); }
+
+    /* かざりの こまかい うごき（ひかえめ） */
+    .deco.sway.on   { animation: sway 4.2s ease-in-out infinite; }
+    .deco.float.on  { animation: floaty 6s ease-in-out infinite; }
+    .deco.float.slow.on { animation: floaty 9s ease-in-out infinite; }
+    .deco.hop.on    { animation: hopdeco 2.6s ease-in-out infinite; }
+    .deco.wob.on    { animation: wobble 5s ease-in-out infinite; }
+    .deco.rainbow.on{ animation: rbfade 1s ease both; }
+    .deco.spark.on  { animation: sparkle 1.6s ease-in-out infinite; }
+    .deco.friend.on { animation: hopdeco 3s ease-in-out infinite; }
+
+    /* いえの けむり */
+    .smoke {
+      position: absolute; left: 62%; top: -6%;
+      font-size: 0.5em; opacity: 0;
+    }
+    .deco.on .smoke { animation: smoke 3.4s ease-in-out infinite; }
+
+    /* ── 2つの おおきな どうせん（しせつ＝ゲームの いりぐち）──
+       ★ここは ぜったいに こわさない。まちの えんしゅつが おおいかくさない★ */
+    .facility {
+      position: absolute;
+      width: 40%;
+      bottom: 20%;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: clamp(10px, 3vmin, 22px);
+      gap: clamp(6px, 1.8vmin, 14px);
       text-decoration: none;
+      color: var(--text);
       background: var(--surface);
-      border: 3px solid var(--accent);
+      border: 4px solid var(--accent);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      padding: 18px;
-      min-height: 150px;
-      color: var(--text);
-      transition: transform .08s ease, box-shadow .08s ease;
+      padding: clamp(10px, 3.4vmin, 22px) 8px;
+      z-index: 12;
+      transition: transform .09s ease, box-shadow .09s ease;
     }
-    /* おした感じ（タップ/クリック時に すこし沈む） */
-    .card:active {
-      transform: translateY(2px) scale(0.99);
-      box-shadow: var(--shadow-press);
-    }
-    .card:focus-visible {
-      outline: 4px solid var(--accent);
-      outline-offset: 3px;
-    }
+    .facility:active { transform: translateY(2px) scale(0.98); box-shadow: var(--shadow-press); }
+    .facility:focus-visible { outline: 4px solid var(--accent); outline-offset: 3px; }
+    .fac--park { left: 6%;  --accent: var(--green); }
+    .fac--cake { right: 6%; --accent: var(--orange); }
 
-    .card .emoji {
-      font-size: clamp(72px, 26vmin, 168px);
+    .facility .f-emoji {
+      font-size: clamp(48px, 15vmin, 104px);
       line-height: 1;
-      filter: drop-shadow(0 4px 6px rgba(91, 58, 30, 0.15));
+      filter: drop-shadow(0 4px 6px rgba(91,58,30,.16));
     }
-
-    /* なまえは アクセント色の まるいプレートに 白文字で（4歳でも見わけやすい） */
-    .card .name {
+    .facility .f-name {
       display: inline-block;
       background: var(--accent);
-      color: #FFFFFF;
+      color: #fff;
       font-weight: 800;
-      font-size: clamp(26px, 7vmin, 46px);
+      font-size: clamp(17px, 4.6vmin, 30px);
       line-height: 1.1;
-      padding: 0.28em 0.9em;
+      padding: 0.26em 0.8em;
       border-radius: 999px;
       white-space: nowrap;
     }
+    /* よるの あかり（まどが ぽっと ともる） */
+    .facility .f-glow {
+      position: absolute; inset: 0; border-radius: inherit;
+      background: radial-gradient(circle at 50% 42%, rgba(255,209,63,.55), rgba(255,209,63,0) 62%);
+      opacity: 0; pointer-events: none;
+      transition: opacity 1.2s ease;
+    }
+    .scene.night .facility { filter: brightness(0.96); }
+    .scene.night .facility .f-glow { opacity: 1; }
 
-    /* カードごとの色わけ */
-    .card--maze { --accent: var(--green); }
-    .card--math { --accent: var(--orange); }
-
-    /* ── 横持ち／よこ長画面：カードを よこに2枚ならべて 崩れないように ── */
-    @media (orientation: landscape) {
-      .cards { grid-template-columns: 1fr 1fr; }
-      .card .emoji { font-size: clamp(56px, 20vmin, 150px); }
-      .card .name { font-size: clamp(22px, 5.4vmin, 40px); }
+    /* ぴよが しせつを さす ときの ふわっと めじるし */
+    .facility.point::after {
+      content: "";
+      position: absolute; inset: -6px;
+      border-radius: calc(var(--radius) + 6px);
+      box-shadow: 0 0 0 4px rgba(255,210,63,.9), 0 0 22px 6px rgba(255,210,63,.55);
+      animation: ring 1.1s ease-in-out infinite;
+      pointer-events: none;
     }
 
-    /* せの ひくい画面（よこ持ちスマホ など）で みだしを コンパクトに */
+    /* ── ぴよ（がめんない じょうちゅう・タップで はねる）── */
+    .piyo {
+      position: absolute;
+      left: 50%; bottom: 4%;
+      transform: translateX(-50%);
+      z-index: 20;
+      cursor: pointer;
+      user-select: none;
+      transition: left .9s cubic-bezier(.4,.1,.3,1), bottom .9s cubic-bezier(.4,.1,.3,1);
+      touch-action: manipulation;
+    }
+    .piyo .p-body {
+      font-size: clamp(40px, 12vmin, 76px);
+      line-height: 1;
+      display: block;
+      filter: drop-shadow(0 5px 5px rgba(91,58,30,.22));
+      animation: bob 2.8s ease-in-out infinite;
+      transform-origin: 50% 90%;
+    }
+    .piyo.hop .p-body   { animation: piyohop .6s ease; }
+    .piyo.cheer .p-body { animation: piyocheer .9s ease; }
+    .piyo .p-crown {
+      position: absolute; left: 50%; top: -0.55em;
+      transform: translateX(-50%);
+      font-size: clamp(22px, 6vmin, 40px);
+      opacity: 0; transition: opacity .5s ease .2s;
+      filter: drop-shadow(0 2px 2px rgba(91,58,30,.25));
+    }
+    .piyo.king .p-crown { opacity: 1; }
+    .piyo .p-zzz {
+      position: absolute; right: -0.4em; top: -0.5em;
+      font-size: 0.5em; opacity: 0;
+    }
+    .piyo.sleep .p-body { animation: none; transform: rotate(6deg) scale(0.96); }
+    .piyo.sleep .p-zzz { opacity: 1; animation: zzz 2.6s ease-in-out infinite; }
+
+    /* ふきだし（ひとこと・ひらがな みじかく） */
+    .bubble {
+      position: absolute;
+      left: 50%; bottom: calc(100% + 6px);
+      transform: translateX(-50%) translateY(6px) scale(0.8);
+      background: #fff;
+      color: var(--text);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 5px 12px;
+      font-weight: 800;
+      font-size: clamp(15px, 4.2vw, 21px);
+      white-space: nowrap;
+      box-shadow: var(--shadow-soft);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+      z-index: 21;
+    }
+    .bubble::after {
+      content: ""; position: absolute; left: 50%; top: 100%;
+      transform: translateX(-50%);
+      border: 7px solid transparent;
+      border-top-color: #fff;
+      margin-top: -1px;
+    }
+    .bubble.show { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+
+    /* すの おうち（よる ぴよが ねる ばしょ） */
+    .nest {
+      position: absolute; left: 50%; bottom: 2%;
+      transform: translateX(-50%) scale(0.6);
+      font-size: clamp(30px, 9vmin, 54px);
+      opacity: 0; z-index: 19;
+      transition: opacity 1s ease, transform 1s ease;
+      pointer-events: none;
+      filter: drop-shadow(0 4px 4px rgba(0,0,0,.25));
+    }
+    .scene.night .nest { opacity: 1; transform: translateX(-50%) scale(1); }
+
+    /* ── すすみ ドット（つぎの へんかまで・さいだい5こ）── */
+    .meter {
+      position: absolute; left: 50%; bottom: 1.5%;
+      transform: translateX(-50%);
+      display: flex; gap: 5px;
+      z-index: 15;
+      opacity: .9;
+      transition: opacity .5s ease;
+    }
+    .meter .dot {
+      width: 9px; height: 9px; border-radius: 50%;
+      background: rgba(255,255,255,.55);
+      border: 1.5px solid rgba(91,58,30,.28);
+      transition: background .3s ease, transform .3s ease;
+    }
+    .meter .dot.f { background: var(--yellow); border-color: rgba(214,158,78,.6); transform: scale(1.05); }
+    .scene.night .meter { opacity: .35; }
+
+    /* ── まちが そだった！の おいわい（かみふぶきの ⭐）── */
+    .confetti { position: absolute; inset: 0; z-index: 30; pointer-events: none; overflow: hidden; }
+    .confetti span {
+      position: absolute; top: -8%;
+      font-size: 22px;
+      animation: fall 2.4s linear forwards;
+    }
+
+    /* ── よるの くらがり（タップで あさに もどる）── */
+    .nightveil {
+      position: absolute; inset: 0; z-index: 40;
+      background: rgba(10,12,30,0);
+      opacity: 1;
+      pointer-events: none;
+      transition: background 1.6s ease;
+    }
+    .scene.night .nightveil { pointer-events: auto; cursor: pointer; }
+    .scene.night.slept .nightveil { background: rgba(10,12,30,.45); }
+
+    /* ── アニメーション ─────────────────────────────── */
+    @keyframes bob { 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(-5px) } }
+    @keyframes piyohop {
+      0%{ transform: translateY(0) } 30%{ transform: translateY(-22px) }
+      55%{ transform: translateY(0) } 70%{ transform: translateY(-8px) } 100%{ transform: translateY(0) }
+    }
+    @keyframes piyocheer {
+      0%{ transform: translateY(0) rotate(0) } 25%{ transform: translateY(-26px) rotate(-8deg) }
+      50%{ transform: translateY(0) rotate(0) } 70%{ transform: translateY(-18px) rotate(8deg) }
+      100%{ transform: translateY(0) rotate(0) }
+    }
+    @keyframes zzz { 0%{ opacity:.3; transform: translateY(0) } 50%{ opacity:1; transform: translateY(-4px) } 100%{ opacity:.3; transform: translateY(-8px) } }
+    @keyframes pop {
+      0%{ opacity:0; transform: translate(-50%,-50%) scale(0.2) }
+      60%{ opacity:1; transform: translate(-50%,-50%) scale(1.25) }
+      100%{ opacity:1; transform: translate(-50%,-50%) scale(1) }
+    }
+    @keyframes sway { 0%,100%{ transform: translate(-50%,-50%) rotate(-4deg) } 50%{ transform: translate(-50%,-50%) rotate(4deg) } }
+    @keyframes floaty { 0%,100%{ transform: translate(-50%,-50%) translateY(0) } 50%{ transform: translate(-50%,-50%) translateY(-8px) } }
+    @keyframes hopdeco { 0%,100%{ transform: translate(-50%,-50%) translateY(0) } 40%{ transform: translate(-50%,-50%) translateY(-9px) } 60%{ transform: translate(-50%,-50%) translateY(0) } }
+    @keyframes wobble { 0%,100%{ transform: translate(-50%,-50%) rotate(-3deg) } 50%{ transform: translate(-50%,-50%) rotate(3deg) } }
+    @keyframes rbfade { from{ opacity:0 } to{ opacity:.92 } }
+    @keyframes sparkle { 0%,100%{ transform: translate(-50%,-50%) scale(1); opacity:1 } 50%{ transform: translate(-50%,-50%) scale(1.15); opacity:.8 } }
+    @keyframes smoke { 0%{ opacity:0; transform: translateY(0) scale(.7) } 30%{ opacity:.8 } 100%{ opacity:0; transform: translateY(-16px) scale(1.1) } }
+    @keyframes twinkle { 0%,100%{ opacity:.5 } 50%{ opacity:1 } }
+    @keyframes ring { 0%,100%{ opacity:.5 } 50%{ opacity:1 } }
+    @keyframes fall {
+      0%{ transform: translateY(0) rotate(0); opacity: 1 }
+      100%{ transform: translateY(115%) rotate(320deg); opacity: .9 }
+    }
+
+    /* うごきを へらす せってい（アクセシビリティ） */
+    @media (prefers-reduced-motion: reduce) {
+      .deco.sway.on, .deco.float.on, .deco.float.slow.on, .deco.hop.on,
+      .deco.wob.on, .deco.spark.on, .deco.friend.on, .piyo .p-body,
+      .scene.night .star, .piyo.sleep .p-zzz { animation: none !important; }
+      .scene, .ground, .path, .deco, .facility .f-glow, .nest { transition-duration: .3s; }
+    }
+
+    /* せの ひくい がめん（よこ持ちスマホ など） */
     @media (max-height: 480px) {
-      .header p { display: none; }
-      .header h1 { font-size: clamp(24px, 6vw, 34px); }
-      .app { gap: 10px; }
+      .brand { font-size: 15px; padding: 4px 10px; }
+      .moon-btn { width: 40px; height: 40px; font-size: 20px; }
+      .facility { bottom: 16%; }
     }
   </style>
 </head>
 <body>
   <main class="app">
-    <header class="header">
-      <h1><span class="chick">🐥</span>ぴよぴよランド</h1>
-      <p>すきな あそびを えらんでね</p>
-    </header>
+    <div class="topbar">
+      <span class="brand"><span class="b-chick">🐥</span>ぴよぴよランド</span>
+      <button class="moon-btn" id="moonBtn" type="button" aria-label="おやすみ">🌙</button>
+    </div>
 
-    <nav class="cards">
-      <a class="card card--maze" href="https://kerokero-1245.github.io/otsukai-meiro/"
-         aria-label="おつかいめいろ であそぶ">
-        <span class="emoji" aria-hidden="true">🍎</span>
-        <span class="name">おつかいめいろ</span>
+    <div class="scene" id="scene">
+      <div class="stars" id="stars" aria-hidden="true"></div>
+      <div class="ground" aria-hidden="true"></div>
+      <div class="path" id="path" aria-hidden="true"></div>
+
+      <!-- かざり（JSが いちを うめこむ） -->
+      <div class="deco-layer" id="decoLayer" aria-hidden="true"></div>
+
+      <!-- 2つの おおきな どうせん（リンクさきURLは ふへん） -->
+      <a class="facility fac--park" id="facPark"
+         href="https://kerokero-1245.github.io/otsukai-meiro/"
+         aria-label="こうえん（おつかいめいろ）であそぶ">
+        <span class="f-glow" aria-hidden="true"></span>
+        <span class="f-emoji" aria-hidden="true">🌳</span>
+        <span class="f-name">こうえん</span>
       </a>
 
-      <a class="card card--math" href="https://kerokero-1245.github.io/piyopiyo-sansu/"
-         aria-label="ぴよぴよさんすう であそぶ">
-        <span class="emoji" aria-hidden="true">🔢</span>
-        <span class="name">ぴよぴよさんすう</span>
+      <a class="facility fac--cake" id="facCake"
+         href="https://kerokero-1245.github.io/piyopiyo-sansu/"
+         aria-label="ケーキやさん（ぴよぴよさんすう）であそぶ">
+        <span class="f-glow" aria-hidden="true"></span>
+        <span class="f-emoji" aria-hidden="true">🍰</span>
+        <span class="f-name">ケーキやさん</span>
       </a>
-    </nav>
+
+      <!-- ぴよが ねる す（よるだけ みえる） -->
+      <div class="nest" aria-hidden="true">🌿</div>
+
+      <!-- すすみ ドット -->
+      <div class="meter" id="meter" aria-hidden="true"></div>
+
+      <!-- ぴよ -->
+      <div class="piyo" id="piyo" role="button" tabindex="0" aria-label="ぴよ">
+        <span class="bubble" id="bubble" aria-hidden="true"></span>
+        <span class="p-crown" aria-hidden="true">👑</span>
+        <span class="p-body" aria-hidden="true">🐥</span>
+        <span class="p-zzz" aria-hidden="true">💤</span>
+      </div>
+
+      <!-- おいわいの かみふぶき -->
+      <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+      <!-- よるの くらがり（タップで あさへ） -->
+      <div class="nightveil" id="nightveil" aria-hidden="true"></div>
+    </div>
   </main>
+
+  <script>
+  (function () {
+    "use strict";
+
+    /* ── localStorage キー台帳（WORLD.md §7）。よむのは meiro/sansu、
+       かくのは land.* だけ ── */
+    var K = {
+      meiro:     'meiro.totalStars',
+      sansu:     'sansu.totalStars',
+      reached:   'land.reachedStage',
+      lastSeen:  'land.lastSeenStars',
+      night:     'land.lastNightDate',
+      lastPoint: 'land.lastPointed'
+    };
+
+    /* こわれた値・けつじょは かならず 0 あつかい（WORLD.md §3.2 / §7） */
+    function readNum(key) {
+      try {
+        var v = localStorage.getItem(key);
+        if (v == null) return 0;
+        var n = Number(v);
+        return (Number.isFinite(n) && n > 0) ? Math.floor(n) : 0;
+      } catch (e) { return 0; }
+    }
+    function readStr(key) {
+      try { return localStorage.getItem(key); } catch (e) { return null; }
+    }
+    function writeStr(key, val) {
+      try { localStorage.setItem(key, String(val)); } catch (e) {}
+    }
+
+    /* ── だんかい しきい値（WORLD.md §3.4・正典）──
+       ぞうぶん 2,2,3,4,5,5,6,7,8,8（ごうけい50） */
+    var THRESHOLDS = [0, 2, 4, 7, 11, 16, 21, 27, 34, 42, 50];
+    var MAX_STAGE = 10;
+
+    function stageForFuel(f) {
+      var s = 0;
+      for (var i = 0; i < THRESHOLDS.length; i++) {
+        if (f >= THRESHOLDS[i]) s = i; else break;
+      }
+      return Math.min(s, MAX_STAGE);
+    }
+
+    /* ── かざりの はいち（けっていてき・らんすう なし）──
+       st=だんかい, x/y=%（scene きじゅん）, s=絵文字サイズpx, cls=うごき */
+    var DECOS = [
+      // だんかい1: くさ・はな
+      { st: 1, e: '🌱', x: 8,  y: 90, s: 26, cls: 'sway' },
+      { st: 1, e: '🌼', x: 22, y: 94, s: 24, cls: 'sway' },
+      { st: 1, e: '🌷', x: 58, y: 94, s: 24, cls: 'sway' },
+      { st: 1, e: '🌱', x: 92, y: 90, s: 26, cls: 'sway' },
+      // だんかい2: なかまの ひよこ
+      { st: 2, e: '🐤', x: 38, y: 88, s: 32, cls: 'friend' },
+      // だんかい3: き・ベンチ
+      { st: 3, e: '🌳', x: 30, y: 50, s: 48, cls: 'sway' },
+      { st: 3, e: '🪑', x: 88, y: 86, s: 34, cls: '' },
+      // だんかい4: ちいさな いえ＋けむり
+      { st: 4, e: '🏠', x: 70, y: 50, s: 48, cls: '', smoke: true },
+      // だんかい5: どうぶつ（みちは べつ）
+      { st: 5, e: '🐰', x: 26, y: 92, s: 28, cls: 'hop' },
+      // だんかい6: ふんすい
+      { st: 6, e: '⛲', x: 70, y: 88, s: 42, cls: '' },
+      // だんかい7: ひろば（メリーゴーラウンド）
+      { st: 7, e: '🎠', x: 86, y: 36, s: 50, cls: 'wob' },
+      // だんかい8: にじ・かざり
+      { st: 8, e: '🌈', x: 50, y: 24, s: 84, cls: 'rainbow' },
+      { st: 8, e: '🎏', x: 86, y: 54, s: 34, cls: 'sway' },
+      // だんかい9: かんらんしゃ
+      { st: 9, e: '🎡', x: 12, y: 32, s: 64, cls: 'wob' },
+      // だんかい10: まつり（＋ぴよに👑）
+      { st: 10, e: '🎆', x: 26, y: 12, s: 50, cls: 'spark' },
+      { st: 10, e: '🎆', x: 74, y: 10, s: 50, cls: 'spark' }
+    ];
+    // つねに でている そらの ようす（だんかい0）
+    var BASE = [
+      { e: '☀️', x: 14, y: 12, s: 32, cls: 'float' },
+      { e: '☁️', x: 44, y: 9,  s: 30, cls: 'float slow' },
+      { e: '☁️', x: 76, y: 15, s: 28, cls: 'float' }
+    ];
+
+    /* ── ぴよの ひとこと（WORLD.md §3.6・ひらがな みじかく やわらかく）── */
+    var SAY_TAP  = ['おはよー', 'みてみて！', 'たのしいね', 'えへへ', 'わーい', 'あそぼ！', 'げんき？'];
+    var SAY_GROW = 'わー ふえた！';
+    var SAY_POINT = 'こっちこっち';
+    var SAY_NEAR = 'もうすこし';
+    var SAY_MORNING = 'おはよー';
+    var SAY_NIGHT = 'またあしたね';
+    var SAY_SLEEPY = 'ねむいなあ';
+
+    /* ── DOM ── */
+    var scene    = document.getElementById('scene');
+    var decoLayer= document.getElementById('decoLayer');
+    var piyo     = document.getElementById('piyo');
+    var bubble   = document.getElementById('bubble');
+    var meterEl  = document.getElementById('meter');
+    var pathEl   = document.getElementById('path');
+    var starsEl  = document.getElementById('stars');
+    var confetti = document.getElementById('confetti');
+    var moonBtn  = document.getElementById('moonBtn');
+    var nightveil= document.getElementById('nightveil');
+    var facPark  = document.getElementById('facPark');
+    var facCake  = document.getElementById('facCake');
+
+    /* ── おと（Web Audio・みじかく やさしく・にん意）── */
+    var actx = null;
+    function tone(freq, dur, type, gain) {
+      try {
+        if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+        if (actx.state === 'suspended') actx.resume();
+        var o = actx.createOscillator(), g = actx.createGain();
+        o.type = type || 'sine'; o.frequency.value = freq;
+        var t = actx.currentTime, gv = (gain == null ? 0.05 : gain);
+        g.gain.setValueAtTime(gv, t);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+        o.connect(g); g.connect(actx.destination);
+        o.start(t); o.stop(t + dur + 0.02);
+      } catch (e) {}
+    }
+    function sndTap()   { tone(660, 0.12, 'sine', 0.05); }
+    function sndGo()    { tone(520, 0.09, 'triangle', 0.05); setTimeout(function(){ tone(780, 0.12, 'triangle', 0.05); }, 90); }
+    function sndGrow()  { [523, 659, 784, 1047].forEach(function (f, i) { setTimeout(function(){ tone(f, 0.16, 'triangle', 0.05); }, i * 120); }); }
+    function sndSleep() { tone(440, 0.3, 'sine', 0.045); setTimeout(function(){ tone(294, 0.5, 'sine', 0.04); }, 260); }
+
+    /* ── ほしを うめこむ（けっていてき・らんすう なし）── */
+    var STAR_POS = [
+      [10,10],[22,20],[34,8],[46,16],[58,7],[70,18],[82,9],[90,22],
+      [16,30],[28,38],[40,28],[52,34],[64,26],[76,34],[88,40],[6,24]
+    ];
+    STAR_POS.forEach(function (p) {
+      var d = document.createElement('div');
+      d.className = 'star';
+      d.style.left = p[0] + '%';
+      d.style.top = p[1] + '%';
+      d.style.animationDelay = ((p[0] + p[1]) % 30) / 10 + 's';
+      starsEl.appendChild(d);
+    });
+
+    /* ── かざりを つくる ── */
+    function makeDeco(cfg, isBase) {
+      var el = document.createElement('div');
+      el.className = 'deco' + (cfg.cls ? ' ' + cfg.cls : '');
+      el.style.left = cfg.x + '%';
+      el.style.top = cfg.y + '%';
+      el.style.fontSize = cfg.s + 'px';
+      el.textContent = cfg.e;
+      if (cfg.smoke) {
+        var sm = document.createElement('span');
+        sm.className = 'smoke'; sm.textContent = '💨';
+        el.appendChild(sm);
+      }
+      if (isBase) el.dataset.stage = '0';
+      else el.dataset.stage = String(cfg.st);
+      decoLayer.appendChild(el);
+      return el;
+    }
+    var decoEls = [];
+    BASE.forEach(function (c) { makeDeco(c, true).classList.add('on'); });
+    DECOS.forEach(function (c) { decoEls.push({ st: c.st, el: makeDeco(c, false) }); });
+
+    /* ── ぴよの ひとこと ── */
+    var bubbleTimer = null;
+    function say(text, ms) {
+      if (!text) return;
+      bubble.textContent = text;
+      bubble.classList.add('show');
+      if (bubbleTimer) clearTimeout(bubbleTimer);
+      bubbleTimer = setTimeout(function () { bubble.classList.remove('show'); }, ms || 1800);
+    }
+    function piyoHop() {
+      piyo.classList.remove('hop'); void piyo.offsetWidth; piyo.classList.add('hop');
+    }
+    function piyoCheer() {
+      piyo.classList.remove('cheer'); void piyo.offsetWidth; piyo.classList.add('cheer');
+    }
+
+    /* ── かみふぶき（まちが そだった おいわい）── */
+    function burstConfetti() {
+      var marks = ['⭐', '✨', '🌟'];
+      for (var i = 0; i < 16; i++) {
+        var s = document.createElement('span');
+        s.textContent = marks[i % marks.length];
+        s.style.left = (5 + Math.floor((i / 16) * 90) + (i % 3) * 3) + '%';
+        s.style.animationDelay = (i % 8) * 0.12 + 's';
+        s.style.fontSize = (18 + (i % 3) * 6) + 'px';
+        confetti.appendChild(s);
+      }
+      setTimeout(function () { confetti.innerHTML = ''; }, 3200);
+    }
+
+    /* ── すすみ ドット（つぎの へんかまで・さいだい5・かず よませない）── */
+    function renderMeter(displayStage, fuel) {
+      meterEl.innerHTML = '';
+      // さいだいだんかい：まちは かんせい。ドットは ださない（👑は ぴよの あたまに）
+      if (displayStage >= MAX_STAGE) return;
+      var lo = THRESHOLDS[displayStage];
+      var hi = THRESHOLDS[displayStage + 1];
+      var prog = hi > lo ? (fuel - lo) / (hi - lo) : 0;
+      if (prog < 0) prog = 0; if (prog > 1) prog = 1;
+      var filled = Math.round(prog * 5);
+      for (var i = 0; i < 5; i++) {
+        var d = document.createElement('span');
+        d.className = 'dot' + (i < filled ? ' f' : '');
+        meterEl.appendChild(d);
+      }
+    }
+
+    /* ── まちを えがく（reachedStage は たんちょう ぞうか＝たいこう禁止）── */
+    function paint() {
+      var meiro = readNum(K.meiro);
+      var sansu = readNum(K.sansu);
+      var fuel = meiro + sansu;
+
+      var reachedPrev = readNum(K.reached);         // まえに ひらいていた だんかい
+      var byFuel = stageForFuel(fuel);
+      var displayStage = Math.max(reachedPrev, byFuel); // たいこう禁止：さがっても もどさない
+
+      // かざりの ひょうじ
+      decoEls.forEach(function (d) {
+        if (d.st <= displayStage) d.el.classList.add('on');
+        else d.el.classList.remove('on');
+      });
+      if (displayStage >= 5) pathEl.classList.add('on'); else pathEl.classList.remove('on');
+      if (displayStage >= MAX_STAGE) piyo.classList.add('king'); else piyo.classList.remove('king');
+
+      renderMeter(displayStage, fuel);
+
+      // ほぞん（land.* のみ）
+      writeStr(K.reached, displayStage);
+      writeStr(K.lastSeen, fuel);
+
+      return { fuel: fuel, meiro: meiro, sansu: sansu,
+               displayStage: displayStage, reachedPrev: reachedPrev };
+    }
+
+    /* ── まちが そだった えんしゅつ（WORLD.md §3.5・またいだ ときだけ 1かい）── */
+    function celebrate(fromStage, toStage) {
+      // あたらしく あいた だんかいだけ .grow で ぽん
+      decoEls.forEach(function (d) {
+        if (d.st > fromStage && d.st <= toStage) {
+          d.el.classList.remove('grow'); void d.el.offsetWidth; d.el.classList.add('grow');
+        }
+      });
+      piyoCheer();
+      say(SAY_GROW, 2400);
+      burstConfetti();
+      sndGrow();
+    }
+
+    /* ── ぴよの ゆうどう（ひかえめ・いちどに ひとつだけ・WORLD.md §2.1）──
+       ⭐が すくない ほうを さす。おなじなら まえと ちがう ほう ── */
+    function pointTarget(meiro, sansu) {
+      var target;
+      if (meiro < sansu) target = 'park';
+      else if (sansu < meiro) target = 'cake';
+      else {
+        var last = readStr(K.lastPoint);
+        target = (last === 'park') ? 'cake' : 'park';
+      }
+      writeStr(K.lastPoint, target);
+      return target;
+    }
+    var pointTimer = null;
+    function clearPoint() {
+      facPark.classList.remove('point');
+      facCake.classList.remove('point');
+    }
+    function doPoint(state) {
+      if (isNight) return;
+      var t = pointTarget(state.meiro, state.sansu);
+      var card = (t === 'park') ? facPark : facCake;
+      clearPoint();
+      card.classList.add('point');
+      // ぴよが その ほうへ ちょっと よる
+      piyo.style.left = (t === 'park') ? '26%' : '74%';
+      piyoHop();
+
+      // つぎの へんかまで あと すこしなら「もうすこし」、ふだんは「こっちこっち」
+      var near = state.displayStage < MAX_STAGE &&
+                 (THRESHOLDS[state.displayStage + 1] - state.fuel) <= 2 &&
+                 (THRESHOLDS[state.displayStage + 1] - state.fuel) > 0;
+      say(near ? SAY_NEAR : SAY_POINT, 1800);
+
+      setTimeout(function () {
+        clearPoint();
+        piyo.style.left = '50%';
+      }, 2400);
+    }
+
+    /* ── アイドル：たまに ゆうどう（そうさが ないとき）── */
+    var idleTimer = null;
+    var lastAct = Date.now();
+    function scheduleIdle(state) {
+      if (idleTimer) clearTimeout(idleTimer);
+      idleTimer = setTimeout(function tick() {
+        if (!isNight && Date.now() - lastAct > 9000) {
+          doPoint(state);
+        }
+        idleTimer = setTimeout(tick, 15000);
+      }, 15000);
+    }
+    function noteAct() { lastAct = Date.now(); }
+
+    /* ── よる モード（WORLD.md §5・こていシーケンス）── */
+    var isNight = false;
+    var nightTimers = [];
+    function clearNightTimers() { nightTimers.forEach(clearTimeout); nightTimers = []; }
+
+    function goNight() {
+      if (isNight) return;
+      isNight = true;
+      clearPoint();
+      if (idleTimer) clearTimeout(idleTimer);
+      bubble.classList.remove('show');
+      // 1) そらが よるへ・ほしが つく
+      scene.classList.add('night');
+      writeStr(K.night, todayStr());
+      sndSleep();
+      // 2) ぴよが すへ トコトコ
+      nightTimers.push(setTimeout(function () {
+        piyo.style.left = '50%';
+        piyo.style.bottom = '2%';
+      }, 1200));
+      // 3) まるまって💤・「またあしたね」
+      nightTimers.push(setTimeout(function () {
+        piyo.classList.add('sleep');
+        say(SAY_NIGHT, 6000);
+      }, 2500));
+      // 4) しずかに くらく（タップで すぐ あさへ）
+      nightTimers.push(setTimeout(function () {
+        scene.classList.add('slept');
+      }, 4000));
+    }
+
+    function goMorning() {
+      if (!isNight) return;
+      isNight = false;
+      clearNightTimers();
+      scene.classList.remove('night');
+      scene.classList.remove('slept');
+      piyo.classList.remove('sleep');
+      piyo.style.bottom = '4%';
+      piyo.style.left = '50%';
+      say(SAY_MORNING, 1600);
+      piyoHop();
+      noteAct();
+      scheduleIdle(currentState);
+    }
+
+    function todayStr() {
+      var d = new Date();
+      return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+    }
+
+    /* ── そうさ カウント（ながく あそんだら やさしく あくび・WORLD.md §5）── */
+    var actCount = 0;
+    function bumpAct() {
+      noteAct();
+      actCount++;
+      if (actCount === 42 && !isNight) {
+        setTimeout(function () {
+          if (!isNight) { say(SAY_SLEEPY, 1800); }
+        }, 800);
+      }
+    }
+
+    /* ── イベント ── */
+    piyo.addEventListener('click', function () {
+      if (isNight) { goMorning(); return; }
+      piyoHop();
+      say(SAY_TAP[Math.floor(Math.random() * SAY_TAP.length)], 1500);
+      sndTap();
+      bumpAct();
+    });
+    piyo.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); piyo.click(); }
+    });
+
+    moonBtn.addEventListener('click', function () { bumpAct(); goNight(); });
+    nightveil.addEventListener('click', function () { goMorning(); });
+
+    // しせつの タップ：おと＋そうさカウント（リンクせんいは そのまま）
+    facPark.addEventListener('click', function () { bumpAct(); sndGo(); });
+    facCake.addEventListener('click', function () { bumpAct(); sndGo(); });
+
+    // ページを はなれて もどった とき（bfcache）＝あさに もどす
+    window.addEventListener('pageshow', function (e) {
+      if (e.persisted) { location.reload(); }
+    });
+
+    /* ── しょきか ── */
+    var currentState = paint();
+
+    // まちが そだったか？（reachedPrev → displayStage を またいだら 1かい）
+    if (currentState.displayStage > currentState.reachedPrev) {
+      setTimeout(function () {
+        celebrate(currentState.reachedPrev, currentState.displayStage);
+      }, 650);
+    } else {
+      // ふだんの らいほう：あさの あいさつ
+      setTimeout(function () { say(SAY_MORNING, 1600); piyoHop(); }, 500);
+    }
+
+    scheduleIdle(currentState);
+  })();
+  </script>
 </body>
 </html>
