@@ -1,7 +1,7 @@
 # ぴよぴよランド 🐥
 
 4〜5歳の姪っ子のための、**⭐で そだつ まち**（ランチャー／ポータル）。
-スマホのホーム画面にこの1つのURLを追加すれば、開くだけで街が広がり、2つのゲームを選べます。
+スマホのホーム画面にこの1つのURLを追加すれば、開くだけで街が広がり、3つのゲームを選べます。
 
 **公開URL: https://kerokero-1245.github.io/**
 
@@ -18,19 +18,21 @@
 **外部CDN・外部送信はゼロ**、保存は **localStorage のみ**。GitHub Pages のユーザーサイトとして、
 `main` ブランチ直下の `index.html` がそのままルートURLで即配信されます（Actions不要）。
 
-- **1枚の風景**（空・地面）の中に、2つの大きな施設カードと飾りスロットを配置
-- 相棒 **🐥ぴよ** が画面内に常駐。タップで跳ねて一言、⭐の少ない方の施設をたまに控えめに指す
+- **1枚の風景**（空・地面）の中に、3つの大きな施設カードと飾りスロットを配置
+  （縦持ち・背の低い画面は 2＋1、横長は 3枚よこ並び。巨大タップ領域を保ち、被り・はみ出しなし）
+- 相棒 **🐥ぴよ** が画面内に常駐。タップで跳ねて一言、⭐が一番少ない施設をたまに控えめに指す
 - 🌙ボタンで **夜モード**（空が夜に→ぴよが「またあしたね」→タップ or 再訪問で朝に戻る）
 - 縦持ちスマホ最優先。横持ち・タブレット・PC でも崩れない
-- 見た目は2つのアプリと統一（クリーム背景・オレンジ・グリーン・角丸・やわらかい影）
+- 見た目は3つのアプリと統一（クリーム背景・オレンジ・グリーン・角丸・やわらかい影）
 
 ### 街の燃料（fuel）と発展
 
-街は2つのアプリで貯めた⭐を**そのまま読んで**（バックエンド無し）確定的に育ちます。
+街は3つのアプリで貯めた⭐を**そのまま読んで**（バックエンド無し）確定的に育ちます。
 
 ```
-fuel = Number(localStorage['meiro.totalStars'] || 0)
-     + Number(localStorage['sansu.totalStars'] || 0)
+fuel = Number(localStorage['meiro.totalStars']  || 0)
+     + Number(localStorage['sansu.totalStars']  || 0)
+     + Number(localStorage['kotoba.totalStars'] || 0)
 ```
 
 キーが無い・壊れた値でも**必ず安全に 0 として**描画します（NaN・負値も 0 扱い）。
@@ -40,19 +42,20 @@ fuel = Number(localStorage['meiro.totalStars'] || 0)
 
 ### localStorage キー
 
-- **読むだけ**（他アプリ所有・改変禁止）: `meiro.totalStars` / `sansu.totalStars`
+- **読むだけ**（他アプリ所有・改変禁止）: `meiro.totalStars` / `sansu.totalStars` / `kotoba.totalStars`
 - **街が書く**（`land.` プレフィックスのみ）:
-  `land.reachedStage`（到達済み最大段階・単調増加）/ `land.lastSeenStars`（前回fuel・育った演出の判定）
-  / `land.lastNightDate`（🌙にした日付）/ `land.lastPointed`（ぴよが前回指した施設）
+  `land.reachedStage`（到達済み最大段階・単調増加。育った演出の判定にも使う）/ `land.lastSeenStars`（前回fuelの控え）
+  / `land.lastNightDate`（🌙にした日付）/ `land.lastPointed`（ぴよが前回指した施設 park/cake/shop）
 
 台帳の正典は WORLD.md §7。
 
-## 2つのアプリへのリンク（巨大導線・URLは不変）
+## 3つのアプリへのリンク（巨大導線・URLは不変）
 
 | 施設 | アプリ | 内容 | URL |
 | --- | --- | --- | --- |
 | 🌳 こうえん | おつかいめいろ | めいろでプログラミング的思考の下地 | https://kerokero-1245.github.io/otsukai-meiro/ |
 | 🍰 ケーキやさん | ぴよぴよさんすう | キャラの増減で たしざん・ひきざん | https://kerokero-1245.github.io/piyopiyo-sansu/ |
+| 🥕 やおやさん | ぴよぴよことば | ベルトコンベアで ことば・語彙あそび | https://kerokero-1245.github.io/piyopiyo-kotoba/ |
 
 施設名は世界観に合わせて表示していますが、**リンク先URLは従来どおり**です。
 「家族に配るURLは https://kerokero-1245.github.io/ の1つだけ」の約束を守ります。
@@ -67,6 +70,6 @@ fuel = Number(localStorage['meiro.totalStars'] || 0)
 ## 見た目・進行のカスタマイズ
 
 - 配色は `index.html` の `:root` の CSS変数（`--bg` / `--orange` / `--green` など）。
-  既存2アプリ（`otsukai-meiro` / `piyopiyo-sansu` の `theme.ts`）に合わせています。
+  既存3アプリ（`otsukai-meiro` / `piyopiyo-sansu` / `piyopiyo-kotoba` の `theme.ts`）に合わせています。
 - ⭐しきい値・段階の飾りは `index.html` 内の `THRESHOLDS` / `DECOS`、ぴよのセリフは `SAY_*`。
   **必ず WORLD.md の表と一字一句そろえて**変更してください。
