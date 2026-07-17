@@ -32,7 +32,8 @@
       --subtext: #9B7B57;
       --border: #F0D9A8;      /* やさしい枠線 */
       --orange: #FF9F45;      /* メインのオレンジ */
-      --green: #5FBF7A;       /* 前向きなグリーン */
+      --green: #5FBF7A;       /* 前向きなグリーン（こうえん） */
+      --veg: #7CB342;         /* やおやさんの はっぱグリーン（こうえんと べつ色） */
       --yellow: #FFD23F;      /* アクセント黄 */
       --shadow: 0 10px 26px rgba(214, 158, 78, 0.28);
       --shadow-soft: 0 8px 20px rgba(91, 58, 30, 0.15);
@@ -199,12 +200,26 @@
     }
     .deco.on .smoke { animation: smoke 3.4s ease-in-out infinite; }
 
-    /* ── 2つの おおきな どうせん（しせつ＝ゲームの いりぐち）──
-       ★ここは ぜったいに こわさない。まちの えんしゅつが おおいかくさない★ */
-    .facility {
+    /* ── 3つの おおきな どうせん（しせつ＝ゲームの いりぐち）を のせる たな ──
+       ★ここは ぜったいに こわさない。まちの えんしゅつが おおいかくさない★
+       flexで ならべ、ぜったいに かさならない・はみ出さない。
+       たてもち・せのひくい がめん＝2まい＋1まい（2＋1）。よこなが＝3まい よこに。 */
+    .facilities {
       position: absolute;
-      width: 40%;
-      bottom: 20%;
+      left: 0; right: 0;
+      bottom: 15%;
+      z-index: 12;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-content: center;
+      gap: clamp(8px, 2.2vmin, 20px);
+      padding: 0 clamp(10px, 3vw, 22px);
+    }
+    .facility {
+      flex: 0 1 42%;          /* たてもち: 2まいで 1れつ → 3まい目は 2れつ目へ（2＋1） */
+      max-width: 46%;
+      position: relative;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -217,13 +232,13 @@
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       padding: clamp(10px, 3.4vmin, 22px) 8px;
-      z-index: 12;
       transition: transform .09s ease, box-shadow .09s ease;
     }
     .facility:active { transform: translateY(2px) scale(0.98); box-shadow: var(--shadow-press); }
     .facility:focus-visible { outline: 4px solid var(--accent); outline-offset: 3px; }
-    .fac--park { left: 6%;  --accent: var(--green); }
-    .fac--cake { right: 6%; --accent: var(--orange); }
+    .fac--park { --accent: var(--green); }
+    .fac--cake { --accent: var(--orange); }
+    .fac--shop { --accent: var(--veg); }
 
     .facility .f-emoji {
       font-size: clamp(48px, 15vmin, 104px);
@@ -413,11 +428,22 @@
       .scene, .ground, .path, .deco, .facility .f-glow, .nest { transition-duration: .3s; }
     }
 
+    /* よこながの がめん（PC・タブレット・よこ持ち）＝3まい よこに ならべる */
+    @media (orientation: landscape) {
+      .facility { flex-basis: 30%; max-width: 32%; }
+    }
+
+    /* せの ひくい たてもち（515×684 など）＝たなを 少し上げ、
+       2れつ目の カードと ぴよの ふきだしが かさならないようにする */
+    @media (orientation: portrait) and (max-height: 720px) {
+      .facilities { bottom: 20%; }
+    }
+
     /* せの ひくい がめん（よこ持ちスマホ など） */
     @media (max-height: 480px) {
       .brand { font-size: 15px; padding: 4px 10px; }
       .moon-btn { width: 40px; height: 40px; font-size: 20px; }
-      .facility { bottom: 16%; }
+      .facilities { bottom: 11%; }
     }
   </style>
 </head>
@@ -436,22 +462,32 @@
       <!-- かざり（JSが いちを うめこむ） -->
       <div class="deco-layer" id="decoLayer" aria-hidden="true"></div>
 
-      <!-- 2つの おおきな どうせん（リンクさきURLは ふへん） -->
-      <a class="facility fac--park" id="facPark"
-         href="https://kerokero-1245.github.io/otsukai-meiro/"
-         aria-label="こうえん（おつかいめいろ）であそぶ">
-        <span class="f-glow" aria-hidden="true"></span>
-        <span class="f-emoji" aria-hidden="true">🌳</span>
-        <span class="f-name">こうえん</span>
-      </a>
+      <!-- 3つの おおきな どうせん（しせつ＝ゲームの いりぐち。リンクさきURLは ふへん） -->
+      <div class="facilities" id="facilities">
+        <a class="facility fac--park" id="facPark"
+           href="https://kerokero-1245.github.io/otsukai-meiro/"
+           aria-label="こうえん（おつかいめいろ）であそぶ">
+          <span class="f-glow" aria-hidden="true"></span>
+          <span class="f-emoji" aria-hidden="true">🌳</span>
+          <span class="f-name">こうえん</span>
+        </a>
 
-      <a class="facility fac--cake" id="facCake"
-         href="https://kerokero-1245.github.io/piyopiyo-sansu/"
-         aria-label="ケーキやさん（ぴよぴよさんすう）であそぶ">
-        <span class="f-glow" aria-hidden="true"></span>
-        <span class="f-emoji" aria-hidden="true">🍰</span>
-        <span class="f-name">ケーキやさん</span>
-      </a>
+        <a class="facility fac--cake" id="facCake"
+           href="https://kerokero-1245.github.io/piyopiyo-sansu/"
+           aria-label="ケーキやさん（ぴよぴよさんすう）であそぶ">
+          <span class="f-glow" aria-hidden="true"></span>
+          <span class="f-emoji" aria-hidden="true">🍰</span>
+          <span class="f-name">ケーキやさん</span>
+        </a>
+
+        <a class="facility fac--shop" id="facShop"
+           href="https://kerokero-1245.github.io/piyopiyo-kotoba/"
+           aria-label="やおやさん（ぴよぴよことば）であそぶ">
+          <span class="f-glow" aria-hidden="true"></span>
+          <span class="f-emoji" aria-hidden="true">🥕</span>
+          <span class="f-name">やおやさん</span>
+        </a>
+      </div>
 
       <!-- ぴよが ねる す（よるだけ みえる） -->
       <div class="nest" aria-hidden="true">🌿</div>
@@ -479,11 +515,12 @@
   (function () {
     "use strict";
 
-    /* ── localStorage キー台帳（WORLD.md §7）。よむのは meiro/sansu、
+    /* ── localStorage キー台帳（WORLD.md §7）。よむのは meiro/sansu/kotoba、
        かくのは land.* だけ ── */
     var K = {
       meiro:     'meiro.totalStars',
       sansu:     'sansu.totalStars',
+      kotoba:    'kotoba.totalStars',
       reached:   'land.reachedStage',
       lastSeen:  'land.lastSeenStars',
       night:     'land.lastNightDate',
@@ -578,6 +615,8 @@
     var nightveil= document.getElementById('nightveil');
     var facPark  = document.getElementById('facPark');
     var facCake  = document.getElementById('facCake');
+    var facShop  = document.getElementById('facShop');
+    var FAC = { park: facPark, cake: facCake, shop: facShop };
 
     /* ── おと（Web Audio・みじかく やさしく・にん意）── */
     var actx = null;
@@ -686,7 +725,8 @@
     function paint() {
       var meiro = readNum(K.meiro);
       var sansu = readNum(K.sansu);
-      var fuel = meiro + sansu;
+      var kotoba = readNum(K.kotoba);
+      var fuel = meiro + sansu + kotoba;
 
       var reachedPrev = readNum(K.reached);         // まえに ひらいていた だんかい
       var byFuel = stageForFuel(fuel);
@@ -706,7 +746,7 @@
       writeStr(K.reached, displayStage);
       writeStr(K.lastSeen, fuel);
 
-      return { fuel: fuel, meiro: meiro, sansu: sansu,
+      return { fuel: fuel, meiro: meiro, sansu: sansu, kotoba: kotoba,
                displayStage: displayStage, reachedPrev: reachedPrev };
     }
 
@@ -725,31 +765,53 @@
     }
 
     /* ── ぴよの ゆうどう（ひかえめ・いちどに ひとつだけ・WORLD.md §2.1）──
-       ⭐が すくない ほうを さす。おなじなら まえと ちがう ほう ── */
-    function pointTarget(meiro, sansu) {
+       ⭐が いちばん すくない しせつを さす。ならんだら まえと ちがう しせつへ ── */
+    function pointTarget(vals) {
+      // vals: [{id:'park',v:meiro},{id:'cake',v:sansu},{id:'shop',v:kotoba}]
+      var min = vals[0].v;
+      for (var i = 1; i < vals.length; i++) if (vals[i].v < min) min = vals[i].v;
+      var cands = [];
+      for (var j = 0; j < vals.length; j++) if (vals[j].v === min) cands.push(vals[j].id);
       var target;
-      if (meiro < sansu) target = 'park';
-      else if (sansu < meiro) target = 'cake';
-      else {
-        var last = readStr(K.lastPoint);
-        target = (last === 'park') ? 'cake' : 'park';
+      if (cands.length === 1) {
+        target = cands[0];                         // すくない しせつが 1つ＝そこを さす
+      } else {
+        var last = readStr(K.lastPoint);           // ならんだ＝まえと ちがう しせつへ ローテーション
+        var idx = cands.indexOf(last);
+        target = (idx === -1) ? cands[0] : cands[(idx + 1) % cands.length];
       }
       writeStr(K.lastPoint, target);
       return target;
+    }
+    /* しせつの よこ位置（scene基準%）を じっそくして かえす。
+       レイアウト（2＋1／よこ3れつ）が かわっても ぴよが ただしく さす */
+    function facCenterPct(card) {
+      try {
+        var sr = scene.getBoundingClientRect();
+        var cr = card.getBoundingClientRect();
+        if (!sr.width) return 50;
+        var cx = (cr.left + cr.width / 2 - sr.left) / sr.width * 100;
+        return Math.max(14, Math.min(86, cx));
+      } catch (e) { return 50; }
     }
     var pointTimer = null;
     function clearPoint() {
       facPark.classList.remove('point');
       facCake.classList.remove('point');
+      facShop.classList.remove('point');
     }
     function doPoint(state) {
       if (isNight) return;
-      var t = pointTarget(state.meiro, state.sansu);
-      var card = (t === 'park') ? facPark : facCake;
+      var t = pointTarget([
+        { id: 'park', v: state.meiro },
+        { id: 'cake', v: state.sansu },
+        { id: 'shop', v: state.kotoba }
+      ]);
+      var card = FAC[t] || facPark;
       clearPoint();
       card.classList.add('point');
-      // ぴよが その ほうへ ちょっと よる
-      piyo.style.left = (t === 'park') ? '26%' : '74%';
+      // ぴよが その しせつの ほうへ ちょっと よる（じっそくした よこ位置へ）
+      piyo.style.left = facCenterPct(card) + '%';
       piyoHop();
 
       // つぎの へんかまで あと すこしなら「もうすこし」、ふだんは「こっちこっち」
@@ -859,6 +921,7 @@
     // しせつの タップ：おと＋そうさカウント（リンクせんいは そのまま）
     facPark.addEventListener('click', function () { bumpAct(); sndGo(); });
     facCake.addEventListener('click', function () { bumpAct(); sndGo(); });
+    facShop.addEventListener('click', function () { bumpAct(); sndGo(); });
 
     // ページを はなれて もどった とき（bfcache）＝あさに もどす
     window.addEventListener('pageshow', function (e) {
