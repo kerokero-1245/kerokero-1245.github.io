@@ -142,14 +142,14 @@
       filter: brightness(0.9);
     }
 
-    /* ── ほし（よるだけ ひかる） ── */
+    /* ── ほし（よるだけ ひかる・シールポップ hoshi.svg） ── */
     .stars { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
     .star {
-      position: absolute; width: 5px; height: 5px; border-radius: 50%;
-      background: #FFF7C7;
+      position: absolute; width: 15px; height: 15px;
+      background: url(assets/img/hoshi.svg) center/contain no-repeat;
       opacity: 0; transform: scale(0.4);
       transition: opacity 1s ease, transform 1s ease;
-      box-shadow: 0 0 6px 1px rgba(255,247,199,.7);
+      filter: drop-shadow(0 0 4px rgba(255,231,150,.55));
     }
     .scene.night .star { opacity: .95; transform: scale(1); animation: twinkle 3.2s ease-in-out infinite; }
 
@@ -402,6 +402,28 @@
       user-select: none;
     }
 
+    /* ── シールポップSVG（<img>で差し替え・viewBox200・白フチ焼き込み・フィルタ不使用）──
+       素材repo https://github.com/kerokero-1245/piyo-assets ／ 見本 piyo-assets/reference/style-samples.html
+       レイアウト・タップ領域・進行ロジックは不変。絵文字スロットと同じ位置に画像を差すだけ。 */
+    .deco-img {
+      display: block;              /* サイズは <img width/height>（＝cfg.s px）で きまる */
+      -webkit-user-drag: none; user-select: none; pointer-events: none;
+    }
+    /* たいよう↔つき の きりかえ（よるは たいようを かくし、つきを だす＝☀️の みえ残り修正） */
+    .scene.night .deco.sun.on  { opacity: 0; }
+    .deco.moon.on              { opacity: 0; }
+    .scene.night .deco.moon.on { opacity: 1; }
+    .scene.night .deco.moon    { filter: drop-shadow(0 0 10px rgba(255,247,199,.5)); }
+
+    /* しせつカードの え（🌳🍰🥕→ ki/cake/ninjin） */
+    .facility img.f-emoji { width: clamp(48px, 15vmin, 104px); height: auto; }
+
+    /* ぴよ（p-body/p-crown/p-zzz）と す（nest） */
+    .piyo img.p-body  { width: clamp(40px, 12vmin, 76px); height: auto; }
+    .piyo img.p-crown { width: clamp(26px, 6.6vmin, 44px); height: auto; }
+    .piyo img.p-zzz   { width: clamp(22px, 6vmin, 36px); height: auto; }
+    .nest img         { display: block; width: clamp(30px, 9vmin, 54px); height: auto; }
+
     /* ── アニメーション ─────────────────────────────── */
     @keyframes bob { 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(-5px) } }
     @keyframes piyohop {
@@ -437,7 +459,9 @@
     @media (prefers-reduced-motion: reduce) {
       .deco.sway.on, .deco.float.on, .deco.float.slow.on, .deco.hop.on,
       .deco.wob.on, .deco.spark.on, .deco.friend.on, .piyo .p-body,
-      .scene.night .star, .piyo.sleep .p-zzz { animation: none !important; }
+      .scene.night .star, .piyo.sleep .p-zzz,
+      .deco.grow, .deco.rainbow.on, .deco.on .smoke,
+      .confetti span, .facility.point::after { animation: none !important; }
       .scene, .ground, .path, .deco, .facility .f-glow, .nest { transition-duration: .3s; }
     }
 
@@ -481,7 +505,7 @@
            href="https://kerokero-1245.github.io/otsukai-meiro/"
            aria-label="こうえん（おつかいめいろ）であそぶ">
           <span class="f-glow" aria-hidden="true"></span>
-          <span class="f-emoji" aria-hidden="true">🌳</span>
+          <img class="f-emoji" src="assets/img/ki.svg" alt="" aria-hidden="true" draggable="false">
           <span class="f-name">こうえん</span>
         </a>
 
@@ -489,7 +513,7 @@
            href="https://kerokero-1245.github.io/piyopiyo-sansu/"
            aria-label="ケーキやさん（ぴよぴよさんすう）であそぶ">
           <span class="f-glow" aria-hidden="true"></span>
-          <span class="f-emoji" aria-hidden="true">🍰</span>
+          <img class="f-emoji" src="assets/img/cake.svg" alt="" aria-hidden="true" draggable="false">
           <span class="f-name">ケーキやさん</span>
         </a>
 
@@ -497,13 +521,13 @@
            href="https://kerokero-1245.github.io/piyopiyo-kotoba/"
            aria-label="やおやさん（ぴよぴよことば）であそぶ">
           <span class="f-glow" aria-hidden="true"></span>
-          <span class="f-emoji" aria-hidden="true">🥕</span>
+          <img class="f-emoji" src="assets/img/ninjin.svg" alt="" aria-hidden="true" draggable="false">
           <span class="f-name">やおやさん</span>
         </a>
       </div>
 
       <!-- ぴよが ねる す（よるだけ みえる） -->
-      <div class="nest" aria-hidden="true">🌿</div>
+      <div class="nest" aria-hidden="true"><img src="assets/img/su.svg" alt="" draggable="false"></div>
 
       <!-- すすみ ドット -->
       <div class="meter" id="meter" aria-hidden="true"></div>
@@ -511,9 +535,9 @@
       <!-- ぴよ -->
       <div class="piyo" id="piyo" role="button" tabindex="0" aria-label="ぴよ">
         <span class="bubble" id="bubble" aria-hidden="true"></span>
-        <span class="p-crown" aria-hidden="true">👑</span>
-        <span class="p-body" aria-hidden="true">🐥</span>
-        <span class="p-zzz" aria-hidden="true">💤</span>
+        <img class="p-crown" src="assets/img/oukan.svg" alt="" aria-hidden="true" draggable="false">
+        <img class="p-body" src="assets/img/piyo.svg" alt="" aria-hidden="true" draggable="false">
+        <img class="p-zzz" src="assets/img/zzz.svg" alt="" aria-hidden="true" draggable="false">
       </div>
 
       <!-- おいわいの かみふぶき -->
@@ -533,6 +557,7 @@
 
     /* ── localStorage キー台帳（WORLD.md §7）。よむのは meiro/sansu/kotoba、
        かくのは land.* だけ ── */
+    var IMG = 'assets/img/';   // シールポップSVGの ばしょ（同一オリジン・クロスオリジン参照なし）
     var K = {
       meiro:     'meiro.totalStars',
       sansu:     'sansu.totalStars',
@@ -576,37 +601,38 @@
        st=だんかい, x/y=%（scene きじゅん）, s=絵文字サイズpx, cls=うごき */
     var DECOS = [
       // だんかい1: くさ・はな
-      { st: 1, e: '🌱', x: 8,  y: 90, s: 26, cls: 'sway' },
-      { st: 1, e: '🌼', x: 22, y: 94, s: 24, cls: 'sway' },
-      { st: 1, e: '🌷', x: 58, y: 94, s: 24, cls: 'sway' },
-      { st: 1, e: '🌱', x: 92, y: 90, s: 26, cls: 'sway' },
+      { st: 1, img: 'kusa',      e: '🌱', x: 8,  y: 90, s: 34, cls: 'sway' },
+      { st: 1, img: 'hana',      e: '🌼', x: 22, y: 94, s: 32, cls: 'sway' },
+      { st: 1, img: 'chuurippu', e: '🌷', x: 58, y: 94, s: 32, cls: 'sway' },
+      { st: 1, img: 'kusa',      e: '🌱', x: 92, y: 90, s: 34, cls: 'sway' },
       // だんかい2: なかまの ひよこ
-      { st: 2, e: '🐤', x: 38, y: 88, s: 32, cls: 'friend' },
+      { st: 2, img: 'hiyoko', e: '🐤', x: 38, y: 88, s: 42, cls: 'friend' },
       // だんかい3: き・ベンチ
-      { st: 3, e: '🌳', x: 30, y: 50, s: 48, cls: 'sway' },
-      { st: 3, e: '🪑', x: 88, y: 86, s: 34, cls: '' },
+      { st: 3, img: 'ki',     e: '🌳', x: 30, y: 50, s: 58, cls: 'sway' },
+      { st: 3, img: 'benchi', e: '🪑', x: 88, y: 86, s: 44, cls: '' },
       // だんかい4: ちいさな いえ＋けむり
-      { st: 4, e: '🏠', x: 70, y: 50, s: 48, cls: '', smoke: true },
+      { st: 4, img: 'ie', e: '🏠', x: 70, y: 50, s: 58, cls: '', smoke: true },
       // だんかい5: どうぶつ（みちは べつ）
-      { st: 5, e: '🐰', x: 26, y: 92, s: 28, cls: 'hop' },
+      { st: 5, img: 'usagi', e: '🐰', x: 26, y: 92, s: 38, cls: 'hop' },
       // だんかい6: ふんすい
-      { st: 6, e: '⛲', x: 70, y: 88, s: 42, cls: '' },
+      { st: 6, img: 'funsui', e: '⛲', x: 70, y: 88, s: 52, cls: '' },
       // だんかい7: ひろば（メリーゴーラウンド）
-      { st: 7, e: '🎠', x: 86, y: 36, s: 50, cls: 'wob' },
+      { st: 7, img: 'mokuba', e: '🎠', x: 86, y: 36, s: 60, cls: 'wob' },
       // だんかい8: にじ・かざり
-      { st: 8, e: '🌈', x: 50, y: 24, s: 84, cls: 'rainbow' },
-      { st: 8, e: '🎏', x: 86, y: 54, s: 34, cls: 'sway' },
+      { st: 8, img: 'niji',      e: '🌈', x: 50, y: 24, s: 92, cls: 'rainbow' },
+      { st: 8, img: 'koinobori', e: '🎏', x: 86, y: 54, s: 44, cls: 'sway' },
       // だんかい9: かんらんしゃ
-      { st: 9, e: '🎡', x: 12, y: 32, s: 64, cls: 'wob' },
+      { st: 9, img: 'kanransha', e: '🎡', x: 12, y: 32, s: 72, cls: 'wob' },
       // だんかい10: まつり（＋ぴよに👑）
-      { st: 10, e: '🎆', x: 26, y: 12, s: 50, cls: 'spark' },
-      { st: 10, e: '🎆', x: 74, y: 10, s: 50, cls: 'spark' }
+      { st: 10, img: 'hanabi', e: '🎆', x: 26, y: 12, s: 56, cls: 'spark' },
+      { st: 10, img: 'hanabi', e: '🎆', x: 74, y: 10, s: 56, cls: 'spark' }
     ];
-    // つねに でている そらの ようす（だんかい0）
+    // つねに でている そらの ようす（だんかい0）。たいよう↔つきは よるで きりかわる
     var BASE = [
-      { e: '☀️', x: 14, y: 12, s: 32, cls: 'float' },
-      { e: '☁️', x: 44, y: 9,  s: 30, cls: 'float slow' },
-      { e: '☁️', x: 76, y: 15, s: 28, cls: 'float' }
+      { img: 'taiyou', e: '☀️', x: 14, y: 14, s: 52, cls: 'float sun' },
+      { img: 'tsuki',  e: '🌙', x: 14, y: 14, s: 46, cls: 'float moon' },
+      { img: 'kumo',   e: '☁️', x: 44, y: 11, s: 52, cls: 'float slow' },
+      { img: 'kumo',   e: '☁️', x: 76, y: 17, s: 44, cls: 'float' }
     ];
 
     /* ── ぴよの ひとこと（WORLD.md §3.6・ひらがな みじかく やわらかく）── */
@@ -633,6 +659,14 @@
     var facCake  = document.getElementById('facCake');
     var facShop  = document.getElementById('facShop');
     var FAC = { park: facPark, cake: facCake, shop: facShop };
+
+    /* ── ぴよの ひょうじょう（3態のみ・WORLD.md §1.4）──
+       つうじょう piyo / よろこび piyo-yorokobi / ねむい piyo-nemui。
+       <img>の src を さしかえるだけ。うごき・ロジックは 不変。SVGが なくても クラッシュしない */
+    var pBody = piyo.querySelector('.p-body');
+    function setPiyoFace(name) {
+      try { if (pBody && pBody.tagName === 'IMG') pBody.src = IMG + name + '.svg'; } catch (e) {}
+    }
 
     /* ── おと（Web Audio・みじかく やさしく・にん意）── */
     var actx = null;
@@ -713,11 +747,33 @@
       el.className = 'deco' + (cfg.cls ? ' ' + cfg.cls : '');
       el.style.left = cfg.x + '%';
       el.style.top = cfg.y + '%';
-      el.style.fontSize = cfg.s + 'px';
-      el.textContent = cfg.e;
+      if (cfg.img) {
+        // シールポップSVGを <img> で。よみこみ失敗（404等）なら 絵文字に フォールバック
+        var im = document.createElement('img');
+        im.className = 'deco-img';
+        im.src = IMG + cfg.img + '.svg';
+        im.width = cfg.s; im.height = cfg.s;
+        im.alt = ''; im.draggable = false; im.setAttribute('aria-hidden', 'true');
+        im.onerror = function () {
+          var t = document.createTextNode(cfg.e || '');
+          el.style.fontSize = cfg.s + 'px';
+          im.replaceWith(t);
+        };
+        el.appendChild(im);
+      } else {
+        el.style.fontSize = cfg.s + 'px';
+        el.textContent = cfg.e;
+      }
       if (cfg.smoke) {
         var sm = document.createElement('span');
-        sm.className = 'smoke'; sm.textContent = '💨';
+        sm.className = 'smoke';
+        var smi = document.createElement('img');
+        smi.className = 'deco-img';
+        smi.src = IMG + 'kemuri.svg';
+        smi.width = Math.round(cfg.s * 0.55); smi.height = Math.round(cfg.s * 0.55);
+        smi.alt = ''; smi.draggable = false; smi.setAttribute('aria-hidden', 'true');
+        smi.onerror = function () { smi.replaceWith(document.createTextNode('💨')); sm.style.fontSize = '0.5em'; };
+        sm.appendChild(smi);
         el.appendChild(sm);
       }
       if (isBase) el.dataset.stage = '0';
@@ -814,6 +870,10 @@
         }
       });
       piyoCheer();
+      setPiyoFace('piyo-yorokobi');
+      setTimeout(function () {
+        if (!isNight && !piyo.classList.contains('sleep')) setPiyoFace('piyo');
+      }, 1100);
       say(SAY_GROW, 2400);
       burstConfetti();
       sndGrow();
@@ -918,6 +978,7 @@
       // 3) まるまって💤・「またあしたね」
       nightTimers.push(setTimeout(function () {
         piyo.classList.add('sleep');
+        setPiyoFace('piyo-nemui');
         say(SAY_NIGHT, 6000);
       }, 2500));
       // 4) しずかに くらく（タップで すぐ あさへ）
@@ -933,6 +994,7 @@
       scene.classList.remove('night');
       scene.classList.remove('slept');
       piyo.classList.remove('sleep');
+      setPiyoFace('piyo');
       piyo.style.bottom = '4%';
       piyo.style.left = '50%';
       say(SAY_MORNING, 1600);
@@ -953,7 +1015,13 @@
       actCount++;
       if (actCount === 42 && !isNight) {
         setTimeout(function () {
-          if (!isNight) { say(SAY_SLEEPY, 1800); }
+          if (!isNight && !piyo.classList.contains('sleep')) {
+            say(SAY_SLEEPY, 1800);
+            setPiyoFace('piyo-nemui');
+            setTimeout(function () {
+              if (!isNight && !piyo.classList.contains('sleep')) setPiyoFace('piyo');
+            }, 2000);
+          }
         }, 800);
       }
     }
