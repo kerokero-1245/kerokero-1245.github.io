@@ -389,6 +389,19 @@
     .scene.night .nightveil { pointer-events: auto; cursor: pointer; }
     .scene.night.slept .nightveil { background: rgba(10,12,30,.45); }
 
+    /* ── ちいさな クレジット（ページ最下部・音声の出典）── */
+    .credit {
+      flex: 0 0 auto;
+      text-align: center;
+      font-size: 10px;
+      line-height: 1.2;
+      color: var(--subtext);
+      opacity: .65;
+      padding: 1px 8px 0;
+      letter-spacing: .01em;
+      user-select: none;
+    }
+
     /* ── アニメーション ─────────────────────────────── */
     @keyframes bob { 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(-5px) } }
     @keyframes piyohop {
@@ -509,6 +522,9 @@
       <!-- よるの くらがり（タップで あさへ） -->
       <div class="nightveil" id="nightveil" aria-hidden="true"></div>
     </div>
+
+    <!-- ちいさな クレジット（音声の出典）。ページ最下部に ひかえめに -->
+    <footer class="credit">こえ：VOICEVOX：ずんだもん</footer>
   </main>
 
   <script>
@@ -620,6 +636,7 @@
 
     /* ── おと（Web Audio・みじかく やさしく・にん意）── */
     var actx = null;
+    var suppressTapSfx = false;   // 初回タップ：タイトルよみあげと タップ音が かさならないように
     function tone(freq, dur, type, gain) {
       try {
         if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
@@ -633,10 +650,48 @@
         o.start(t); o.stop(t + dur + 0.02);
       } catch (e) {}
     }
-    function sndTap()   { tone(660, 0.12, 'sine', 0.05); }
-    function sndGo()    { tone(520, 0.09, 'triangle', 0.05); setTimeout(function(){ tone(780, 0.12, 'triangle', 0.05); }, 90); }
+    function sndTap()   { if (suppressTapSfx) return; tone(660, 0.12, 'sine', 0.05); }
+    function sndGo()    { if (suppressTapSfx) return; tone(520, 0.09, 'triangle', 0.05); setTimeout(function(){ tone(780, 0.12, 'triangle', 0.05); }, 90); }
     function sndGrow()  { [523, 659, 784, 1047].forEach(function (f, i) { setTimeout(function(){ tone(f, 0.16, 'triangle', 0.05); }, i * 120); }); }
     function sndSleep() { tone(440, 0.3, 'sine', 0.045); setTimeout(function(){ tone(294, 0.5, 'sine', 0.04); }, 260); }
+
+    /* ── タイトル よみあげ（VOICEVOX ずんだもん・初回タップで 1セッション1回）──
+       ①同梱クリップ assets/voice/piyopiyo-land.m4a を Audio() で再生。
+       ②再生できなければ speechSynthesis（日本語）。③それも無ければ 無音。
+       ブラウザの自動再生制限に合わせ、かならず ユーザー操作起点。クラッシュ厳禁。 */
+    var TITLE_CLIP = 'assets/voice/piyopiyo-land.m4a';
+    var SESS_TITLE = 'land.titleVoicePlayed';
+    var titleAudio = null;
+    function titleAlreadyPlayed() {
+      try { return sessionStorage.getItem(SESS_TITLE) === '1'; } catch (e) { return false; }
+    }
+    function markTitlePlayed() {
+      try { sessionStorage.setItem(SESS_TITLE, '1'); } catch (e) {}
+    }
+    function speakTitleTTS() {
+      try {
+        var ss = window.speechSynthesis;
+        if (!ss || typeof window.SpeechSynthesisUtterance !== 'function') return;
+        var u = new window.SpeechSynthesisUtterance('ぴよぴよランド');
+        u.lang = 'ja-JP'; u.rate = 0.95; u.pitch = 1.2; u.volume = 1;
+        ss.cancel();
+        ss.speak(u);
+      } catch (e) {}
+    }
+    // 初回だけ true を かえす（＝タイトルを 鳴らした）。以降・失敗しても false。
+    function playTitleVoice() {
+      if (titleAlreadyPlayed()) return false;
+      markTitlePlayed();
+      var fellBack = false;
+      function fallback() { if (fellBack) return; fellBack = true; speakTitleTTS(); }
+      try {
+        titleAudio = new Audio(TITLE_CLIP);
+        titleAudio.addEventListener('error', fallback);   // 未同梱・404 → speechSynthesis へ
+        var p = titleAudio.play();
+        if (p && typeof p.catch === 'function') { p.catch(function () { fallback(); }); }
+      } catch (e) { fallback(); }
+      return true;
+    }
 
     /* ── ほしを うめこむ（けっていてき・らんすう なし）── */
     var STAR_POS = [
@@ -904,6 +959,16 @@
     }
 
     /* ── イベント ── */
+
+    // 初回タップ（がめんの どこでも）で タイトルを 1セッション1回 よみあげる。
+    // capture で 各ボタンの click より先に走らせ、初回だけ タップ音と かさならないよう抑制。
+    document.addEventListener('click', function () {
+      if (playTitleVoice()) {
+        suppressTapSfx = true;
+        setTimeout(function () { suppressTapSfx = false; }, 80);
+      }
+    }, true);
+
     piyo.addEventListener('click', function () {
       if (isNight) { goMorning(); return; }
       piyoHop();

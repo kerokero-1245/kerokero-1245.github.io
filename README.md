@@ -24,6 +24,9 @@
 - 🌙ボタンで **夜モード**（空が夜に→ぴよが「またあしたね」→タップ or 再訪問で朝に戻る）
 - 縦持ちスマホ最優先。横持ち・タブレット・PC でも崩れない
 - 見た目は3つのアプリと統一（クリーム背景・オレンジ・グリーン・角丸・やわらかい影）
+- **初回タップ**で「ぴよぴよランド」を1回よみあげ（1セッション1回。ブラウザの自動再生制限に合わせ
+  ユーザー操作起点）。同梱クリップ `assets/voice/piyopiyo-land.m4a` を `Audio()` で再生し、
+  無ければ端末の音声合成（speechSynthesis／日本語）→ 無音、の順に**多段フォールバック**（絶対に落ちない）
 
 ### 街の燃料（fuel）と発展
 
@@ -73,3 +76,16 @@ fuel = Number(localStorage['meiro.totalStars']  || 0)
   既存3アプリ（`otsukai-meiro` / `piyopiyo-sansu` / `piyopiyo-kotoba` の `theme.ts`）に合わせています。
 - ⭐しきい値・段階の飾りは `index.html` 内の `THRESHOLDS` / `DECOS`、ぴよのセリフは `SAY_*`。
   **必ず WORLD.md の表と一字一句そろえて**変更してください。
+
+## 音声（タイトルよみあげ）
+
+- 初回タップで「ぴよぴよランド」を1回だけよみあげます。実装は `index.html` の
+  `playTitleVoice()`（クリップ `Audio()` 再生 → speechSynthesis → 無音の多段フォールバック）。
+- 同梱クリップ: `assets/voice/piyopiyo-land.m4a`（**VOICEVOX ENGINE**・話者 **ずんだもん／あまあま**
+  〈style id 1〉・`speedScale` 0.92・24kHz→AAC 64kbps mono `m4a`）。他の3アプリと同じ声で統一。
+- 差し替え時はファイル名を `piyopiyo-land.m4a` のまま `assets/voice/` に置くだけ（コード変更不要）。
+
+## クレジット
+
+- 音声合成: **VOICEVOX:ずんだもん**（[VOICEVOX](https://voicevox.hiroshiba.jp/) 利用規約に基づく）。
+  ページ最下部にも小さく表示しています。
