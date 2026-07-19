@@ -85,7 +85,21 @@ fuel = Number(localStorage['meiro.totalStars']  || 0)
   〈style id 1〉・`speedScale` 0.92・24kHz→AAC 64kbps mono `m4a`）。他の3アプリと同じ声で統一。
 - 差し替え時はファイル名を `piyopiyo-land.m4a` のまま `assets/voice/` に置くだけ（コード変更不要）。
 
+## BGM（オルゴール・ループ）
+
+- やわらかい**オルゴール風の子守唄**（`land`・C メジャーペンタ・66BPM・16小節シームレスループ）を
+  **Web Audio でその場生成**します（録音物・外部素材ゼロ・完全オフライン）。**初期状態は ON・控えめ音量**。
+- 実装は同梱の共通エンジン `assets/bgm/engine.js`（`window.PiyoBgm`）＋スコア `assets/bgm/songs.js`
+  （`window.PIYO_SONGS` の `land` 1曲。基盤は素材リポジトリ `piyo-assets/bgm/`）。声・効果音と**同じ
+  AudioContext を共有**します。
+- **最初のタップで再生開始**（ブラウザの自動再生制限に合わせユーザー操作起点）。タイトルよみあげ・
+  声の再生中は**ダッキング**（音量を下げ、終了で戻す）。**🌙夜モードで約2秒フェードアウト**し、
+  朝に戻ると再開します。
+- **ON/OFF はトップバーの 🔊/🔇 チップ**（`localStorage` キー `land.bgm`・既定ON・OFFは即停止で永続）。
+  AudioContext 非対応・スクリプト未読込でも**無害**（BGMだけ鳴らず、他機能は通常どおり）。
+
 ## クレジット
 
 - 音声合成: **VOICEVOX:ずんだもん**（[VOICEVOX](https://voicevox.hiroshiba.jp/) 利用規約に基づく）。
-  ページ最下部にも小さく表示しています。
+- **BGM: オリジナル（Web Audio 生成）**。録音物・外部素材は使っていません。
+- いずれもページ最下部にも小さく表示しています。

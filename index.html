@@ -107,6 +107,29 @@
     .moon-btn:active { transform: scale(0.92); box-shadow: var(--shadow-press); }
     .moon-btn:focus-visible { outline: 4px solid var(--orange); outline-offset: 3px; }
 
+    /* うえの おびの みぎがわ（BGM チップ＋🌙 を まとめる） */
+    .topbar-actions { display: inline-flex; align-items: center; gap: 8px; }
+
+    /* ── BGM チップ（🔊/🔇・タップで ON/OFF・key land.bgm・既定ON）──
+       シールポップの みための じゃまを しないよう ひかえめ。でも 子どもが おせる おおきさ */
+    .bgm-btn {
+      appearance: none;
+      border: 2px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      width: 42px; height: 42px;
+      border-radius: 999px;
+      font-size: 21px;
+      line-height: 1;
+      cursor: pointer;
+      box-shadow: var(--shadow-soft);
+      transition: transform .1s ease, box-shadow .1s ease, opacity .15s ease;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .bgm-btn:active { transform: scale(0.92); box-shadow: var(--shadow-press); }
+    .bgm-btn:focus-visible { outline: 4px solid var(--orange); outline-offset: 3px; }
+    .bgm-btn.off { opacity: .55; }   /* OFF は うすく（きえてる ことが わかる） */
+
     /* ── まち（1まいの ふうけい）──────────────────────────── */
     .scene {
       position: relative;
@@ -480,6 +503,7 @@
     @media (max-height: 480px) {
       .brand { font-size: 15px; padding: 4px 10px; }
       .moon-btn { width: 40px; height: 40px; font-size: 20px; }
+      .bgm-btn { width: 36px; height: 36px; font-size: 18px; }
       .facilities { bottom: 11%; }
     }
   </style>
@@ -488,7 +512,10 @@
   <main class="app">
     <div class="topbar">
       <span class="brand"><span class="b-chick">🐥</span>ぴよぴよランド</span>
-      <button class="moon-btn" id="moonBtn" type="button" aria-label="おやすみ">🌙</button>
+      <div class="topbar-actions">
+        <button class="bgm-btn" id="bgmBtn" type="button" aria-label="BGMを ながす" aria-pressed="true">🔊</button>
+        <button class="moon-btn" id="moonBtn" type="button" aria-label="おやすみ">🌙</button>
+      </div>
     </div>
 
     <div class="scene" id="scene">
@@ -548,8 +575,13 @@
     </div>
 
     <!-- ちいさな クレジット（音声の出典）。ページ最下部に ひかえめに -->
-    <footer class="credit">こえ：VOICEVOX：ずんだもん</footer>
+    <footer class="credit">こえ：VOICEVOX：ずんだもん／BGM：オリジナル（Web Audio 生成）</footer>
   </main>
+
+  <!-- BGM（オルゴール・ループ／piyo-assets 共通エンジン・同一オリジン同梱）。
+       songs.js（window.PIYO_SONGS）→ engine.js（window.PiyoBgm）の順。外部参照なし。 -->
+  <script src="assets/bgm/songs.js"></script>
+  <script src="assets/bgm/engine.js"></script>
 
   <script>
   (function () {
@@ -654,6 +686,7 @@
     var starsEl  = document.getElementById('stars');
     var confetti = document.getElementById('confetti');
     var moonBtn  = document.getElementById('moonBtn');
+    var bgmBtn   = document.getElementById('bgmBtn');
     var nightveil= document.getElementById('nightveil');
     var facPark  = document.getElementById('facPark');
     var facCake  = document.getElementById('facCake');
@@ -671,10 +704,17 @@
     /* ── おと（Web Audio・みじかく やさしく・にん意）── */
     var actx = null;
     var suppressTapSfx = false;   // 初回タップ：タイトルよみあげと タップ音が かさならないように
-    function tone(freq, dur, type, gain) {
+    // 効果音・声・BGM で 1つの AudioContext を共有する（ユーザー操作起点で ようい・resume）。
+    function ensureActx() {
       try {
         if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
-        if (actx.state === 'suspended') actx.resume();
+        if (actx && actx.state === 'suspended') actx.resume();
+      } catch (e) {}
+      return actx;
+    }
+    function tone(freq, dur, type, gain) {
+      try {
+        if (!ensureActx()) return;
         var o = actx.createOscillator(), g = actx.createGain();
         o.type = type || 'sine'; o.frequency.value = freq;
         var t = actx.currentTime, gv = (gain == null ? 0.05 : gain);
@@ -689,6 +729,50 @@
     function sndGrow()  { [523, 659, 784, 1047].forEach(function (f, i) { setTimeout(function(){ tone(f, 0.16, 'triangle', 0.05); }, i * 120); }); }
     function sndSleep() { tone(440, 0.3, 'sine', 0.045); setTimeout(function(){ tone(294, 0.5, 'sine', 0.04); }, 260); }
 
+    /* ── BGM（オルゴール・16小節シームレスループ・初期ON・ひかえめ音量）──
+       piyo-assets 共通エンジン（assets/bgm/engine.js＋songs.js の land 1曲）。
+       声・効果音と おなじ AudioContext を共有（getCtx で actx を注入）。
+       AudioContext 非対応・スクリプト未読込・localStorage 例外でも 無害（no-op・クラッシュ厳禁）。 */
+    var BGM_KEY = 'land.bgm';           // トグルの保存キー（WORLD.md §7・既定ON）
+    function bgmEnabledStored() {
+      try { return localStorage.getItem(BGM_KEY) !== '0'; }  // 未設定・壊れ値も ON
+      catch (e) { return true; }
+    }
+    var bgm = (function () {
+      try {
+        if (window.PiyoBgm && typeof window.PiyoBgm.createEngine === 'function') {
+          // ctx 注入で 声・効果音と 同一 AudioContext を共有（別 ctx 乱立を さける）
+          return window.PiyoBgm.createEngine({ getCtx: function () { return actx; } });
+        }
+      } catch (e) {}
+      // スクリプト未読込などの保険（すべて no-op）
+      return {
+        startBgm: function () {}, stopBgm: function () {},
+        setBgmEnabled: function () {}, isBgmEnabled: function () { return false; },
+        duckBgm: function () {}, unduckBgm: function () {},
+        getBgmState: function () { return { supported: false }; }
+      };
+    })();
+    // 検証・デバッグ用ハンドル（getBgmState 等の確認に使う。データは持たない・無害）
+    try { window.PIYO_BGM = bgm; } catch (e) {}
+    function bgmDuck()   { try { bgm.duckBgm(); }   catch (e) {} }
+    function bgmUnduck() { try { bgm.unduckBgm(); } catch (e) {} }
+    // 最初のユーザー操作で BGM を開始（冪等・OFFなら鳴らさない）。ctx を用意してから start。
+    function startBgmSafe() { try { ensureActx(); bgm.startBgm('land'); } catch (e) {} }
+    // 起動時の ON/OFF を localStorage から反映（既定ON）。この時点では まだ鳴らさない（ジェスチャ待ち）。
+    try { bgm.setBgmEnabled(bgmEnabledStored()); } catch (e) {}
+
+    // BGM チップ（🔊/🔇）の みための こうしん
+    function renderBgmBtn() {
+      if (!bgmBtn) return;
+      var on = true;
+      try { on = bgm.isBgmEnabled(); } catch (e) {}
+      bgmBtn.textContent = on ? '🔊' : '🔇';
+      bgmBtn.classList.toggle('off', !on);
+      bgmBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      bgmBtn.setAttribute('aria-label', on ? 'BGMを ながす' : 'BGMを ながさない');
+    }
+
     /* ── タイトル よみあげ（VOICEVOX ずんだもん・初回タップで 1セッション1回）──
        ①同梱クリップ assets/voice/piyopiyo-land.m4a を Audio() で再生。
        ②再生できなければ speechSynthesis（日本語）。③それも無ければ 無音。
@@ -702,24 +786,35 @@
     function markTitlePlayed() {
       try { sessionStorage.setItem(SESS_TITLE, '1'); } catch (e) {}
     }
-    function speakTitleTTS() {
+    // onDone: 読み上げ終了（成功・失敗・非対応いずれも）で 1回だけ呼ぶ。BGM の復帰に使う。
+    function speakTitleTTS(onDone) {
       try {
         var ss = window.speechSynthesis;
-        if (!ss || typeof window.SpeechSynthesisUtterance !== 'function') return;
+        if (!ss || typeof window.SpeechSynthesisUtterance !== 'function') { if (onDone) onDone(); return; }
         var u = new window.SpeechSynthesisUtterance('ぴよぴよランド');
         u.lang = 'ja-JP'; u.rate = 0.95; u.pitch = 1.2; u.volume = 1;
+        if (onDone) { u.onend = onDone; u.onerror = onDone; }
         ss.cancel();
         ss.speak(u);
-      } catch (e) {}
+      } catch (e) { if (onDone) onDone(); }
     }
     // 初回だけ true を かえす（＝タイトルを 鳴らした）。以降・失敗しても false。
+    // 読み上げの あいだは BGM をダッキング（duckBgm）、終わったら unduckBgm（多段でも 1回だけ復帰）。
     function playTitleVoice() {
       if (titleAlreadyPlayed()) return false;
       markTitlePlayed();
+      bgmDuck();                                   // 声のあいだ BGM を さげる
+      var restored = false;
+      function restore() { if (restored) return; restored = true; bgmUnduck(); }
+      setTimeout(restore, 10000);                  // 保険：万一 ended が来なくても 必ず復帰
       var fellBack = false;
-      function fallback() { if (fellBack) return; fellBack = true; speakTitleTTS(); }
+      function fallback() {
+        if (fellBack) return; fellBack = true;
+        speakTitleTTS(restore);                    // TTS 中も ダッキング維持し、終わったら復帰
+      }
       try {
         titleAudio = new Audio(TITLE_CLIP);
+        titleAudio.addEventListener('ended', restore);    // クリップ再生おわり → BGM もどす
         titleAudio.addEventListener('error', fallback);   // 未同梱・404 → speechSynthesis へ
         var p = titleAudio.play();
         if (p && typeof p.catch === 'function') { p.catch(function () { fallback(); }); }
@@ -970,6 +1065,7 @@
       scene.classList.add('night');
       writeStr(K.night, todayStr());
       sndSleep();
+      bgm.stopBgm(2);                 // BGM は 2秒かけて しずかにフェードアウト（おやすみ）
       // 2) ぴよが すへ トコトコ
       nightTimers.push(setTimeout(function () {
         piyo.style.left = '50%';
@@ -999,6 +1095,7 @@
       piyo.style.left = '50%';
       say(SAY_MORNING, 1600);
       piyoHop();
+      startBgmSafe();                 // あさに もどったら BGM 再開（このジェスチャ文脈で・OFFなら鳴らない）
       noteAct();
       scheduleIdle(currentState);
     }
@@ -1028,14 +1125,35 @@
 
     /* ── イベント ── */
 
-    // 初回タップ（がめんの どこでも）で タイトルを 1セッション1回 よみあげる。
+    // 初回タップ（がめんの どこでも）で ①BGM を開始（冪等・OFFなら鳴らない）、
+    // ②タイトルを 1セッション1回 よみあげる。
     // capture で 各ボタンの click より先に走らせ、初回だけ タップ音と かさならないよう抑制。
-    document.addEventListener('click', function () {
+    // BGM チップを おした ときは start しない（トグル側で 制御・二度がけ・ブリップ回避）。
+    document.addEventListener('click', function (e) {
+      var onBgmBtn = false;
+      try { onBgmBtn = !!(e && e.target && e.target.closest && e.target.closest('#bgmBtn')); } catch (e2) {}
+      if (!onBgmBtn) startBgmSafe();
       if (playTitleVoice()) {
         suppressTapSfx = true;
         setTimeout(function () { suppressTapSfx = false; }, 80);
       }
     }, true);
+
+    // ── BGM チップ：タップで ON/OFF（既定ON・key land.bgm・localStorage 永続）──
+    if (bgmBtn) {
+      bgmBtn.addEventListener('click', function () {
+        var on = true;
+        try { on = bgm.isBgmEnabled(); } catch (e) {}
+        var next = !on;
+        try {
+          if (next) ensureActx();       // ONは このジェスチャ文脈で ctx を用意してから
+          bgm.setBgmEnabled(next);       // OFF→ stopBgm ／ ON→ 予定曲(land)を 即再開
+        } catch (e) {}
+        try { localStorage.setItem(BGM_KEY, next ? '1' : '0'); } catch (e) {}
+        renderBgmBtn();
+        noteAct();
+      });
+    }
 
     piyo.addEventListener('click', function () {
       if (isNight) { goMorning(); return; }
@@ -1062,6 +1180,7 @@
     });
 
     /* ── しょきか ── */
+    renderBgmBtn();                    // BGM チップの みため（保存された ON/OFF を反映）
     var currentState = paint();
 
     // まちが そだったか？（reachedPrev → displayStage を またいだら 1かい）
