@@ -230,8 +230,12 @@ fuel = Number(localStorage['meiro.totalStars']  || 0)
 | `land.lastPointed` | `park`/`cake`/`shop` | 街 | ぴよが**前回指した施設**。最少⭐が並んだときの誘導ローテーション（§2.1）に使う |
 | `land.bgm` | `'1'`/`'0'` | 街 | 街BGMの ON/OFF トグル。**既定ON**（未設定・壊れ値も ON 扱い）。`'0'`のみ OFF。トップバーの🔊/🔇チップで切替 |
 | `meiro.bgm` | `'1'`/`'0'` | めいろ | おつかいめいろBGMの ON/OFF。**既定ON**。おとなモードのトグルで切替（各アプリが自分の `<app>.bgm` を所有） |
-| `sansu.bgm` | `'1'`/`'0'` | さんすう | ぴよぴよさんすうBGMの ON/OFF。**既定ON**。おとなモードのトグルで切替 |
-| `kotoba.bgm` | `'1'`/`'0'` | ことば | ぴよぴよことばBGMの ON/OFF。**既定ON**。おとなモードのトグルで切替 |
+| `sansu.bgm` | `'on'`/`'off'` | さんすう | ぴよぴよさんすうBGMの ON/OFF。**既定ON**。おとなモードのトグルで切替 |
+| `kotoba.bgm` | `'on'`/`'off'` | ことば | ぴよぴよことばBGMの ON/OFF。**既定ON**。おとなモードのトグルで切替 |
+| `sansu.tts` | `'on'`/`'off'` | さんすう | よみあげ（音声）の ON/OFF。**既定ON**。おとなモードのトグルで切替 |
+| `kotoba.tts` | `'on'`/`'off'` | ことば | よみあげ（音声）の ON/OFF。**既定ON**。おとなモードのトグルで切替 |
+| `kotoba.moji` | `'hiragana'`/`'katakana'`/`'mazegaki'` | ことば | もじ表示切替（**表示のみ**・内部の語の同一性は常にひらがな）。**既定 hiragana**。おとなモードの3択で切替 |
+| `meiro.mode` | `'tap'`/`'queue'` | めいろ | あそびかた ①タップ即動く／②ならべてゴー（やじるしモード）。**`'queue'` のときだけ②**、未設定・壊れ値は①。おとなモードのトグルで切替 |
 
 **規約**
 - 街用キーは必ず `land.` プレフィックス。読むのは `meiro`/`sansu`/`kotoba` の `totalStars`、書くのは `land.*` のみ。
