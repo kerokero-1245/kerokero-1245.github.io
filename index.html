@@ -57,6 +57,7 @@
     }
 
     .app {
+      height: 100vh;      /* svh 非対応ブラウザの 代替 */
       height: 100svh;
       display: flex;
       flex-direction: column;
@@ -334,6 +335,7 @@
       opacity: 0; transition: opacity .5s ease .2s;
       filter: drop-shadow(0 2px 2px rgba(91,58,30,.25));
     }
+    .piyo.to-nest { bottom: 2%; }    /* よる：すへ トコトコ */
     .piyo.king .p-crown { opacity: 1; }
     .piyo .p-zzz {
       position: absolute; right: -0.4em; top: -0.5em;
@@ -342,11 +344,14 @@
     .piyo.sleep .p-body { animation: none; transform: rotate(6deg) scale(0.96); }
     .piyo.sleep .p-zzz { opacity: 1; animation: zzz 2.6s ease-in-out infinite; }
 
-    /* ふきだし（ひとこと・ひらがな みじかく） */
+    /* ふきだし（ひとこと・ひらがな みじかく）。
+       ぴよの よこに だす（うえに だすと しせつカードと ラベルに かぶる）。
+       ぴよが がめんの みぎはんぶんに いる ときは ひだりがわ（.bub-l）へ */
     .bubble {
       position: absolute;
-      left: 50%; bottom: calc(100% + 6px);
-      transform: translateX(-50%) translateY(6px) scale(0.8);
+      left: calc(100% + 8px); bottom: 30%;
+      transform: translateY(6px) scale(0.8);
+      transform-origin: 0 50%;
       background: #fff;
       color: var(--text);
       border: 2px solid var(--border);
@@ -362,13 +367,15 @@
       z-index: 21;
     }
     .bubble::after {
-      content: ""; position: absolute; left: 50%; top: 100%;
-      transform: translateX(-50%);
+      content: ""; position: absolute; right: 100%; top: 50%;
+      transform: translateY(-50%);
       border: 7px solid transparent;
-      border-top-color: #fff;
-      margin-top: -1px;
+      border-right-color: #fff;
+      margin-right: -1px;
     }
-    .bubble.show { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+    .bubble.show { opacity: 1; transform: translateY(0) scale(1); }
+    .piyo.bub-l .bubble { left: auto; right: calc(100% + 8px); transform-origin: 100% 50%; }
+    .piyo.bub-l .bubble::after { right: auto; left: 100%; border-right-color: transparent; border-left-color: #fff; margin-right: 0; margin-left: -1px; }
 
     /* すの おうち（よる ぴよが ねる ばしょ） */
     .nest {
@@ -431,6 +438,8 @@
       letter-spacing: .01em;
       user-select: none;
     }
+    /* せまい がめんで おれる ときは「／」の あとで おる（すえの もじだけ はみ出さない） */
+    .credit span { display: inline-block; }
 
     /* ── シールポップSVG（<img>で差し替え・viewBox200・白フチ焼き込み・フィルタ不使用）──
        素材repo https://github.com/kerokero-1245/piyo-assets ／ 見本 piyo-assets/reference/style-samples.html
@@ -493,6 +502,7 @@
       .deco.grow, .deco.rainbow.on, .deco.on .smoke,
       .confetti span, .facility.point::after { animation: none !important; }
       .scene, .ground, .path, .deco, .facility .f-glow, .nest { transition-duration: .3s; }
+      .piyo { transition: none; }      /* ぴよの いどうも すっと きりかえる */
     }
 
     /* たてもち（しせつ 2＋1）での かざりの おきば */
@@ -503,6 +513,10 @@
     /* よこながの がめん（PC・タブレット・よこ持ち）＝3まい よこに ならべる */
     @media (orientation: landscape) {
       .facility { flex-basis: 30%; max-width: 32%; }
+      /* カードの したの すきまが ひくいので、ぴよを すこし さげる
+         （すすみドットの すぐ うえ。👑の ときは ドットが ないので いちばん したへ） */
+      .piyo { bottom: calc(1.5% + 4px); }
+      .piyo.king, .piyo.king.to-nest { bottom: 0; }
     }
 
     /* せの ひくい たてもち（515×684 など）＝たなを 少し上げ、
@@ -587,7 +601,7 @@
     </div>
 
     <!-- ちいさな クレジット（音声の出典）。ページ最下部に ひかえめに -->
-    <footer class="credit">こえ：VOICEVOX：ずんだもん／BGM：オリジナル（Web Audio 生成）</footer>
+    <footer class="credit"><span>こえ：VOICEVOX：ずんだもん／</span><span>BGM：オリジナル（Web Audio 生成）</span></footer>
   </main>
 
   <!-- BGM（オルゴール・ループ／piyo-assets 共通エンジン・同一オリジン同梱）。
@@ -1044,6 +1058,11 @@
         return Math.max(14, Math.min(86, cx));
       } catch (e) { return 50; }
     }
+    /* ぴよの よこ位置（scene基準%）。みぎはんぶんに いる ときは ふきだしを ひだりがわに だす */
+    function setPiyoX(pct) {
+      piyo.style.left = pct + '%';
+      piyo.classList.toggle('bub-l', pct > 55);
+    }
     var pointTimer = null;
     function clearPoint() {
       facPark.classList.remove('point');
@@ -1061,7 +1080,7 @@
       clearPoint();
       card.classList.add('point');
       // ぴよが その しせつの ほうへ ちょっと よる（じっそくした よこ位置へ）
-      piyo.style.left = facCenterPct(card) + '%';
+      setPiyoX(facCenterPct(card));
       piyoHop();
 
       // つぎの へんかまで あと すこしなら「もうすこし」、ふだんは「こっちこっち」
@@ -1072,7 +1091,7 @@
 
       setTimeout(function () {
         clearPoint();
-        piyo.style.left = '50%';
+        setPiyoX(50);
       }, 2400);
     }
 
@@ -1108,8 +1127,8 @@
       bgm.stopBgm(2);                 // BGM は 2秒かけて しずかにフェードアウト（おやすみ）
       // 2) ぴよが すへ トコトコ
       nightTimers.push(setTimeout(function () {
-        piyo.style.left = '50%';
-        piyo.style.bottom = '2%';
+        setPiyoX(50);
+        piyo.classList.add('to-nest');
       }, 1200));
       // 3) まるまって💤・「またあしたね」
       nightTimers.push(setTimeout(function () {
@@ -1131,8 +1150,8 @@
       scene.classList.remove('slept');
       piyo.classList.remove('sleep');
       setPiyoFace('piyo');
-      piyo.style.bottom = '4%';
-      piyo.style.left = '50%';
+      piyo.classList.remove('to-nest');
+      setPiyoX(50);
       say(SAY_MORNING, 1600);
       piyoHop();
       startBgmSafe();                 // あさに もどったら BGM 再開（このジェスチャ文脈で・OFFなら鳴らない）
@@ -1142,7 +1161,8 @@
 
     function todayStr() {
       var d = new Date();
-      return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+      function p2(n) { return (n < 10 ? '0' : '') + n; }
+      return d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate());   // YYYY-MM-DD（WORLD.md §7）
     }
 
     /* ── そうさ カウント（ながく あそんだら やさしく あくび・WORLD.md §5）── */
