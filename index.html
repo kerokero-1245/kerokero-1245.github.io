@@ -753,11 +753,14 @@
       try { return localStorage.getItem(BGM_KEY) !== '0'; }  // 未設定・壊れ値も ON
       catch (e) { return true; }
     }
+    var bgmReal = false;                // 共有エンジンが よみこめたか（no-op 保険と くべつ）
     var bgm = (function () {
       try {
         if (window.PiyoBgm && typeof window.PiyoBgm.createEngine === 'function') {
           // ctx 注入で 声・効果音と 同一 AudioContext を共有（別 ctx 乱立を さける）
-          return window.PiyoBgm.createEngine({ getCtx: function () { return actx; } });
+          var eng = window.PiyoBgm.createEngine({ getCtx: function () { return actx; } });
+          bgmReal = true;
+          return eng;
         }
       } catch (e) {}
       // スクリプト未読込などの保険（すべて no-op）
@@ -772,16 +775,25 @@
     try { window.PIYO_BGM = bgm; } catch (e) {}
     function bgmDuck()   { try { bgm.duckBgm(); }   catch (e) {} }
     function bgmUnduck() { try { bgm.unduckBgm(); } catch (e) {} }
-    // 最初のユーザー操作で BGM を開始（冪等・OFFなら鳴らさない）。ctx を用意してから start。
-    function startBgmSafe() { try { ensureActx(); bgm.startBgm('land'); } catch (e) {} }
+    // ON/OFF の のぞみ（チップと localStorage の値）。よるの あいだに ON に されても、
+    // エンジンへは あさに もどる ときまで つたえない（よるは BGM を さいかいしない＝WORLD.md §5.1）。
+    var bgmWant = bgmEnabledStored();
+    // 最初のユーザー操作で BGM を開始（冪等・OFFなら鳴らさない・よるは鳴らさない）。ctx を用意してから start。
+    function startBgmSafe() {
+      try {
+        ensureActx();
+        if (isNight) return;
+        bgm.setBgmEnabled(bgmWant);
+        bgm.startBgm('land');
+      } catch (e) {}
+    }
     // 起動時の ON/OFF を localStorage から反映（既定ON）。この時点では まだ鳴らさない（ジェスチャ待ち）。
-    try { bgm.setBgmEnabled(bgmEnabledStored()); } catch (e) {}
+    try { bgm.setBgmEnabled(bgmWant); } catch (e) {}
 
     // BGM チップ（🔊/🔇）の みための こうしん
     function renderBgmBtn() {
       if (!bgmBtn) return;
-      var on = true;
-      try { on = bgm.isBgmEnabled(); } catch (e) {}
+      var on = bgmReal && bgmWant;
       bgmBtn.textContent = on ? '🔊' : '🔇';
       bgmBtn.classList.toggle('off', !on);
       bgmBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
@@ -1157,6 +1169,7 @@
     // ②タイトルを 1セッション1回 よみあげる。
     // capture で 各ボタンの click より先に走らせ、初回だけ タップ音と かさならないよう抑制。
     // BGM チップを おした ときは start しない（トグル側で 制御・二度がけ・ブリップ回避）。
+    // よるの あいだは どこを タップしても BGM は さいかいしない（あさに もどる タップで さいかい）。
     document.addEventListener('click', function (e) {
       var onBgmBtn = false;
       try { onBgmBtn = !!(e && e.target && e.target.closest && e.target.closest('#bgmBtn')); } catch (e2) {}
@@ -1170,12 +1183,16 @@
     // ── BGM チップ：タップで ON/OFF（既定ON・key land.bgm・localStorage 永続）──
     if (bgmBtn) {
       bgmBtn.addEventListener('click', function () {
-        var on = true;
-        try { on = bgm.isBgmEnabled(); } catch (e) {}
-        var next = !on;
+        var next = !bgmWant;
+        bgmWant = next;
         try {
           if (next) ensureActx();       // ONは このジェスチャ文脈で ctx を用意してから
-          bgm.setBgmEnabled(next);       // OFF→ stopBgm ／ ON→ 予定曲(land)を 即再開
+          if (!next) {
+            bgm.setBgmEnabled(false);    // OFF→ すぐ stopBgm（よるでも）
+          } else if (!isNight) {
+            bgm.setBgmEnabled(true);     // ON→ 予定曲(land)を 即再開
+            bgm.startBgm('land');        // 最初のタップが チップでも 鳴らす（冪等）
+          }                              // よるの ON は あさに もどる ときに 反映（startBgmSafe）
         } catch (e) {}
         try { localStorage.setItem(BGM_KEY, next ? '1' : '0'); } catch (e) {}
         renderBgmBtn();
