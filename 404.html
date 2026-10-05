@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ぴよぴよランド</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#FFF6E5">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text x='50' y='54' font-size='78' text-anchor='middle' dominant-baseline='central'>🐥</text></svg>">
+  <style>
+    /* ぴよぴよランドの 404（みちに まよった とき）。
+       どの ふかさの URL でも うごくよう、素材と リンクは サイトの ルート（/）きじゅん。 */
+    :root {
+      --bg: #FFF6E5; --surface: #FFFFFF; --text: #5B3A1E; --subtext: #9B7B57;
+      --border: #F0D9A8; --orange: #FF9F45; --green: #5FBF7A;
+      --shadow: 0 10px 26px rgba(214, 158, 78, 0.28);
+      --shadow-soft: 0 8px 20px rgba(91, 58, 30, 0.15);
+      --radius: 28px;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro",
+                   "Hiragino Sans", "Yu Gothic", "YuGothic", "Meiryo", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+      display: flex; align-items: center; justify-content: center;
+      padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+    }
+    .card {
+      position: relative; overflow: hidden;
+      width: 100%; max-width: 440px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-soft);
+      background: linear-gradient(#AEE4FF 0%, #CFF0FF 45%, #EAF7EA 62%);
+      text-align: center;
+      padding: 28px 20px 30px;
+    }
+    .ground {
+      position: absolute; left: 0; right: 0; bottom: 0; top: 62%;
+      background: linear-gradient(#8FD79B 0%, #6FC886 40%, #5FBF7A 100%);
+      border-top-left-radius: 60% 22px; border-top-right-radius: 60% 22px;
+    }
+    .inner { position: relative; z-index: 1; }
+    .kumo { position: absolute; top: 14px; width: 54px; height: auto; opacity: .95; }
+    .kumo.l { left: 18px; } .kumo.r { right: 22px; top: 40px; width: 44px; }
+    .piyo { display: block; width: 120px; height: auto; margin: 36px auto 4px; filter: drop-shadow(0 5px 5px rgba(91,58,30,.22)); }
+    .bubble {
+      display: inline-block; background: #fff; border: 2px solid var(--border); border-radius: 16px;
+      padding: 6px 16px; font-weight: 800; font-size: 22px; box-shadow: var(--shadow-soft);
+      margin: 0 0 14px;
+    }
+    p.msg {
+      margin: 0 auto 22px; max-width: 18em;
+      background: rgba(255,255,255,.85); border-radius: 16px; padding: 10px 14px;
+      font-weight: 700; font-size: 18px; line-height: 1.5;
+    }
+    a.home {
+      display: inline-flex; align-items: center; gap: .4em;
+      background: var(--surface); color: var(--text); text-decoration: none;
+      border: 4px solid var(--orange); border-radius: 999px;
+      padding: 12px 26px; font-weight: 800; font-size: 22px;
+      box-shadow: var(--shadow);
+    }
+    a.home:active { transform: translateY(2px) scale(0.98); }
+    a.home:focus-visible { outline: 4px solid var(--orange); outline-offset: 3px; }
+    a.home img { width: 34px; height: auto; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="ground" aria-hidden="true"></div>
+    <img class="kumo l" src="/assets/img/kumo.svg" alt="" aria-hidden="true">
+    <img class="kumo r" src="/assets/img/kumo.svg" alt="" aria-hidden="true">
+    <div class="inner">
+      <img class="piyo" src="/assets/img/piyo.svg" alt="" aria-hidden="true">
+      <div class="bubble">あれれ？</div>
+      <p class="msg">この みちは まちに つながって いないみたい。</p>
+      <a class="home" href="/"><img src="/assets/img/ki.svg" alt="" aria-hidden="true">まちへ もどる</a>
+    </div>
+  </main>
+</body>
+</html>
