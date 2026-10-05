@@ -18,7 +18,10 @@
       --radius: 28px;
     }
     * { box-sizing: border-box; }
-    html, body { height: 100%; }
+    /* body は「すくなくとも 画面の たかさ」。せの ひくい 画面（よこ持ちスマホ）では カードに あわせて のび、
+       上が 画面の そとに きれずに スクロールで ぜんぶ みえる（height: 100% の 中央寄せだと 上へ はみ出す） */
+    html { height: 100%; }
+    body { min-height: 100%; }
     body {
       margin: 0; background: var(--bg); color: var(--text);
       font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro",
@@ -55,6 +58,8 @@
       margin: 0 auto 22px; max-width: 18em;
       background: rgba(255,255,255,.85); border-radius: 16px; padding: 10px 14px;
       font-weight: 700; font-size: 18px; line-height: 1.5;
+      /* ことばの とちゅうで おらない（文節の あいだの くうはくで だけ おる） */
+      word-break: keep-all; overflow-wrap: anywhere;
     }
     a.home {
       display: inline-flex; align-items: center; gap: .4em;
