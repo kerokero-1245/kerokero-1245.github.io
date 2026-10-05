@@ -385,6 +385,11 @@
     .bubble.show { opacity: 1; transform: translateY(0) scale(1); }
     .piyo.bub-l .bubble { left: auto; right: calc(100% + 8px); transform-origin: 100% 50%; }
     .piyo.bub-l .bubble::after { right: auto; left: 100%; border-right-color: transparent; border-left-color: #fff; margin-right: 0; margin-left: -1px; }
+    /* はばの せまい がめん（320px など）＝ふきだしの よこの よはくを すこし へらし、
+       いちばん ながい「わー ふえた！」でも シーンの みぎはしから はみ出さない */
+    @media (max-width: 340px) {
+      .bubble { padding: 5px 10px; }
+    }
 
     /* すの おうち（よる ぴよが ねる ばしょ） */
     .nest {
@@ -993,9 +998,11 @@
       var byFuel = stageForFuel(fuel);
       var displayStage = Math.max(reachedPrev, byFuel); // たいこう禁止：さがっても もどさない
 
-      // かざりの ひょうじ
+      // かざりの ひょうじ。まえに ひらいていた だんかい（reachedPrev）までは さいしょから みせる。
+      // こんかい あたらしく あいた ぶんは かくした まま はじめ、celebrate() が .on と .grow を
+      // いっしょに つけて ぽん と 1かいだけ だす（さきに みえてから ぽんで きえて でなおす ちらつきを ふせぐ）
       decoEls.forEach(function (d) {
-        if (d.st <= displayStage) d.el.classList.add('on');
+        if (d.st <= reachedPrev) d.el.classList.add('on');
         else d.el.classList.remove('on');
       });
       if (displayStage >= 5) pathEl.classList.add('on'); else pathEl.classList.remove('on');
@@ -1018,10 +1025,20 @@
 
     /* ── まちが そだった えんしゅつ（WORLD.md §3.5・またいだ ときだけ 1かい）── */
     function celebrate(fromStage, toStage) {
-      // あたらしく あいた だんかいだけ .grow で ぽん
+      // あたらしく あいた だんかいだけ .on と .grow を いっしょに つけて ぽん（paint() では かくした まま）。
+      // .on の フェード（transition）が ぽんの うえに かさならないよう、つける あいだだけ transition を きる。
+      // うごきを へらす せっていでは ぽんが ないので、ふつうに .on の フェードで でる
+      var reduceMotion = false;
+      try { reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
       decoEls.forEach(function (d) {
         if (d.st > fromStage && d.st <= toStage) {
-          d.el.classList.remove('grow'); void d.el.offsetWidth; d.el.classList.add('grow');
+          var el = d.el;
+          el.classList.remove('grow');
+          if (!reduceMotion) el.style.transition = 'none';
+          el.classList.add('on');
+          el.classList.add('grow');
+          void el.offsetWidth;
+          el.style.transition = '';
         }
       });
       // ぽんが おわったら .grow を はずして いつもの うごき（ゆらゆら等）へ。
