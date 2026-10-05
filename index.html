@@ -193,6 +193,9 @@
        あたらしく あいた ものは .grow で ぽん と とうじょう */
     .deco {
       position: absolute;
+      /* おきば（scene きじゅん%）は JS が --x/--y に いれる。
+         たてもち（しせつ 2＋1）では --px/--py が あれば そちらを つかう＝カードの うらに かくれない */
+      left: var(--x); top: var(--y);
       transform: translate(-50%, -50%) scale(0.2);
       opacity: 0;
       line-height: 1;
@@ -215,6 +218,10 @@
     .deco.rainbow.on{ animation: rbfade 1s ease both; }
     .deco.spark.on  { animation: sparkle 1.6s ease-in-out infinite; }
     .deco.friend.on { animation: hopdeco 3s ease-in-out infinite; }
+    /* あたらしく あいた ものは まず ぽん（上の こまかい うごきより つよく あてる）。
+       ぽんが おわったら JS が .grow を はずし、いつもの うごきに もどる */
+    .deco-layer .deco.on.grow { animation: pop 0.7s cubic-bezier(.2,1.4,.5,1) both; }
+    .deco-layer .deco.rainbow.on.grown { animation: none; opacity: .92; }
 
     /* いえの けむり */
     .smoke {
@@ -488,6 +495,11 @@
       .scene, .ground, .path, .deco, .facility .f-glow, .nest { transition-duration: .3s; }
     }
 
+    /* たてもち（しせつ 2＋1）での かざりの おきば */
+    @media (orientation: portrait) {
+      .deco { left: var(--px, var(--x)); top: var(--py, var(--y)); }
+    }
+
     /* よこながの がめん（PC・タブレット・よこ持ち）＝3まい よこに ならべる */
     @media (orientation: landscape) {
       .facility { flex-basis: 30%; max-width: 32%; }
@@ -630,7 +642,10 @@
     }
 
     /* ── かざりの はいち（けっていてき・らんすう なし）──
-       st=だんかい, x/y=%（scene きじゅん）, s=絵文字サイズpx, cls=うごき */
+       st=だんかい, x/y=%（scene きじゅん）, s=絵文字サイズpx, cls=うごき
+       p=[x,y] は たてもち（しせつ 2＋1）での おきば。ない ものは x/y の まま。
+       しせつカードの うらに かくれない ばしょ：そら（カードより うえ）／カードの した／
+       たてもちの 2れつめ（やおやさん）の りょうわき */
     var DECOS = [
       // だんかい1: くさ・はな
       { st: 1, img: 'kusa',      e: '🌱', x: 8,  y: 90, s: 34, cls: 'sway' },
@@ -638,23 +653,23 @@
       { st: 1, img: 'chuurippu', e: '🌷', x: 58, y: 94, s: 32, cls: 'sway' },
       { st: 1, img: 'kusa',      e: '🌱', x: 92, y: 90, s: 34, cls: 'sway' },
       // だんかい2: なかまの ひよこ
-      { st: 2, img: 'hiyoko', e: '🐤', x: 38, y: 88, s: 42, cls: 'friend' },
+      { st: 2, img: 'hiyoko', e: '🐤', x: 38, y: 89, s: 42, cls: 'friend' },
       // だんかい3: き・ベンチ
-      { st: 3, img: 'ki',     e: '🌳', x: 30, y: 50, s: 58, cls: 'sway' },
-      { st: 3, img: 'benchi', e: '🪑', x: 88, y: 86, s: 44, cls: '' },
+      { st: 3, img: 'ki',     e: '🌳', x: 30, y: 47, s: 58, cls: 'sway', p: [14, 80] },
+      { st: 3, img: 'benchi', e: '🪑', x: 88, y: 89, s: 44, cls: '', p: [88, 86] },
       // だんかい4: ちいさな いえ＋けむり
-      { st: 4, img: 'ie', e: '🏠', x: 70, y: 50, s: 58, cls: '', smoke: true },
+      { st: 4, img: 'ie', e: '🏠', x: 70, y: 47, s: 58, cls: '', smoke: true, p: [86, 76] },
       // だんかい5: どうぶつ（みちは べつ）
       { st: 5, img: 'usagi', e: '🐰', x: 26, y: 92, s: 38, cls: 'hop' },
       // だんかい6: ふんすい
-      { st: 6, img: 'funsui', e: '⛲', x: 70, y: 88, s: 52, cls: '' },
+      { st: 6, img: 'funsui', e: '⛲', x: 70, y: 90, s: 52, cls: '' },
       // だんかい7: ひろば（メリーゴーラウンド）
-      { st: 7, img: 'mokuba', e: '🎠', x: 86, y: 36, s: 60, cls: 'wob' },
+      { st: 7, img: 'mokuba', e: '🎠', x: 86, y: 36, s: 60, cls: 'wob', p: [86, 27] },
       // だんかい8: にじ・かざり
       { st: 8, img: 'niji',      e: '🌈', x: 50, y: 24, s: 92, cls: 'rainbow' },
-      { st: 8, img: 'koinobori', e: '🎏', x: 86, y: 54, s: 44, cls: 'sway' },
+      { st: 8, img: 'koinobori', e: '🎏', x: 86, y: 49, s: 44, cls: 'sway', p: [16, 70] },
       // だんかい9: かんらんしゃ
-      { st: 9, img: 'kanransha', e: '🎡', x: 12, y: 32, s: 72, cls: 'wob' },
+      { st: 9, img: 'kanransha', e: '🎡', x: 12, y: 32, s: 72, cls: 'wob', p: [12, 26] },
       // だんかい10: まつり（＋ぴよに👑）
       { st: 10, img: 'hanabi', e: '🎆', x: 26, y: 12, s: 56, cls: 'spark' },
       { st: 10, img: 'hanabi', e: '🎆', x: 74, y: 10, s: 56, cls: 'spark' }
@@ -840,8 +855,12 @@
     function makeDeco(cfg, isBase) {
       var el = document.createElement('div');
       el.className = 'deco' + (cfg.cls ? ' ' + cfg.cls : '');
-      el.style.left = cfg.x + '%';
-      el.style.top = cfg.y + '%';
+      el.style.setProperty('--x', cfg.x + '%');
+      el.style.setProperty('--y', cfg.y + '%');
+      if (cfg.p) {
+        el.style.setProperty('--px', cfg.p[0] + '%');
+        el.style.setProperty('--py', cfg.p[1] + '%');
+      }
       if (cfg.img) {
         // シールポップSVGを <img> で。よみこみ失敗（404等）なら 絵文字に フォールバック
         var im = document.createElement('img');
@@ -964,6 +983,15 @@
           d.el.classList.remove('grow'); void d.el.offsetWidth; d.el.classList.add('grow');
         }
       });
+      // ぽんが おわったら .grow を はずして いつもの うごき（ゆらゆら等）へ。
+      // にじ（rbfade＝うすく でる）は もう いちど でなおさないよう .grown で うすさだけ そろえる
+      setTimeout(function () {
+        decoEls.forEach(function (d) {
+          if (!d.el.classList.contains('grow')) return;
+          if (d.el.classList.contains('rainbow')) d.el.classList.add('grown');
+          d.el.classList.remove('grow');
+        });
+      }, 750);
       piyoCheer();
       setPiyoFace('piyo-yorokobi');
       setTimeout(function () {
