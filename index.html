@@ -23,14 +23,14 @@
 
   <!-- 絵文字ファビコン（インラインSVG data URI・🐥） -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text x='50' y='54' font-size='78' text-anchor='middle' dominant-baseline='central'>🐥</text></svg>">
-  <!-- ホーム画面の アイコン（もとの クリーム地＋🐥 の SVG を PNG に したもの） -->
+  <!-- ホーム画面の アイコン（クリーム地に 街の ぴよ assets/img/piyo.svg を のせて PNG に したもの） -->
   <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
 
   <style>
     /* ═══════════════════════════════════════════════════════════
        ぴよぴよランド ―「⭐で そだつ まち」（街MVP）
        ・ビルド不要の静的 index.html 1枚（インラインCSS/JS/絵文字/SVG）
-       ・外部CDN・外部送信ゼロ。保存は localStorage のみ
+       ・外部CDN・外部送信ゼロ。保存は localStorage（タイトル よみあげ済みの しるし land.titleVoicePlayed だけ sessionStorage）
        ・設計の正典は docs/WORLD.md。数値・キー・文言はそこに従う
        ─ いろ・かたちは3アプリ（otsukai-meiro / piyopiyo-sansu / piyopiyo-kotoba）と統一
        ═══════════════════════════════════════════════════════════ */

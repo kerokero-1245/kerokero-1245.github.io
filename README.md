@@ -19,7 +19,7 @@
 ビルド不要の静的ページです。画面の CSS と街の JS は `index.html` 1枚にインラインで書き、
 素材は同じリポジトリに同梱しています（シールポップSVG は `assets/img/`、BGM のエンジンと曲は
 `assets/bgm/engine.js`・`assets/bgm/songs.js`、タイトルの声は `assets/voice/piyopiyo-land.m4a`）。
-**外部CDN・外部送信はゼロ**、保存は **localStorage のみ**。GitHub Pages のユーザーサイトとして、
+**外部CDN・外部送信はゼロ**、保存は **localStorage**（タイトル読み上げ済みの印 `land.titleVoicePlayed` だけは sessionStorage）。GitHub Pages のユーザーサイトとして、
 `main` ブランチ直下の `index.html` がそのままルートURLで即配信されます（Actions不要）。
 
 - **1枚の風景**（空・地面）の中に、3つの大きな施設カードと飾りスロットを配置
