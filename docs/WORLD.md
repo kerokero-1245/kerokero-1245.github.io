@@ -222,8 +222,10 @@ fuel = Number(localStorage['meiro.totalStars']  || 0)
 | `meiro.celebratedAll` | フラグ | めいろ | 既存・**変更禁止**（全クリア祝福済み） |
 | `meiro.totalStars` | 数値文字列 | めいろ | **今回めいろに新設**。クリア毎に +1（**再クリアも +1**）。初期化時は既存 `meiro.stars` の**件数を初期値にマイグレーション** |
 | `sansu.totalStars` | 数値文字列 | さんすう | 既存・**変更禁止**（累計クリア回数） |
+| `sansu.starsResetAt` | 数値文字列 | さんすう | おとなモードで表示を 0 に もどした時点の累計の控え。アプリ内の表示 = totalStars − 控え。街は読まない |
 | `sansu.maxSum` | 設定 | さんすう | 既存・**変更禁止** |
 | `kotoba.totalStars` | 数値文字列 | ことば | 既存・**変更禁止**（累計クリア回数）。🥕やおやさんの⭐源。街は**読むだけ** |
+| `kotoba.starsResetAt` | 数値文字列 | ことば | おとなモードで表示を 0 に もどした時点の累計の控え。アプリ内の表示 = totalStars − 控え。街は読まない |
 | `land.reachedStage` | 数値文字列 | 街 | 到達済み**最大段階（0〜10）を単調増加**で保存。退行防止・「街が変わった」判定（§3.5）に使う |
 | `land.lastSeenStars` | 数値文字列 | 街 | **前回訪問時の fuel** の控え（記録用。退行防止は `land.reachedStage` が担う） |
 | `land.lastNightDate` | `YYYY-MM-DD` | 街 | 🌙にした日付。朝戻し判定（日付が変われば朝へ） |

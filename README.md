@@ -49,10 +49,11 @@ fuel = Number(localStorage['meiro.totalStars']  || 0)
 
 ### localStorage キー
 
-- **読むだけ**（他アプリ所有・改変禁止）: `meiro.totalStars` / `sansu.totalStars` / `kotoba.totalStars`
+- **読むだけ**（他アプリ所有・改変禁止）: `meiro.totalStars` / `sansu.totalStars` / `sansu.starsResetAt` / `kotoba.totalStars` / `kotoba.starsResetAt`
 - **街が書く**（`land.` プレフィックスのみ）:
   `land.reachedStage`（到達済み最大段階・単調増加。育った演出の判定にも使う）/ `land.lastSeenStars`（前回fuelの控え）
-  / `land.lastNightDate`（🌙にした日付）/ `land.lastPointed`（ぴよが前回指した施設 park/cake/shop）
+  / `land.lastNightDate`（🌙にした日付）/ `land.lastPointed`（ぴよが前回指した施設 park/cake/shop）/ `land.bgm`（BGM ON/OFF）
+  / `land.titleVoicePlayed`（**sessionStorage**・タイトル読み上げ済みフラグ）
 
 台帳の正典は WORLD.md §7。
 
