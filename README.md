@@ -16,7 +16,9 @@
 
 ## このページの役割（街MVP）
 
-ビルド不要の静的ページ（`index.html` 1枚に CSS/JS/絵文字/SVG をインライン）です。
+ビルド不要の静的ページです。画面の CSS と街の JS は `index.html` 1枚にインラインで書き、
+素材は同じリポジトリに同梱しています（シールポップSVG は `assets/img/`、BGM のエンジンと曲は
+`assets/bgm/engine.js`・`assets/bgm/songs.js`、タイトルの声は `assets/voice/piyopiyo-land.m4a`）。
 **外部CDN・外部送信はゼロ**、保存は **localStorage のみ**。GitHub Pages のユーザーサイトとして、
 `main` ブランチ直下の `index.html` がそのままルートURLで即配信されます（Actions不要）。
 
