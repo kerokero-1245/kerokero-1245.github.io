@@ -525,6 +525,7 @@
       /* カードの したの すきまが ひくいので、ぴよを すこし さげる
          （すすみドットの すぐ うえ。👑の ときは ドットが ないので いちばん したへ） */
       .piyo { bottom: calc(1.5% + 4px); }
+      .piyo.to-nest { bottom: 1%; }
       .piyo.king, .piyo.king.to-nest { bottom: 0; }
     }
 
@@ -998,7 +999,12 @@
         else d.el.classList.remove('on');
       });
       if (displayStage >= 5) pathEl.classList.add('on'); else pathEl.classList.remove('on');
+      // 👑の つけはずしで ぴよの たかさが かわる（よこなが）。よみこみ直後に すべって みえないよう いどうなしで
+      var piyoTr = piyo.style.transition;
+      piyo.style.transition = 'none';
       if (displayStage >= MAX_STAGE) piyo.classList.add('king'); else piyo.classList.remove('king');
+      void piyo.offsetWidth;
+      piyo.style.transition = piyoTr;
 
       renderMeter(displayStage, fuel);
 
