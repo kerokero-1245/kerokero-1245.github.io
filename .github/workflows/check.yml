@@ -1,0 +1,43 @@
+# push（main）と PR で、HTML の書き方（htmlhint）とリンク切れ（lychee）を検査する。配信（GitHub Pages）には関与しない。
+name: 検査（HTML・リンク切れ）
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  html:
+    name: HTML の検査（htmlhint）
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # ルールはリポジトリ直下の .htmlhintrc（htmlhint の既定ルールと同じ 10 本）
+      - run: npx --yes htmlhint "**/*.html"
+
+  links:
+    name: リンク切れの検査（lychee）
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      # /otsukai-meiro/ など同じオリジンの別リポジトリへのリンクと相対リンクは、公開 URL を基点に解決する
+      - uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --no-progress
+            --base-url https://kerokero-1245.github.io
+            --accept 200,429
+            '**/*.html'
+          fail: true
