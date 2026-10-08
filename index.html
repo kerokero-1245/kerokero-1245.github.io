@@ -205,7 +205,8 @@
       position: absolute;
       /* おきば（scene きじゅん%）は JS が --x/--y に いれる。
          たてもち（しせつ 2＋1）では --px/--py が あれば そちらを つかう＝カードの うらに かくれない。
-         よこ持ちスマホ（よこなが・せが 480px いか）では --lx/--ly が あれば そちらを つかう */
+         よこ持ちスマホ（よこなが・せが 480px いか）では --lx/--ly が あれば そちらを つかう。
+         カードや ぴよに かかる がめん だけ --spx/--sqx/--wlx（DECOS の sp/sq/wl）も つかう */
       left: var(--x); top: var(--y);
       transform: translate(-50%, -50%) scale(0.2);
       opacity: 0;
@@ -541,6 +542,24 @@
       .facilities { bottom: 20%; }
     }
 
+    /* せの ひくい たてもちでの かざりの おきば（たなが 20% に 上がり、そらの かざりが カードに かかる ため）。
+       ほそい がめん（320×568 など）＝そらの かざりを カードより うえへ。おおきさは シーンの たかさに あわせて ちぢむ（--spc）。
+       しかくい がめん（515×684 など）＝そらに すきまが ないので、かんらんしゃ・もくばは 2れつ目の りょうわきへ */
+    @media (orientation: portrait) and (max-height: 720px) and (max-aspect-ratio: 13/20) {
+      .scene { container-type: size; }   /* cqh＝シーンの たかさ */
+      .deco { left: var(--spx, var(--px, var(--x))); top: var(--spy, var(--py, var(--y))); }
+      .deco .deco-img { max-width: calc(var(--spc, 999) * 1cqh); max-height: calc(var(--spc, 999) * 1cqh); }
+    }
+    @media (orientation: portrait) and (max-height: 720px) and (min-aspect-ratio: 13/20) {
+      .deco { left: var(--sqx, var(--px, var(--x))); top: var(--sqy, var(--py, var(--y))); }
+    }
+
+    /* せの たかい よこなが（せが 481〜767px）＝カードの れつが 45〜52% から はじまり、
+       き・いえ・こいのぼりが カードに、ひよこ・ふんすい・ベンチが カードの したの はしに かかる ため、そら／じめんへ よける */
+    @media (orientation: landscape) and (min-height: 481px) and (max-height: 767px) {
+      .deco { left: var(--wlx, var(--x)); top: var(--wly, var(--y)); }
+    }
+
     /* せの ひくい がめん（よこ持ちスマホ など） */
     @media (max-height: 480px) {
       .brand { font-size: 15px; padding: 4px 10px; }
@@ -685,32 +704,36 @@
        st=だんかい, x/y=%（scene きじゅん）, s=絵文字サイズpx, cls=うごき
        p=[x,y] は たてもち（しせつ 2＋1）での おきば。ない ものは x/y の まま。
        l=[x,y] は よこ持ちスマホ（よこなが・せが 480px いか）での おきば。lg=じめんの かざり（カードの した の おびに はいる おおきさに ちぢむ）。
+       カードや ぴよに かかる がめんだけの おきば（ない ものは 上の おきばの まま）:
+         sp=[x,y] せの ひくい ほそい たてもち（320×568 など。たなが 上がり、そらが ひくい）。spc=そこでの おおきさの 上げん（シーンの たかさの %）
+         sq=[x,y] せの ひくい しかくい たてもち（515×684 など。カードが 大きく、そらに すきまが ない＝2れつ目の りょうわきへ）
+         wl=[x,y] せの たかい よこなが（せが 481〜767px。800×500・1280×720 など。カードの れつが 45〜52% から はじまる）
        しせつカードの うらに かくれない ばしょ：そら（カードより うえ）／カードの した／
        たてもちの 2れつめ（やおやさん）の りょうわき */
     var DECOS = [
       // だんかい1: くさ・はな
       { st: 1, img: 'kusa',      e: '🌱', x: 8,  y: 90, s: 34, cls: 'sway', l: [8, 94.5], lg: 1 },
       { st: 1, img: 'hana',      e: '🌼', x: 22, y: 94, s: 32, cls: 'sway', l: [17, 94.5], lg: 1 },
-      { st: 1, img: 'chuurippu', e: '🌷', x: 58, y: 94, s: 32, cls: 'sway', l: [65, 94.5], lg: 1 },
+      { st: 1, img: 'chuurippu', e: '🌷', x: 58, y: 94, s: 32, cls: 'sway', p: [62, 94], sp: [63.5, 94], l: [65, 94.5], lg: 1 },
       { st: 1, img: 'kusa',      e: '🌱', x: 92, y: 90, s: 34, cls: 'sway', l: [92, 94.5], lg: 1 },
       // だんかい2: なかまの ひよこ
-      { st: 2, img: 'hiyoko', e: '🐤', x: 38, y: 89, s: 42, cls: 'friend', l: [35, 94.5], lg: 1 },
+      { st: 2, img: 'hiyoko', e: '🐤', x: 38, y: 89, s: 42, cls: 'friend', sp: [35.5, 89], l: [35, 94.5], lg: 1, wl: [38, 92] },
       // だんかい3: き・ベンチ
-      { st: 3, img: 'ki',     e: '🌳', x: 30, y: 47, s: 58, cls: 'sway', p: [14, 80], l: [22, 28] },
-      { st: 3, img: 'benchi', e: '🪑', x: 88, y: 89, s: 44, cls: '', p: [88, 86], l: [83, 94.5], lg: 1 },
+      { st: 3, img: 'ki',     e: '🌳', x: 30, y: 47, s: 58, cls: 'sway', p: [14, 80], l: [22, 28], wl: [22, 32] },
+      { st: 3, img: 'benchi', e: '🪑', x: 88, y: 89, s: 44, cls: '', p: [88, 86], l: [83, 94.5], lg: 1, wl: [88, 92.5] },
       // だんかい4: ちいさな いえ＋けむり
-      { st: 4, img: 'ie', e: '🏠', x: 70, y: 47, s: 58, cls: '', smoke: true, p: [86, 76], l: [72, 28] },
+      { st: 4, img: 'ie', e: '🏠', x: 70, y: 47, s: 58, cls: '', smoke: true, p: [86, 76], l: [72, 28], wl: [72, 32] },
       // だんかい5: どうぶつ（みちは べつ）
       { st: 5, img: 'usagi', e: '🐰', x: 26, y: 92, s: 38, cls: 'hop', l: [26, 94.5], lg: 1 },
       // だんかい6: ふんすい
-      { st: 6, img: 'funsui', e: '⛲', x: 70, y: 90, s: 52, cls: '', l: [74, 94.5], lg: 1 },
+      { st: 6, img: 'funsui', e: '⛲', x: 70, y: 90, s: 52, cls: '', l: [74, 94.5], lg: 1, wl: [70, 92.5] },
       // だんかい7: ひろば（メリーゴーラウンド）
-      { st: 7, img: 'mokuba', e: '🎠', x: 86, y: 36, s: 60, cls: 'wob', p: [86, 27], l: [89, 24] },
+      { st: 7, img: 'mokuba', e: '🎠', x: 86, y: 36, s: 60, cls: 'wob', p: [86, 27], sp: [87, 24], spc: 11, sq: [86, 60], l: [89, 24] },
       // だんかい8: にじ・かざり
-      { st: 8, img: 'niji',      e: '🌈', x: 50, y: 24, s: 92, cls: 'rainbow', l: [50, 21] },
-      { st: 8, img: 'koinobori', e: '🎏', x: 86, y: 49, s: 44, cls: 'sway', p: [16, 70], l: [34, 32] },
+      { st: 8, img: 'niji',      e: '🌈', x: 50, y: 24, s: 92, cls: 'rainbow', sp: [50, 21], spc: 15, sq: [59.5, 10], l: [50, 21] },
+      { st: 8, img: 'koinobori', e: '🎏', x: 86, y: 49, s: 44, cls: 'sway', p: [16, 70], l: [34, 32], wl: [34, 32] },
       // だんかい9: かんらんしゃ
-      { st: 9, img: 'kanransha', e: '🎡', x: 12, y: 32, s: 72, cls: 'wob', p: [12, 26], l: [9, 22] },
+      { st: 9, img: 'kanransha', e: '🎡', x: 12, y: 32, s: 72, cls: 'wob', p: [12, 26], sp: [13, 22], spc: 13, sq: [14, 59], l: [9, 22] },
       // だんかい10: まつり（＋ぴよに👑）
       { st: 10, img: 'hanabi', e: '🎆', x: 26, y: 12, s: 56, cls: 'spark' },
       { st: 10, img: 'hanabi', e: '🎆', x: 74, y: 10, s: 56, cls: 'spark' }
@@ -918,6 +941,12 @@
         el.style.setProperty('--lx', cfg.l[0] + '%');
         el.style.setProperty('--ly', cfg.l[1] + '%');
       }
+      ['sp', 'sq', 'wl'].forEach(function (k) {
+        if (!cfg[k]) return;
+        el.style.setProperty('--' + k + 'x', cfg[k][0] + '%');
+        el.style.setProperty('--' + k + 'y', cfg[k][1] + '%');
+      });
+      if (cfg.spc) el.style.setProperty('--spc', String(cfg.spc));
       if (cfg.lg) el.classList.add('lg');
       if (cfg.img) {
         // シールポップSVGを <img> で。よみこみ失敗（404等）なら 絵文字に フォールバック
