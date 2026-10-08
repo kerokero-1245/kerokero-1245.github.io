@@ -112,3 +112,6 @@ fuel = Number(localStorage['meiro.totalStars']  || 0)
 - 音声合成: **VOICEVOX:ずんだもん**（[VOICEVOX](https://voicevox.hiroshiba.jp/) 利用規約に基づく）。
 - **BGM: オリジナル（Web Audio 生成）**。録音物・外部素材は使っていません。
 - いずれもページ最下部にも小さく表示しています。
+## ライセンス
+
+MIT License（[LICENSE](LICENSE) 参照）
