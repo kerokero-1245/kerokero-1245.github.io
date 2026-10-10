@@ -63,11 +63,11 @@ fuel = Number(localStorage['meiro.totalStars']  || 0)
 
 ## 3つのアプリへのリンク（巨大導線・URLは不変）
 
-| 施設 | アプリ | 内容 | URL |
-| --- | --- | --- | --- |
-| 🌳 こうえん | おつかいめいろ | めいろでプログラミング的思考の下地 | https://kerokero-1245.github.io/otsukai-meiro/ |
-| 🍰 ケーキやさん | ぴよぴよさんすう | キャラの増減で たしざん・ひきざん | https://kerokero-1245.github.io/piyopiyo-sansu/ |
-| 🥕 やおやさん | ぴよぴよことば | ベルトコンベアで ことば・語彙あそび | https://kerokero-1245.github.io/piyopiyo-kotoba/ |
+| 施設            | アプリ           | 内容                                | URL                                              |
+| --------------- | ---------------- | ----------------------------------- | ------------------------------------------------ |
+| 🌳 こうえん     | おつかいめいろ   | めいろでプログラミング的思考の下地  | https://kerokero-1245.github.io/otsukai-meiro/   |
+| 🍰 ケーキやさん | ぴよぴよさんすう | キャラの増減で たしざん・ひきざん   | https://kerokero-1245.github.io/piyopiyo-sansu/  |
+| 🥕 やおやさん   | ぴよぴよことば   | ベルトコンベアで ことば・語彙あそび | https://kerokero-1245.github.io/piyopiyo-kotoba/ |
 
 施設名は世界観に合わせて表示していますが、**リンク先URLは従来どおり**です。
 「家族に配るURLは https://kerokero-1245.github.io/ の1つだけ」の約束を守ります。

@@ -1,706 +1,1262 @@
 <!doctype html>
 <html lang="ja">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>ぴよぴよランド</title>
-  <meta name="description" content="4さいの あそびの まち。⭐で まちが そだつよ。">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>ぴよぴよランド</title>
+    <meta
+      name="description"
+      content="4さいの あそびの まち。⭐で まちが そだつよ。"
+    />
 
-  <!-- スマホ表示・ホーム画面追加まわり -->
-  <meta name="theme-color" content="#FFF6E5">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="ぴよぴよランド">
-  <link rel="manifest" href="manifest.webmanifest">
+    <!-- スマホ表示・ホーム画面追加まわり -->
+    <meta name="theme-color" content="#FFF6E5" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="ぴよぴよランド" />
+    <link rel="manifest" href="manifest.webmanifest" />
 
-  <!-- SNS で共有した ときの みだし（OGP） -->
-  <meta property="og:title" content="ぴよぴよランド">
-  <meta property="og:description" content="4さいの あそびの まち。⭐で まちが そだつよ。">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://kerokero-1245.github.io/">
-  <meta property="og:image" content="https://kerokero-1245.github.io/docs/screenshots/top.png">
+    <!-- SNS で共有した ときの みだし（OGP） -->
+    <meta property="og:title" content="ぴよぴよランド" />
+    <meta
+      property="og:description"
+      content="4さいの あそびの まち。⭐で まちが そだつよ。"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://kerokero-1245.github.io/" />
+    <meta
+      property="og:image"
+      content="https://kerokero-1245.github.io/docs/screenshots/top.png"
+    />
 
-  <!-- 絵文字ファビコン（インラインSVG data URI・🐥） -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text x='50' y='54' font-size='78' text-anchor='middle' dominant-baseline='central'>🐥</text></svg>">
-  <!-- ホーム画面の アイコン（クリーム地に 街の ぴよ assets/img/piyo.svg を のせて PNG に したもの） -->
-  <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
+    <!-- 絵文字ファビコン（インラインSVG data URI・🐥） -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text x='50' y='54' font-size='78' text-anchor='middle' dominant-baseline='central'>🐥</text></svg>"
+    />
+    <!-- ホーム画面の アイコン（クリーム地に 街の ぴよ assets/img/piyo.svg を のせて PNG に したもの） -->
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180" />
 
-  <style>
-    /* ═══════════════════════════════════════════════════════════
+    <style>
+      /* ═══════════════════════════════════════════════════════════
        ぴよぴよランド ―「⭐で そだつ まち」（街MVP）
        ・ビルド不要の静的 index.html 1枚（インラインCSS/JS/絵文字/SVG）
        ・外部CDN・外部送信ゼロ。保存は localStorage（タイトル よみあげ済みの しるし land.titleVoicePlayed だけ sessionStorage）
        ・設計の正典は docs/WORLD.md。数値・キー・文言はそこに従う
        ─ いろ・かたちは3アプリ（otsukai-meiro / piyopiyo-sansu / piyopiyo-kotoba）と統一
        ═══════════════════════════════════════════════════════════ */
-    :root {
-      --bg: #FFF6E5;          /* やわらかいクリーム背景（額縁） */
-      --surface: #FFFFFF;     /* カード */
-      --text: #5B3A1E;        /* こげ茶 */
-      --subtext: #9B7B57;
-      --border: #F0D9A8;      /* やさしい枠線 */
-      --orange: #FF9F45;      /* メインのオレンジ */
-      --green: #5FBF7A;       /* 前向きなグリーン（こうえん） */
-      --veg: #7CB342;         /* やおやさんの はっぱグリーン（こうえんと べつ色） */
-      --yellow: #FFD23F;      /* アクセント黄 */
-      --shadow: 0 10px 26px rgba(214, 158, 78, 0.28);
-      --shadow-soft: 0 8px 20px rgba(91, 58, 30, 0.15);
-      --shadow-press: 0 4px 12px rgba(214, 158, 78, 0.30);
-      --radius: 28px;
-    }
+      :root {
+        --bg: #fff6e5; /* やわらかいクリーム背景（額縁） */
+        --surface: #ffffff; /* カード */
+        --text: #5b3a1e; /* こげ茶 */
+        --subtext: #9b7b57;
+        --border: #f0d9a8; /* やさしい枠線 */
+        --orange: #ff9f45; /* メインのオレンジ */
+        --green: #5fbf7a; /* 前向きなグリーン（こうえん） */
+        --veg: #7cb342; /* やおやさんの はっぱグリーン（こうえんと べつ色） */
+        --yellow: #ffd23f; /* アクセント黄 */
+        --shadow: 0 10px 26px rgba(214, 158, 78, 0.28);
+        --shadow-soft: 0 8px 20px rgba(91, 58, 30, 0.15);
+        --shadow-press: 0 4px 12px rgba(214, 158, 78, 0.3);
+        --radius: 28px;
+      }
 
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
 
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro",
-                   "Hiragino Sans", "Yu Gothic", "YuGothic", "Meiryo", sans-serif;
-      -webkit-font-smoothing: antialiased;
-      -webkit-tap-highlight-color: transparent;
-      -webkit-text-size-adjust: 100%;
-      overflow: hidden;                    /* 横スクロール厳禁・1画面完結 */
-    }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          "Hiragino Maru Gothic ProN", "Hiragino Maru Gothic Pro",
+          "Hiragino Sans", "Yu Gothic", "YuGothic", "Meiryo", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-text-size-adjust: 100%;
+        overflow: hidden; /* 横スクロール厳禁・1画面完結 */
+      }
 
-    .app {
-      height: 100vh;      /* svh 非対応ブラウザの 代替 */
-      height: 100svh;
-      display: flex;
-      flex-direction: column;
-      padding: max(8px, env(safe-area-inset-top)) 10px
-               max(8px, env(safe-area-inset-bottom));
-      gap: 8px;
-    }
+      .app {
+        height: 100vh; /* svh 非対応ブラウザの 代替 */
+        height: 100svh;
+        display: flex;
+        flex-direction: column;
+        padding: max(8px, env(safe-area-inset-top)) 10px
+          max(8px, env(safe-area-inset-bottom));
+        gap: 8px;
+      }
 
-    /* ── うえの おび（ちいさなタイトル・🌙 おやすみ ボタン） ── */
-    .topbar {
-      flex: 0 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      padding: 0 4px;
-    }
-    .brand {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25em;
-      background: var(--surface);
-      color: var(--text);
-      border: 2px solid var(--border);
-      border-radius: 999px;
-      padding: 5px 14px;
-      font-weight: 800;
-      font-size: clamp(15px, 4.2vw, 20px);
-      box-shadow: var(--shadow-soft);
-      white-space: nowrap;
-    }
-    .brand .b-chick { font-size: 1.15em; }
+      /* ── うえの おび（ちいさなタイトル・🌙 おやすみ ボタン） ── */
+      .topbar {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 0 4px;
+      }
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25em;
+        background: var(--surface);
+        color: var(--text);
+        border: 2px solid var(--border);
+        border-radius: 999px;
+        padding: 5px 14px;
+        font-weight: 800;
+        font-size: clamp(15px, 4.2vw, 20px);
+        box-shadow: var(--shadow-soft);
+        white-space: nowrap;
+      }
+      .brand .b-chick {
+        font-size: 1.15em;
+      }
 
-    .moon-btn {
-      appearance: none;
-      border: 2px solid var(--border);
-      background: var(--surface);
-      color: var(--text);
-      width: 46px; height: 46px;
-      border-radius: 999px;
-      font-size: 24px;
-      line-height: 1;
-      cursor: pointer;
-      box-shadow: var(--shadow-soft);
-      transition: transform .1s ease, box-shadow .1s ease;
-      display: inline-flex; align-items: center; justify-content: center;
-    }
-    .moon-btn:active { transform: scale(0.92); box-shadow: var(--shadow-press); }
-    .moon-btn:focus-visible { outline: 4px solid var(--orange); outline-offset: 3px; }
+      .moon-btn {
+        appearance: none;
+        border: 2px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        width: 46px;
+        height: 46px;
+        border-radius: 999px;
+        font-size: 24px;
+        line-height: 1;
+        cursor: pointer;
+        box-shadow: var(--shadow-soft);
+        transition:
+          transform 0.1s ease,
+          box-shadow 0.1s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .moon-btn:active {
+        transform: scale(0.92);
+        box-shadow: var(--shadow-press);
+      }
+      .moon-btn:focus-visible {
+        outline: 4px solid var(--orange);
+        outline-offset: 3px;
+      }
 
-    /* うえの おびの みぎがわ（BGM チップ＋🌙 を まとめる） */
-    .topbar-actions { display: inline-flex; align-items: center; gap: 8px; }
+      /* うえの おびの みぎがわ（BGM チップ＋🌙 を まとめる） */
+      .topbar-actions {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
 
-    /* ── BGM チップ（🔊/🔇・タップで ON/OFF・key land.bgm・既定ON）──
+      /* ── BGM チップ（🔊/🔇・タップで ON/OFF・key land.bgm・既定ON）──
        シールポップの みための じゃまを しないよう ひかえめ。でも 子どもが おせる おおきさ */
-    .bgm-btn {
-      appearance: none;
-      border: 2px solid var(--border);
-      background: var(--surface);
-      color: var(--text);
-      width: 42px; height: 42px;
-      border-radius: 999px;
-      font-size: 21px;
-      line-height: 1;
-      cursor: pointer;
-      box-shadow: var(--shadow-soft);
-      transition: transform .1s ease, box-shadow .1s ease, opacity .15s ease;
-      display: inline-flex; align-items: center; justify-content: center;
-    }
-    .bgm-btn:active { transform: scale(0.92); box-shadow: var(--shadow-press); }
-    .bgm-btn:focus-visible { outline: 4px solid var(--orange); outline-offset: 3px; }
-    .bgm-btn.off { opacity: .55; }   /* OFF は うすく（きえてる ことが わかる） */
+      .bgm-btn {
+        appearance: none;
+        border: 2px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        width: 42px;
+        height: 42px;
+        border-radius: 999px;
+        font-size: 21px;
+        line-height: 1;
+        cursor: pointer;
+        box-shadow: var(--shadow-soft);
+        transition:
+          transform 0.1s ease,
+          box-shadow 0.1s ease,
+          opacity 0.15s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .bgm-btn:active {
+        transform: scale(0.92);
+        box-shadow: var(--shadow-press);
+      }
+      .bgm-btn:focus-visible {
+        outline: 4px solid var(--orange);
+        outline-offset: 3px;
+      }
+      .bgm-btn.off {
+        opacity: 0.55;
+      } /* OFF は うすく（きえてる ことが わかる） */
 
-    /* ── まち（1まいの ふうけい）──────────────────────────── */
-    .scene {
-      position: relative;
-      flex: 1 1 auto;
-      width: 100%;
-      max-width: 920px;
-      margin: 0 auto;
-      border-radius: var(--radius);
-      overflow: hidden;
-      box-shadow: var(--shadow-soft);
-      isolation: isolate;
-      /* ひるの そら（うえ→ちへい で あたたかく） */
-      background: linear-gradient(#AEE4FF 0%, #CFF0FF 34%, #EAF7EA 58%, #EAF7EA 60%);
-      transition: background 1.4s ease;
-      touch-action: manipulation;
-    }
-    /* ── よる ── */
-    .scene.night {
-      background: linear-gradient(#141634 0%, #23244a 40%, #3a2b55 70%, #3a2b55 100%);
-    }
+      /* ── まち（1まいの ふうけい）──────────────────────────── */
+      .scene {
+        position: relative;
+        flex: 1 1 auto;
+        width: 100%;
+        max-width: 920px;
+        margin: 0 auto;
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: var(--shadow-soft);
+        isolation: isolate;
+        /* ひるの そら（うえ→ちへい で あたたかく） */
+        background: linear-gradient(
+          #aee4ff 0%,
+          #cff0ff 34%,
+          #eaf7ea 58%,
+          #eaf7ea 60%
+        );
+        transition: background 1.4s ease;
+        touch-action: manipulation;
+      }
+      /* ── よる ── */
+      .scene.night {
+        background: linear-gradient(
+          #141634 0%,
+          #23244a 40%,
+          #3a2b55 70%,
+          #3a2b55 100%
+        );
+      }
 
-    /* じめん（みどり） */
-    .ground {
-      position: absolute; left: 0; right: 0; bottom: 0; top: 58%;
-      background: linear-gradient(#8FD79B 0%, #6FC886 40%, #5FBF7A 100%);
-      border-top-left-radius: 60% 22px;
-      border-top-right-radius: 60% 22px;
-      transition: filter 1.4s ease, background 1.4s ease;
-      z-index: 2;
-    }
-    .scene.night .ground {
-      background: linear-gradient(#2f5a49 0%, #274c40 100%);
-      filter: brightness(0.9);
-    }
+      /* じめん（みどり） */
+      .ground {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 58%;
+        background: linear-gradient(#8fd79b 0%, #6fc886 40%, #5fbf7a 100%);
+        border-top-left-radius: 60% 22px;
+        border-top-right-radius: 60% 22px;
+        transition:
+          filter 1.4s ease,
+          background 1.4s ease;
+        z-index: 2;
+      }
+      .scene.night .ground {
+        background: linear-gradient(#2f5a49 0%, #274c40 100%);
+        filter: brightness(0.9);
+      }
 
-    /* ── ほし（よるだけ ひかる・シールポップ hoshi.svg） ── */
-    .stars { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
-    .star {
-      position: absolute; width: 15px; height: 15px;
-      background: url(assets/img/hoshi.svg) center/contain no-repeat;
-      opacity: 0; transform: scale(0.4);
-      transition: opacity 1s ease, transform 1s ease;
-      filter: drop-shadow(0 0 4px rgba(255,231,150,.55));
-    }
-    .scene.night .star { opacity: .95; transform: scale(1); animation: twinkle 3.2s ease-in-out infinite; }
+      /* ── ほし（よるだけ ひかる・シールポップ hoshi.svg） ── */
+      .stars {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+      }
+      .star {
+        position: absolute;
+        width: 15px;
+        height: 15px;
+        background: url(assets/img/hoshi.svg) center/contain no-repeat;
+        opacity: 0;
+        transform: scale(0.4);
+        transition:
+          opacity 1s ease,
+          transform 1s ease;
+        filter: drop-shadow(0 0 4px rgba(255, 231, 150, 0.55));
+      }
+      .scene.night .star {
+        opacity: 0.95;
+        transform: scale(1);
+        animation: twinkle 3.2s ease-in-out infinite;
+      }
 
-    /* ── みち（だんかい5で でる） ── */
-    .path {
-      position: absolute; left: 50%; bottom: 0; transform: translateX(-50%);
-      width: 40%; height: 30%;
-      background: linear-gradient(#F3E2B8, #EBD3A0);
-      clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%);
-      opacity: 0; z-index: 3;
-      transition: opacity .8s ease;
-    }
-    .path.on { opacity: .85; }
-    .scene.night .path { filter: brightness(0.7); }
+      /* ── みち（だんかい5で でる） ── */
+      .path {
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        transform: translateX(-50%);
+        width: 40%;
+        height: 30%;
+        background: linear-gradient(#f3e2b8, #ebd3a0);
+        clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%);
+        opacity: 0;
+        z-index: 3;
+        transition: opacity 0.8s ease;
+      }
+      .path.on {
+        opacity: 0.85;
+      }
+      .scene.night .path {
+        filter: brightness(0.7);
+      }
 
-    /* ── かざり（絵文字スロット）──
+      /* ── かざり（絵文字スロット）──
        すべて DOM に あるが、reachedStage 以下だけ .on で みえる。
        あたらしく あいた ものは .grow で ぽん と とうじょう */
-    .deco {
-      position: absolute;
-      /* おきば（scene きじゅん%）は JS が --x/--y に いれる。
+      .deco {
+        position: absolute;
+        /* おきば（scene きじゅん%）は JS が --x/--y に いれる。
          たてもち（しせつ 2＋1）では --px/--py が あれば そちらを つかう＝カードの うらに かくれない。
          よこ持ちスマホ（よこなが・せが 480px いか）では --lx/--ly が あれば そちらを つかう。
          カードや ぴよに かかる がめん だけ --spx/--sqx/--wlx（DECOS の sp/sq/wl）も つかう */
-      left: var(--x); top: var(--y);
-      transform: translate(-50%, -50%) scale(0.2);
-      opacity: 0;
-      line-height: 1;
-      z-index: 4;
-      pointer-events: none;
-      filter: drop-shadow(0 4px 4px rgba(91,58,30,.18));
-      transition: opacity .5s ease, transform .5s ease;
-      will-change: transform;
-    }
-    .deco.on { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    .deco.grow { animation: pop 0.7s cubic-bezier(.2,1.4,.5,1) both; }
-    .scene.night .deco { filter: drop-shadow(0 4px 4px rgba(0,0,0,.3)) brightness(0.82); }
+        left: var(--x);
+        top: var(--y);
+        transform: translate(-50%, -50%) scale(0.2);
+        opacity: 0;
+        line-height: 1;
+        z-index: 4;
+        pointer-events: none;
+        filter: drop-shadow(0 4px 4px rgba(91, 58, 30, 0.18));
+        transition:
+          opacity 0.5s ease,
+          transform 0.5s ease;
+        will-change: transform;
+      }
+      .deco.on {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+      .deco.grow {
+        animation: pop 0.7s cubic-bezier(0.2, 1.4, 0.5, 1) both;
+      }
+      .scene.night .deco {
+        filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.3)) brightness(0.82);
+      }
 
-    /* かざりの こまかい うごき（ひかえめ） */
-    .deco.sway.on   { animation: sway 4.2s ease-in-out infinite; }
-    .deco.float.on  { animation: floaty 6s ease-in-out infinite; }
-    .deco.float.slow.on { animation: floaty 9s ease-in-out infinite; }
-    .deco.hop.on    { animation: hopdeco 2.6s ease-in-out infinite; }
-    .deco.wob.on    { animation: wobble 5s ease-in-out infinite; }
-    .deco.rainbow.on{ animation: rbfade 1s ease both; }
-    .deco.spark.on  { animation: sparkle 1.6s ease-in-out infinite; }
-    .deco.friend.on { animation: hopdeco 3s ease-in-out infinite; }
-    /* あたらしく あいた ものは まず ぽん（上の こまかい うごきより つよく あてる）。
+      /* かざりの こまかい うごき（ひかえめ） */
+      .deco.sway.on {
+        animation: sway 4.2s ease-in-out infinite;
+      }
+      .deco.float.on {
+        animation: floaty 6s ease-in-out infinite;
+      }
+      .deco.float.slow.on {
+        animation: floaty 9s ease-in-out infinite;
+      }
+      .deco.hop.on {
+        animation: hopdeco 2.6s ease-in-out infinite;
+      }
+      .deco.wob.on {
+        animation: wobble 5s ease-in-out infinite;
+      }
+      .deco.rainbow.on {
+        animation: rbfade 1s ease both;
+      }
+      .deco.spark.on {
+        animation: sparkle 1.6s ease-in-out infinite;
+      }
+      .deco.friend.on {
+        animation: hopdeco 3s ease-in-out infinite;
+      }
+      /* あたらしく あいた ものは まず ぽん（上の こまかい うごきより つよく あてる）。
        ぽんが おわったら JS が .grow を はずし、いつもの うごきに もどる */
-    .deco-layer .deco.on.grow { animation: pop 0.7s cubic-bezier(.2,1.4,.5,1) both; }
-    .deco-layer .deco.rainbow.on.grown { animation: none; opacity: .92; }
+      .deco-layer .deco.on.grow {
+        animation: pop 0.7s cubic-bezier(0.2, 1.4, 0.5, 1) both;
+      }
+      .deco-layer .deco.rainbow.on.grown {
+        animation: none;
+        opacity: 0.92;
+      }
 
-    /* いえの けむり */
-    .smoke {
-      position: absolute; left: 62%; top: -6%;
-      font-size: 0.5em; opacity: 0;
-    }
-    .deco.on .smoke { animation: smoke 3.4s ease-in-out infinite; }
+      /* いえの けむり */
+      .smoke {
+        position: absolute;
+        left: 62%;
+        top: -6%;
+        font-size: 0.5em;
+        opacity: 0;
+      }
+      .deco.on .smoke {
+        animation: smoke 3.4s ease-in-out infinite;
+      }
 
-    /* ── 3つの おおきな どうせん（しせつ＝ゲームの いりぐち）を のせる たな ──
+      /* ── 3つの おおきな どうせん（しせつ＝ゲームの いりぐち）を のせる たな ──
        ★ここは ぜったいに こわさない。まちの えんしゅつが おおいかくさない★
        flexで ならべ、ぜったいに かさならない・はみ出さない。
        たてもち・せのひくい がめん＝2まい＋1まい（2＋1）。よこなが＝3まい よこに。 */
-    .facilities {
-      position: absolute;
-      left: 0; right: 0;
-      bottom: 15%;
-      z-index: 12;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-content: center;
-      gap: clamp(8px, 2.2vmin, 20px);
-      padding: 0 clamp(10px, 3vw, 22px);
-    }
-    .facility {
-      flex: 0 1 42%;          /* たてもち: 2まいで 1れつ → 3まい目は 2れつ目へ（2＋1） */
-      max-width: 46%;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: clamp(6px, 1.8vmin, 14px);
-      text-decoration: none;
-      color: var(--text);
-      background: var(--surface);
-      border: 4px solid var(--accent);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: clamp(10px, 3.4vmin, 22px) 8px;
-      transition: transform .09s ease, box-shadow .09s ease;
-    }
-    .facility:active { transform: translateY(2px) scale(0.98); box-shadow: var(--shadow-press); }
-    .facility:focus-visible { outline: 4px solid var(--accent); outline-offset: 3px; }
-    .fac--park { --accent: var(--green); }
-    .fac--cake { --accent: var(--orange); }
-    .fac--shop { --accent: var(--veg); }
+      .facilities {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 15%;
+        z-index: 12;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-content: center;
+        gap: clamp(8px, 2.2vmin, 20px);
+        padding: 0 clamp(10px, 3vw, 22px);
+      }
+      .facility {
+        flex: 0 1 42%; /* たてもち: 2まいで 1れつ → 3まい目は 2れつ目へ（2＋1） */
+        max-width: 46%;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: clamp(6px, 1.8vmin, 14px);
+        text-decoration: none;
+        color: var(--text);
+        background: var(--surface);
+        border: 4px solid var(--accent);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: clamp(10px, 3.4vmin, 22px) 8px;
+        transition:
+          transform 0.09s ease,
+          box-shadow 0.09s ease;
+      }
+      .facility:active {
+        transform: translateY(2px) scale(0.98);
+        box-shadow: var(--shadow-press);
+      }
+      .facility:focus-visible {
+        outline: 4px solid var(--accent);
+        outline-offset: 3px;
+      }
+      .fac--park {
+        --accent: var(--green);
+      }
+      .fac--cake {
+        --accent: var(--orange);
+      }
+      .fac--shop {
+        --accent: var(--veg);
+      }
 
-    .facility .f-emoji {
-      font-size: clamp(48px, 15vmin, 104px);
-      line-height: 1;
-      filter: drop-shadow(0 4px 6px rgba(91,58,30,.16));
-    }
-    .facility .f-name {
-      display: inline-block;
-      background: var(--accent);
-      color: #fff;
-      font-weight: 800;
-      font-size: clamp(17px, 4.6vmin, 30px);
-      line-height: 1.1;
-      padding: 0.26em 0.8em;
-      border-radius: 999px;
-      white-space: nowrap;
-    }
-    /* よるの あかり（まどが ぽっと ともる） */
-    .facility .f-glow {
-      position: absolute; inset: 0; border-radius: inherit;
-      background: radial-gradient(circle at 50% 42%, rgba(255,209,63,.55), rgba(255,209,63,0) 62%);
-      opacity: 0; pointer-events: none;
-      transition: opacity 1.2s ease;
-    }
-    .scene.night .facility { filter: brightness(0.96); }
-    .scene.night .facility .f-glow { opacity: 1; }
+      .facility .f-emoji {
+        font-size: clamp(48px, 15vmin, 104px);
+        line-height: 1;
+        filter: drop-shadow(0 4px 6px rgba(91, 58, 30, 0.16));
+      }
+      .facility .f-name {
+        display: inline-block;
+        background: var(--accent);
+        color: #fff;
+        font-weight: 800;
+        font-size: clamp(17px, 4.6vmin, 30px);
+        line-height: 1.1;
+        padding: 0.26em 0.8em;
+        border-radius: 999px;
+        white-space: nowrap;
+      }
+      /* よるの あかり（まどが ぽっと ともる） */
+      .facility .f-glow {
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: radial-gradient(
+          circle at 50% 42%,
+          rgba(255, 209, 63, 0.55),
+          rgba(255, 209, 63, 0) 62%
+        );
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 1.2s ease;
+      }
+      .scene.night .facility {
+        filter: brightness(0.96);
+      }
+      .scene.night .facility .f-glow {
+        opacity: 1;
+      }
 
-    /* ぴよが しせつを さす ときの ふわっと めじるし */
-    .facility.point::after {
-      content: "";
-      position: absolute; inset: -6px;
-      border-radius: calc(var(--radius) + 6px);
-      box-shadow: 0 0 0 4px rgba(255,210,63,.9), 0 0 22px 6px rgba(255,210,63,.55);
-      animation: ring 1.1s ease-in-out infinite;
-      pointer-events: none;
-    }
+      /* ぴよが しせつを さす ときの ふわっと めじるし */
+      .facility.point::after {
+        content: "";
+        position: absolute;
+        inset: -6px;
+        border-radius: calc(var(--radius) + 6px);
+        box-shadow:
+          0 0 0 4px rgba(255, 210, 63, 0.9),
+          0 0 22px 6px rgba(255, 210, 63, 0.55);
+        animation: ring 1.1s ease-in-out infinite;
+        pointer-events: none;
+      }
 
-    /* ── ぴよ（がめんない じょうちゅう・タップで はねる）── */
-    .piyo {
-      position: absolute;
-      left: 50%; bottom: 4%;
-      transform: translateX(-50%);
-      z-index: 20;
-      cursor: pointer;
-      user-select: none;
-      transition: left .9s cubic-bezier(.4,.1,.3,1), bottom .9s cubic-bezier(.4,.1,.3,1);
-      touch-action: manipulation;
-    }
-    .piyo .p-body {
-      font-size: clamp(40px, 12vmin, 76px);
-      line-height: 1;
-      display: block;
-      filter: drop-shadow(0 5px 5px rgba(91,58,30,.22));
-      animation: bob 2.8s ease-in-out infinite;
-      transform-origin: 50% 90%;
-    }
-    .piyo.hop .p-body   { animation: piyohop .6s ease; }
-    .piyo.cheer .p-body { animation: piyocheer .9s ease; }
-    .piyo .p-crown {
-      position: absolute; left: 50%; top: -0.55em;
-      transform: translateX(-50%);
-      font-size: clamp(22px, 6vmin, 40px);
-      opacity: 0; transition: opacity .5s ease .2s;
-      filter: drop-shadow(0 2px 2px rgba(91,58,30,.25));
-    }
-    .piyo.to-nest { bottom: 2%; }    /* よる：すへ トコトコ */
-    .piyo.king .p-crown { opacity: 1; }
-    .piyo .p-zzz {
-      position: absolute; right: -0.4em; top: -0.5em;
-      font-size: 0.5em; opacity: 0;
-    }
-    .piyo.sleep .p-body { animation: none; transform: rotate(6deg) scale(0.96); }
-    .piyo.sleep .p-zzz { opacity: 1; animation: zzz 2.6s ease-in-out infinite; }
+      /* ── ぴよ（がめんない じょうちゅう・タップで はねる）── */
+      .piyo {
+        position: absolute;
+        left: 50%;
+        bottom: 4%;
+        transform: translateX(-50%);
+        z-index: 20;
+        cursor: pointer;
+        user-select: none;
+        transition:
+          left 0.9s cubic-bezier(0.4, 0.1, 0.3, 1),
+          bottom 0.9s cubic-bezier(0.4, 0.1, 0.3, 1);
+        touch-action: manipulation;
+      }
+      .piyo .p-body {
+        font-size: clamp(40px, 12vmin, 76px);
+        line-height: 1;
+        display: block;
+        filter: drop-shadow(0 5px 5px rgba(91, 58, 30, 0.22));
+        animation: bob 2.8s ease-in-out infinite;
+        transform-origin: 50% 90%;
+      }
+      .piyo.hop .p-body {
+        animation: piyohop 0.6s ease;
+      }
+      .piyo.cheer .p-body {
+        animation: piyocheer 0.9s ease;
+      }
+      .piyo .p-crown {
+        position: absolute;
+        left: 50%;
+        top: -0.55em;
+        transform: translateX(-50%);
+        font-size: clamp(22px, 6vmin, 40px);
+        opacity: 0;
+        transition: opacity 0.5s ease 0.2s;
+        filter: drop-shadow(0 2px 2px rgba(91, 58, 30, 0.25));
+      }
+      .piyo.to-nest {
+        bottom: 2%;
+      } /* よる：すへ トコトコ */
+      .piyo.king .p-crown {
+        opacity: 1;
+      }
+      .piyo .p-zzz {
+        position: absolute;
+        right: -0.4em;
+        top: -0.5em;
+        font-size: 0.5em;
+        opacity: 0;
+      }
+      .piyo.sleep .p-body {
+        animation: none;
+        transform: rotate(6deg) scale(0.96);
+      }
+      .piyo.sleep .p-zzz {
+        opacity: 1;
+        animation: zzz 2.6s ease-in-out infinite;
+      }
 
-    /* ふきだし（ひとこと・ひらがな みじかく）。
+      /* ふきだし（ひとこと・ひらがな みじかく）。
        ぴよの よこに だす（うえに だすと しせつカードと ラベルに かぶる）。
        ぴよが がめんの みぎはんぶんに いる ときは ひだりがわ（.bub-l）へ */
-    .bubble {
-      position: absolute;
-      left: calc(100% + 8px); bottom: 30%;
-      transform: translateY(6px) scale(0.8);
-      transform-origin: 0 50%;
-      background: #fff;
-      color: var(--text);
-      border: 2px solid var(--border);
-      border-radius: 16px;
-      padding: 5px 12px;
-      font-weight: 800;
-      font-size: clamp(15px, 4.2vw, 21px);
-      white-space: nowrap;
-      box-shadow: var(--shadow-soft);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .18s ease, transform .18s ease;
-      z-index: 21;
-    }
-    .bubble::after {
-      content: ""; position: absolute; right: 100%; top: 50%;
-      transform: translateY(-50%);
-      border: 7px solid transparent;
-      border-right-color: #fff;
-      margin-right: -1px;
-    }
-    .bubble.show { opacity: 1; transform: translateY(0) scale(1); }
-    .piyo.bub-l .bubble { left: auto; right: calc(100% + 8px); transform-origin: 100% 50%; }
-    .piyo.bub-l .bubble::after { right: auto; left: 100%; border-right-color: transparent; border-left-color: #fff; margin-right: 0; margin-left: -1px; }
-    /* はばの せまい がめん（320px など）＝ふきだしの よこの よはくを すこし へらし、
+      .bubble {
+        position: absolute;
+        left: calc(100% + 8px);
+        bottom: 30%;
+        transform: translateY(6px) scale(0.8);
+        transform-origin: 0 50%;
+        background: #fff;
+        color: var(--text);
+        border: 2px solid var(--border);
+        border-radius: 16px;
+        padding: 5px 12px;
+        font-weight: 800;
+        font-size: clamp(15px, 4.2vw, 21px);
+        white-space: nowrap;
+        box-shadow: var(--shadow-soft);
+        opacity: 0;
+        pointer-events: none;
+        transition:
+          opacity 0.18s ease,
+          transform 0.18s ease;
+        z-index: 21;
+      }
+      .bubble::after {
+        content: "";
+        position: absolute;
+        right: 100%;
+        top: 50%;
+        transform: translateY(-50%);
+        border: 7px solid transparent;
+        border-right-color: #fff;
+        margin-right: -1px;
+      }
+      .bubble.show {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      .piyo.bub-l .bubble {
+        left: auto;
+        right: calc(100% + 8px);
+        transform-origin: 100% 50%;
+      }
+      .piyo.bub-l .bubble::after {
+        right: auto;
+        left: 100%;
+        border-right-color: transparent;
+        border-left-color: #fff;
+        margin-right: 0;
+        margin-left: -1px;
+      }
+      /* はばの せまい がめん（320px など）＝ふきだしの よこの よはくを すこし へらし、
        いちばん ながい「わー ふえた！」でも シーンの みぎはしから はみ出さない */
-    @media (max-width: 340px) {
-      .bubble { padding: 5px 10px; }
-    }
+      @media (max-width: 340px) {
+        .bubble {
+          padding: 5px 10px;
+        }
+      }
 
-    /* すの おうち（よる ぴよが ねる ばしょ） */
-    .nest {
-      position: absolute; left: 50%; bottom: 2%;
-      transform: translateX(-50%) scale(0.6);
-      font-size: clamp(30px, 9vmin, 54px);
-      opacity: 0; z-index: 19;
-      transition: opacity 1s ease, transform 1s ease;
-      pointer-events: none;
-      filter: drop-shadow(0 4px 4px rgba(0,0,0,.25));
-    }
-    .scene.night .nest { opacity: 1; transform: translateX(-50%) scale(1); }
+      /* すの おうち（よる ぴよが ねる ばしょ） */
+      .nest {
+        position: absolute;
+        left: 50%;
+        bottom: 2%;
+        transform: translateX(-50%) scale(0.6);
+        font-size: clamp(30px, 9vmin, 54px);
+        opacity: 0;
+        z-index: 19;
+        transition:
+          opacity 1s ease,
+          transform 1s ease;
+        pointer-events: none;
+        filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.25));
+      }
+      .scene.night .nest {
+        opacity: 1;
+        transform: translateX(-50%) scale(1);
+      }
 
-    /* ── すすみ ドット（つぎの へんかまで・さいだい5こ）── */
-    .meter {
-      position: absolute; left: 50%; bottom: 1.5%;
-      transform: translateX(-50%);
-      display: flex; gap: 5px;
-      z-index: 15;
-      opacity: .9;
-      transition: opacity .5s ease;
-    }
-    .meter .dot {
-      width: 9px; height: 9px; border-radius: 50%;
-      background: rgba(255,255,255,.55);
-      border: 1.5px solid rgba(91,58,30,.28);
-      transition: background .3s ease, transform .3s ease;
-    }
-    .meter .dot.f { background: var(--yellow); border-color: rgba(214,158,78,.6); transform: scale(1.05); }
-    .scene.night .meter { opacity: .35; }
+      /* ── すすみ ドット（つぎの へんかまで・さいだい5こ）── */
+      .meter {
+        position: absolute;
+        left: 50%;
+        bottom: 1.5%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 5px;
+        z-index: 15;
+        opacity: 0.9;
+        transition: opacity 0.5s ease;
+      }
+      .meter .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.55);
+        border: 1.5px solid rgba(91, 58, 30, 0.28);
+        transition:
+          background 0.3s ease,
+          transform 0.3s ease;
+      }
+      .meter .dot.f {
+        background: var(--yellow);
+        border-color: rgba(214, 158, 78, 0.6);
+        transform: scale(1.05);
+      }
+      .scene.night .meter {
+        opacity: 0.35;
+      }
 
-    /* ── まちが そだった！の おいわい（かみふぶきの ⭐）── */
-    .confetti { position: absolute; inset: 0; z-index: 30; pointer-events: none; overflow: hidden; }
-    .confetti span {
-      position: absolute; top: -8%;
-      font-size: 22px;
-      animation: fall 2.4s linear forwards;
-    }
+      /* ── まちが そだった！の おいわい（かみふぶきの ⭐）── */
+      .confetti {
+        position: absolute;
+        inset: 0;
+        z-index: 30;
+        pointer-events: none;
+        overflow: hidden;
+      }
+      .confetti span {
+        position: absolute;
+        top: -8%;
+        font-size: 22px;
+        animation: fall 2.4s linear forwards;
+      }
 
-    /* ── よるの くらがり（タップで あさに もどる）── */
-    .nightveil {
-      position: absolute; inset: 0; z-index: 40;
-      background: rgba(10,12,30,0);
-      opacity: 1;
-      pointer-events: none;
-      transition: background 1.6s ease;
-    }
-    .scene.night .nightveil { pointer-events: auto; cursor: pointer; }
-    .scene.night.slept .nightveil { background: rgba(10,12,30,.45); }
+      /* ── よるの くらがり（タップで あさに もどる）── */
+      .nightveil {
+        position: absolute;
+        inset: 0;
+        z-index: 40;
+        background: rgba(10, 12, 30, 0);
+        opacity: 1;
+        pointer-events: none;
+        transition: background 1.6s ease;
+      }
+      .scene.night .nightveil {
+        pointer-events: auto;
+        cursor: pointer;
+      }
+      .scene.night.slept .nightveil {
+        background: rgba(10, 12, 30, 0.45);
+      }
 
-    /* ── ちいさな クレジット（ページ最下部・音声の出典）── */
-    .credit {
-      flex: 0 0 auto;
-      text-align: center;
-      font-size: 10px;
-      line-height: 1.2;
-      color: var(--subtext);
-      opacity: .65;
-      padding: 1px 8px 0;
-      letter-spacing: .01em;
-      user-select: none;
-    }
-    /* せまい がめんで おれる ときは「／」の あとで おる（すえの もじだけ はみ出さない） */
-    .credit span { display: inline-block; }
+      /* ── ちいさな クレジット（ページ最下部・音声の出典）── */
+      .credit {
+        flex: 0 0 auto;
+        text-align: center;
+        font-size: 10px;
+        line-height: 1.2;
+        color: var(--subtext);
+        opacity: 0.65;
+        padding: 1px 8px 0;
+        letter-spacing: 0.01em;
+        user-select: none;
+      }
+      /* せまい がめんで おれる ときは「／」の あとで おる（すえの もじだけ はみ出さない） */
+      .credit span {
+        display: inline-block;
+      }
 
-    /* ── シールポップSVG（<img>で差し替え・viewBox200・白フチ焼き込み・フィルタ不使用）──
+      /* ── シールポップSVG（<img>で差し替え・viewBox200・白フチ焼き込み・フィルタ不使用）──
        素材repo https://github.com/kerokero-1245/piyo-assets ／ 見本 piyo-assets/reference/style-samples.html
        レイアウト・タップ領域・進行ロジックは不変。絵文字スロットと同じ位置に画像を差すだけ。 */
-    .deco-img {
-      display: block;              /* サイズは <img width/height>（＝cfg.s px）で きまる */
-      -webkit-user-drag: none; user-select: none; pointer-events: none;
-    }
-    /* たいよう↔つき の きりかえ（よるは たいようを かくし、つきを だす＝☀️の みえ残り修正） */
-    .scene.night .deco.sun.on  { opacity: 0; }
-    .deco.moon.on              { opacity: 0; }
-    .scene.night .deco.moon.on { opacity: 1; }
-    .scene.night .deco.moon    { filter: drop-shadow(0 0 10px rgba(255,247,199,.5)); }
+      .deco-img {
+        display: block; /* サイズは <img width/height>（＝cfg.s px）で きまる */
+        -webkit-user-drag: none;
+        user-select: none;
+        pointer-events: none;
+      }
+      /* たいよう↔つき の きりかえ（よるは たいようを かくし、つきを だす＝☀️の みえ残り修正） */
+      .scene.night .deco.sun.on {
+        opacity: 0;
+      }
+      .deco.moon.on {
+        opacity: 0;
+      }
+      .scene.night .deco.moon.on {
+        opacity: 1;
+      }
+      .scene.night .deco.moon {
+        filter: drop-shadow(0 0 10px rgba(255, 247, 199, 0.5));
+      }
 
-    /* しせつカードの え（🌳🍰🥕→ ki/cake/ninjin） */
-    .facility img.f-emoji { width: clamp(48px, 15vmin, 104px); height: auto; }
+      /* しせつカードの え（🌳🍰🥕→ ki/cake/ninjin） */
+      .facility img.f-emoji {
+        width: clamp(48px, 15vmin, 104px);
+        height: auto;
+      }
 
-    /* ぴよ（p-body/p-crown/p-zzz）と す（nest） */
-    .piyo img.p-body  { width: clamp(40px, 12vmin, 76px); height: auto; }
-    .piyo img.p-crown { width: clamp(26px, 6.6vmin, 44px); height: auto; }
-    .piyo img.p-zzz   { width: clamp(22px, 6vmin, 36px); height: auto; }
-    .nest img         { display: block; width: clamp(30px, 9vmin, 54px); height: auto; }
+      /* ぴよ（p-body/p-crown/p-zzz）と す（nest） */
+      .piyo img.p-body {
+        width: clamp(40px, 12vmin, 76px);
+        height: auto;
+      }
+      .piyo img.p-crown {
+        width: clamp(26px, 6.6vmin, 44px);
+        height: auto;
+      }
+      .piyo img.p-zzz {
+        width: clamp(22px, 6vmin, 36px);
+        height: auto;
+      }
+      .nest img {
+        display: block;
+        width: clamp(30px, 9vmin, 54px);
+        height: auto;
+      }
 
-    /* ── アニメーション ─────────────────────────────── */
-    @keyframes bob { 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(-5px) } }
-    @keyframes piyohop {
-      0%{ transform: translateY(0) } 30%{ transform: translateY(-22px) }
-      55%{ transform: translateY(0) } 70%{ transform: translateY(-8px) } 100%{ transform: translateY(0) }
-    }
-    @keyframes piyocheer {
-      0%{ transform: translateY(0) rotate(0) } 25%{ transform: translateY(-26px) rotate(-8deg) }
-      50%{ transform: translateY(0) rotate(0) } 70%{ transform: translateY(-18px) rotate(8deg) }
-      100%{ transform: translateY(0) rotate(0) }
-    }
-    @keyframes zzz { 0%{ opacity:.3; transform: translateY(0) } 50%{ opacity:1; transform: translateY(-4px) } 100%{ opacity:.3; transform: translateY(-8px) } }
-    @keyframes pop {
-      0%{ opacity:0; transform: translate(-50%,-50%) scale(0.2) }
-      60%{ opacity:1; transform: translate(-50%,-50%) scale(1.25) }
-      100%{ opacity:1; transform: translate(-50%,-50%) scale(1) }
-    }
-    @keyframes sway { 0%,100%{ transform: translate(-50%,-50%) rotate(-4deg) } 50%{ transform: translate(-50%,-50%) rotate(4deg) } }
-    @keyframes floaty { 0%,100%{ transform: translate(-50%,-50%) translateY(0) } 50%{ transform: translate(-50%,-50%) translateY(-8px) } }
-    @keyframes hopdeco { 0%,100%{ transform: translate(-50%,-50%) translateY(0) } 40%{ transform: translate(-50%,-50%) translateY(-9px) } 60%{ transform: translate(-50%,-50%) translateY(0) } }
-    @keyframes wobble { 0%,100%{ transform: translate(-50%,-50%) rotate(-3deg) } 50%{ transform: translate(-50%,-50%) rotate(3deg) } }
-    @keyframes rbfade { from{ opacity:0 } to{ opacity:.92 } }
-    @keyframes sparkle { 0%,100%{ transform: translate(-50%,-50%) scale(1); opacity:1 } 50%{ transform: translate(-50%,-50%) scale(1.15); opacity:.8 } }
-    @keyframes smoke { 0%{ opacity:0; transform: translateY(0) scale(.7) } 30%{ opacity:.8 } 100%{ opacity:0; transform: translateY(-16px) scale(1.1) } }
-    @keyframes twinkle { 0%,100%{ opacity:.5 } 50%{ opacity:1 } }
-    @keyframes ring { 0%,100%{ opacity:.5 } 50%{ opacity:1 } }
-    @keyframes fall {
-      0%{ transform: translateY(0) rotate(0); opacity: 1 }
-      100%{ transform: translateY(115%) rotate(320deg); opacity: .9 }
-    }
+      /* ── アニメーション ─────────────────────────────── */
+      @keyframes bob {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-5px);
+        }
+      }
+      @keyframes piyohop {
+        0% {
+          transform: translateY(0);
+        }
+        30% {
+          transform: translateY(-22px);
+        }
+        55% {
+          transform: translateY(0);
+        }
+        70% {
+          transform: translateY(-8px);
+        }
+        100% {
+          transform: translateY(0);
+        }
+      }
+      @keyframes piyocheer {
+        0% {
+          transform: translateY(0) rotate(0);
+        }
+        25% {
+          transform: translateY(-26px) rotate(-8deg);
+        }
+        50% {
+          transform: translateY(0) rotate(0);
+        }
+        70% {
+          transform: translateY(-18px) rotate(8deg);
+        }
+        100% {
+          transform: translateY(0) rotate(0);
+        }
+      }
+      @keyframes zzz {
+        0% {
+          opacity: 0.3;
+          transform: translateY(0);
+        }
+        50% {
+          opacity: 1;
+          transform: translateY(-4px);
+        }
+        100% {
+          opacity: 0.3;
+          transform: translateY(-8px);
+        }
+      }
+      @keyframes pop {
+        0% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.2);
+        }
+        60% {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1.25);
+        }
+        100% {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1);
+        }
+      }
+      @keyframes sway {
+        0%,
+        100% {
+          transform: translate(-50%, -50%) rotate(-4deg);
+        }
+        50% {
+          transform: translate(-50%, -50%) rotate(4deg);
+        }
+      }
+      @keyframes floaty {
+        0%,
+        100% {
+          transform: translate(-50%, -50%) translateY(0);
+        }
+        50% {
+          transform: translate(-50%, -50%) translateY(-8px);
+        }
+      }
+      @keyframes hopdeco {
+        0%,
+        100% {
+          transform: translate(-50%, -50%) translateY(0);
+        }
+        40% {
+          transform: translate(-50%, -50%) translateY(-9px);
+        }
+        60% {
+          transform: translate(-50%, -50%) translateY(0);
+        }
+      }
+      @keyframes wobble {
+        0%,
+        100% {
+          transform: translate(-50%, -50%) rotate(-3deg);
+        }
+        50% {
+          transform: translate(-50%, -50%) rotate(3deg);
+        }
+      }
+      @keyframes rbfade {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 0.92;
+        }
+      }
+      @keyframes sparkle {
+        0%,
+        100% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: translate(-50%, -50%) scale(1.15);
+          opacity: 0.8;
+        }
+      }
+      @keyframes smoke {
+        0% {
+          opacity: 0;
+          transform: translateY(0) scale(0.7);
+        }
+        30% {
+          opacity: 0.8;
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-16px) scale(1.1);
+        }
+      }
+      @keyframes twinkle {
+        0%,
+        100% {
+          opacity: 0.5;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+      @keyframes ring {
+        0%,
+        100% {
+          opacity: 0.5;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+      @keyframes fall {
+        0% {
+          transform: translateY(0) rotate(0);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(115%) rotate(320deg);
+          opacity: 0.9;
+        }
+      }
 
-    /* うごきを へらす せってい（アクセシビリティ） */
-    @media (prefers-reduced-motion: reduce) {
-      .deco.sway.on, .deco.float.on, .deco.float.slow.on, .deco.hop.on,
-      .deco.wob.on, .deco.spark.on, .deco.friend.on, .piyo .p-body,
-      .scene.night .star, .piyo.sleep .p-zzz,
-      .deco.grow, .deco.rainbow.on, .deco.on .smoke,
-      .confetti span, .facility.point::after { animation: none !important; }
-      .scene, .ground, .path, .deco, .facility .f-glow, .nest { transition-duration: .3s; }
-      .piyo { transition: none; }      /* ぴよの いどうも すっと きりかえる */
-    }
+      /* うごきを へらす せってい（アクセシビリティ） */
+      @media (prefers-reduced-motion: reduce) {
+        .deco.sway.on,
+        .deco.float.on,
+        .deco.float.slow.on,
+        .deco.hop.on,
+        .deco.wob.on,
+        .deco.spark.on,
+        .deco.friend.on,
+        .piyo .p-body,
+        .scene.night .star,
+        .piyo.sleep .p-zzz,
+        .deco.grow,
+        .deco.rainbow.on,
+        .deco.on .smoke,
+        .confetti span,
+        .facility.point::after {
+          animation: none !important;
+        }
+        .scene,
+        .ground,
+        .path,
+        .deco,
+        .facility .f-glow,
+        .nest {
+          transition-duration: 0.3s;
+        }
+        .piyo {
+          transition: none;
+        } /* ぴよの いどうも すっと きりかえる */
+      }
 
-    /* たてもち（しせつ 2＋1）での かざりの おきば */
-    @media (orientation: portrait) {
-      .deco { left: var(--px, var(--x)); top: var(--py, var(--y)); }
-    }
+      /* たてもち（しせつ 2＋1）での かざりの おきば */
+      @media (orientation: portrait) {
+        .deco {
+          left: var(--px, var(--x));
+          top: var(--py, var(--y));
+        }
+      }
 
-    /* よこながの がめん（PC・タブレット・よこ持ち）＝3まい よこに ならべる */
-    @media (orientation: landscape) {
-      .facility { flex-basis: 30%; max-width: 32%; }
-      /* カードの したの すきまが ひくいので、ぴよを すこし さげる
+      /* よこながの がめん（PC・タブレット・よこ持ち）＝3まい よこに ならべる */
+      @media (orientation: landscape) {
+        .facility {
+          flex-basis: 30%;
+          max-width: 32%;
+        }
+        /* カードの したの すきまが ひくいので、ぴよを すこし さげる
          （すすみドットの すぐ うえ。👑の ときは ドットが ないので いちばん したへ） */
-      .piyo { bottom: calc(1.5% + 4px); }
-      .piyo.to-nest { bottom: 1%; }
-      .piyo.king, .piyo.king.to-nest { bottom: 0; }
-    }
+        .piyo {
+          bottom: calc(1.5% + 4px);
+        }
+        .piyo.to-nest {
+          bottom: 1%;
+        }
+        .piyo.king,
+        .piyo.king.to-nest {
+          bottom: 0;
+        }
+      }
 
-    /* せの ひくい たてもち（515×684 など）＝たなを 少し上げ、
+      /* せの ひくい たてもち（515×684 など）＝たなを 少し上げ、
        2れつ目の カードと ぴよの ふきだしが かさならないようにする */
-    @media (orientation: portrait) and (max-height: 720px) {
-      .facilities { bottom: 20%; }
-    }
+      @media (orientation: portrait) and (max-height: 720px) {
+        .facilities {
+          bottom: 20%;
+        }
+      }
 
-    /* せの ひくい たてもちでの かざりの おきば（たなが 20% に 上がり、そらの かざりが カードに かかる ため）。
+      /* せの ひくい たてもちでの かざりの おきば（たなが 20% に 上がり、そらの かざりが カードに かかる ため）。
        ほそい がめん（320×568 など）＝そらの かざりを カードより うえへ。おおきさは シーンの たかさに あわせて ちぢむ（--spc）。
        しかくい がめん（515×684 など）＝そらに すきまが ないので、かんらんしゃ・もくばは 2れつ目の りょうわきへ */
-    @media (orientation: portrait) and (max-height: 720px) and (max-aspect-ratio: 13/20) {
-      .scene { container-type: size; }   /* cqh＝シーンの たかさ */
-      .deco { left: var(--spx, var(--px, var(--x))); top: var(--spy, var(--py, var(--y))); }
-      .deco .deco-img { max-width: calc(var(--spc, 999) * 1cqh); max-height: calc(var(--spc, 999) * 1cqh); }
-    }
-    @media (orientation: portrait) and (max-height: 720px) and (min-aspect-ratio: 13/20) {
-      .deco { left: var(--sqx, var(--px, var(--x))); top: var(--sqy, var(--py, var(--y))); }
-    }
+      @media (orientation: portrait) and (max-height: 720px) and (max-aspect-ratio: 13/20) {
+        .scene {
+          container-type: size;
+        } /* cqh＝シーンの たかさ */
+        .deco {
+          left: var(--spx, var(--px, var(--x)));
+          top: var(--spy, var(--py, var(--y)));
+        }
+        .deco .deco-img {
+          max-width: calc(var(--spc, 999) * 1cqh);
+          max-height: calc(var(--spc, 999) * 1cqh);
+        }
+      }
+      @media (orientation: portrait) and (max-height: 720px) and (min-aspect-ratio: 13/20) {
+        .deco {
+          left: var(--sqx, var(--px, var(--x)));
+          top: var(--sqy, var(--py, var(--y)));
+        }
+      }
 
-    /* せの たかい よこなが（せが 481〜767px）＝カードの れつが 45〜52% から はじまり、
+      /* せの たかい よこなが（せが 481〜767px）＝カードの れつが 45〜52% から はじまり、
        き・いえ・こいのぼりが カードに、ひよこ・ふんすい・ベンチが カードの したの はしに かかる ため、そら／じめんへ よける */
-    @media (orientation: landscape) and (min-height: 481px) and (max-height: 767px) {
-      .deco { left: var(--wlx, var(--x)); top: var(--wly, var(--y)); }
-    }
+      @media (orientation: landscape) and (min-height: 481px) and (max-height: 767px) {
+        .deco {
+          left: var(--wlx, var(--x));
+          top: var(--wly, var(--y));
+        }
+      }
 
-    /* せの ひくい がめん（よこ持ちスマホ など） */
-    @media (max-height: 480px) {
-      .brand { font-size: 15px; padding: 4px 10px; }
-      .moon-btn { width: 40px; height: 40px; font-size: 20px; }
-      .bgm-btn { width: 36px; height: 36px; font-size: 18px; }
-      .facilities { bottom: 11%; }
-    }
+      /* せの ひくい がめん（よこ持ちスマホ など） */
+      @media (max-height: 480px) {
+        .brand {
+          font-size: 15px;
+          padding: 4px 10px;
+        }
+        .moon-btn {
+          width: 40px;
+          height: 40px;
+          font-size: 20px;
+        }
+        .bgm-btn {
+          width: 36px;
+          height: 36px;
+          font-size: 18px;
+        }
+        .facilities {
+          bottom: 11%;
+        }
+      }
 
-    /* よこ持ちスマホ（よこなが・せが 480px いか）での かざりの おきば。
+      /* よこ持ちスマホ（よこなが・せが 480px いか）での かざりの おきば。
        カードの れつが シーンの 42〜89% を よこいっぱいに つかうので、
        そらの かざりは カードより うえ（--lx/--ly）、じめんの かざり（.lg）は カードの した の おび（89〜100%）へ。
        おびは シーンの たかさの 11%（568×320 で 26px）しか ないので、じめんの かざりは おびに はいる おおきさまで ちぢめる */
-    @media (orientation: landscape) and (max-height: 480px) {
-      .scene { container-type: size; }   /* cqh＝シーンの たかさ（ひたいおうの ブラウザでは もとの おおきさの まま） */
-      .deco { left: var(--lx, var(--x)); top: var(--ly, var(--y)); }
-      .deco.lg .deco-img { max-width: calc(11cqh - 2px); max-height: calc(11cqh - 2px); }
-    }
-  </style>
-</head>
-<body>
-  <main class="app">
-    <div class="topbar">
-      <span class="brand"><span class="b-chick">🐥</span>ぴよぴよランド</span>
-      <div class="topbar-actions">
-        <button class="bgm-btn" id="bgmBtn" type="button" aria-label="BGMを ながす" aria-pressed="true">🔊</button>
-        <button class="moon-btn" id="moonBtn" type="button" aria-label="おやすみ">🌙</button>
-      </div>
-    </div>
-
-    <div class="scene" id="scene">
-      <div class="stars" id="stars" aria-hidden="true"></div>
-      <div class="ground" aria-hidden="true"></div>
-      <div class="path" id="path" aria-hidden="true"></div>
-
-      <!-- かざり（JSが いちを うめこむ） -->
-      <div class="deco-layer" id="decoLayer" aria-hidden="true"></div>
-
-      <!-- 3つの おおきな どうせん（しせつ＝ゲームの いりぐち。リンクさきURLは ふへん） -->
-      <div class="facilities" id="facilities">
-        <a class="facility fac--park" id="facPark"
-           href="https://kerokero-1245.github.io/otsukai-meiro/"
-           aria-label="こうえん（おつかいめいろ）であそぶ">
-          <span class="f-glow" aria-hidden="true"></span>
-          <img class="f-emoji" src="assets/img/ki.svg" alt="" aria-hidden="true" draggable="false">
-          <span class="f-name">こうえん</span>
-        </a>
-
-        <a class="facility fac--cake" id="facCake"
-           href="https://kerokero-1245.github.io/piyopiyo-sansu/"
-           aria-label="ケーキやさん（ぴよぴよさんすう）であそぶ">
-          <span class="f-glow" aria-hidden="true"></span>
-          <img class="f-emoji" src="assets/img/cake.svg" alt="" aria-hidden="true" draggable="false">
-          <span class="f-name">ケーキやさん</span>
-        </a>
-
-        <a class="facility fac--shop" id="facShop"
-           href="https://kerokero-1245.github.io/piyopiyo-kotoba/"
-           aria-label="やおやさん（ぴよぴよことば）であそぶ">
-          <span class="f-glow" aria-hidden="true"></span>
-          <img class="f-emoji" src="assets/img/ninjin.svg" alt="" aria-hidden="true" draggable="false">
-          <span class="f-name">やおやさん</span>
-        </a>
-      </div>
-
-      <!-- ぴよが ねる す（よるだけ みえる） -->
-      <div class="nest" aria-hidden="true"><img src="assets/img/su.svg" alt="" draggable="false"></div>
-
-      <!-- すすみ ドット -->
-      <div class="meter" id="meter" aria-hidden="true"></div>
-
-      <!-- ぴよ -->
-      <div class="piyo" id="piyo" role="button" tabindex="0" aria-label="ぴよ">
-        <span class="bubble" id="bubble" aria-hidden="true"></span>
-        <img class="p-crown" src="assets/img/oukan.svg" alt="" aria-hidden="true" draggable="false">
-        <img class="p-body" src="assets/img/piyo.svg" alt="" aria-hidden="true" draggable="false">
-        <img class="p-zzz" src="assets/img/zzz.svg" alt="" aria-hidden="true" draggable="false">
-      </div>
-
-      <!-- おいわいの かみふぶき -->
-      <div class="confetti" id="confetti" aria-hidden="true"></div>
-
-      <!-- よるの くらがり（タップで あさへ） -->
-      <div class="nightveil" id="nightveil" aria-hidden="true"></div>
-    </div>
-
-    <!-- ちいさな クレジット（音声の出典）。ページ最下部に ひかえめに -->
-    <footer class="credit"><span>こえ：VOICEVOX：ずんだもん／</span><span>BGM：オリジナル（Web Audio 生成）</span></footer>
-  </main>
-
-  <!-- BGM（オルゴール・ループ／piyo-assets 共通エンジン・同一オリジン同梱）。
-       songs.js（window.PIYO_SONGS）→ engine.js（window.PiyoBgm）の順。外部参照なし。 -->
-  <script src="assets/bgm/songs.js"></script>
-  <script src="assets/bgm/engine.js"></script>
-
-  <script>
-  (function () {
-    "use strict";
-
-    /* ── localStorage キー台帳（WORLD.md §7）。よむのは meiro/sansu/kotoba、
-       かくのは land.* だけ ── */
-    var IMG = 'assets/img/';   // シールポップSVGの ばしょ（同一オリジン・クロスオリジン参照なし）
-    var K = {
-      meiro:     'meiro.totalStars',
-      sansu:     'sansu.totalStars',
-      kotoba:    'kotoba.totalStars',
-      reached:   'land.reachedStage',
-      lastSeen:  'land.lastSeenStars',
-      night:     'land.lastNightDate',
-      lastPoint: 'land.lastPointed'
-    };
-
-    /* こわれた値・けつじょは かならず 0 あつかい（WORLD.md §3.2 / §7） */
-    function readNum(key) {
-      try {
-        var v = localStorage.getItem(key);
-        if (v == null) return 0;
-        var n = Number(v);
-        return (Number.isFinite(n) && n > 0) ? Math.floor(n) : 0;
-      } catch (e) { return 0; }
-    }
-    function readStr(key) {
-      try { return localStorage.getItem(key); } catch (e) { return null; }
-    }
-    function writeStr(key, val) {
-      try { localStorage.setItem(key, String(val)); } catch (e) {}
-    }
-
-    /* ── だんかい しきい値（WORLD.md §3.4・正典）──
-       ぞうぶん 2,2,3,4,5,5,6,7,8,8（ごうけい50） */
-    var THRESHOLDS = [0, 2, 4, 7, 11, 16, 21, 27, 34, 42, 50];
-    var MAX_STAGE = 10;
-
-    function stageForFuel(f) {
-      var s = 0;
-      for (var i = 0; i < THRESHOLDS.length; i++) {
-        if (f >= THRESHOLDS[i]) s = i; else break;
+      @media (orientation: landscape) and (max-height: 480px) {
+        .scene {
+          container-type: size;
+        } /* cqh＝シーンの たかさ（ひたいおうの ブラウザでは もとの おおきさの まま） */
+        .deco {
+          left: var(--lx, var(--x));
+          top: var(--ly, var(--y));
+        }
+        .deco.lg .deco-img {
+          max-width: calc(11cqh - 2px);
+          max-height: calc(11cqh - 2px);
+        }
       }
-      return Math.min(s, MAX_STAGE);
-    }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <div class="topbar">
+        <span class="brand"><span class="b-chick">🐥</span>ぴよぴよランド</span>
+        <div class="topbar-actions">
+          <button
+            class="bgm-btn"
+            id="bgmBtn"
+            type="button"
+            aria-label="BGMを ながす"
+            aria-pressed="true"
+          >
+            🔊
+          </button>
+          <button
+            class="moon-btn"
+            id="moonBtn"
+            type="button"
+            aria-label="おやすみ"
+          >
+            🌙
+          </button>
+        </div>
+      </div>
 
-    /* ── かざりの はいち（けっていてき・らんすう なし）──
+      <div class="scene" id="scene">
+        <div class="stars" id="stars" aria-hidden="true"></div>
+        <div class="ground" aria-hidden="true"></div>
+        <div class="path" id="path" aria-hidden="true"></div>
+
+        <!-- かざり（JSが いちを うめこむ） -->
+        <div class="deco-layer" id="decoLayer" aria-hidden="true"></div>
+
+        <!-- 3つの おおきな どうせん（しせつ＝ゲームの いりぐち。リンクさきURLは ふへん） -->
+        <div class="facilities" id="facilities">
+          <a
+            class="facility fac--park"
+            id="facPark"
+            href="https://kerokero-1245.github.io/otsukai-meiro/"
+            aria-label="こうえん（おつかいめいろ）であそぶ"
+          >
+            <span class="f-glow" aria-hidden="true"></span>
+            <img
+              class="f-emoji"
+              src="assets/img/ki.svg"
+              alt=""
+              aria-hidden="true"
+              draggable="false"
+            />
+            <span class="f-name">こうえん</span>
+          </a>
+
+          <a
+            class="facility fac--cake"
+            id="facCake"
+            href="https://kerokero-1245.github.io/piyopiyo-sansu/"
+            aria-label="ケーキやさん（ぴよぴよさんすう）であそぶ"
+          >
+            <span class="f-glow" aria-hidden="true"></span>
+            <img
+              class="f-emoji"
+              src="assets/img/cake.svg"
+              alt=""
+              aria-hidden="true"
+              draggable="false"
+            />
+            <span class="f-name">ケーキやさん</span>
+          </a>
+
+          <a
+            class="facility fac--shop"
+            id="facShop"
+            href="https://kerokero-1245.github.io/piyopiyo-kotoba/"
+            aria-label="やおやさん（ぴよぴよことば）であそぶ"
+          >
+            <span class="f-glow" aria-hidden="true"></span>
+            <img
+              class="f-emoji"
+              src="assets/img/ninjin.svg"
+              alt=""
+              aria-hidden="true"
+              draggable="false"
+            />
+            <span class="f-name">やおやさん</span>
+          </a>
+        </div>
+
+        <!-- ぴよが ねる す（よるだけ みえる） -->
+        <div class="nest" aria-hidden="true">
+          <img src="assets/img/su.svg" alt="" draggable="false" />
+        </div>
+
+        <!-- すすみ ドット -->
+        <div class="meter" id="meter" aria-hidden="true"></div>
+
+        <!-- ぴよ -->
+        <div
+          class="piyo"
+          id="piyo"
+          role="button"
+          tabindex="0"
+          aria-label="ぴよ"
+        >
+          <span class="bubble" id="bubble" aria-hidden="true"></span>
+          <img
+            class="p-crown"
+            src="assets/img/oukan.svg"
+            alt=""
+            aria-hidden="true"
+            draggable="false"
+          />
+          <img
+            class="p-body"
+            src="assets/img/piyo.svg"
+            alt=""
+            aria-hidden="true"
+            draggable="false"
+          />
+          <img
+            class="p-zzz"
+            src="assets/img/zzz.svg"
+            alt=""
+            aria-hidden="true"
+            draggable="false"
+          />
+        </div>
+
+        <!-- おいわいの かみふぶき -->
+        <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+        <!-- よるの くらがり（タップで あさへ） -->
+        <div class="nightveil" id="nightveil" aria-hidden="true"></div>
+      </div>
+
+      <!-- ちいさな クレジット（音声の出典）。ページ最下部に ひかえめに -->
+      <footer class="credit">
+        <span>こえ：VOICEVOX：ずんだもん／</span
+        ><span>BGM：オリジナル（Web Audio 生成）</span>
+      </footer>
+    </main>
+
+    <!-- BGM（オルゴール・ループ／piyo-assets 共通エンジン・同一オリジン同梱）。
+       songs.js（window.PIYO_SONGS）→ engine.js（window.PiyoBgm）の順。外部参照なし。 -->
+    <script src="assets/bgm/songs.js"></script>
+    <script src="assets/bgm/engine.js"></script>
+
+    <script>
+      (function () {
+        "use strict";
+
+        /* ── localStorage キー台帳（WORLD.md §7）。よむのは meiro/sansu/kotoba、
+       かくのは land.* だけ ── */
+        var IMG = "assets/img/"; // シールポップSVGの ばしょ（同一オリジン・クロスオリジン参照なし）
+        var K = {
+          meiro: "meiro.totalStars",
+          sansu: "sansu.totalStars",
+          kotoba: "kotoba.totalStars",
+          reached: "land.reachedStage",
+          lastSeen: "land.lastSeenStars",
+          night: "land.lastNightDate",
+          lastPoint: "land.lastPointed",
+        };
+
+        /* こわれた値・けつじょは かならず 0 あつかい（WORLD.md §3.2 / §7） */
+        function readNum(key) {
+          try {
+            var v = localStorage.getItem(key);
+            if (v == null) return 0;
+            var n = Number(v);
+            return Number.isFinite(n) && n > 0 ? Math.floor(n) : 0;
+          } catch (e) {
+            return 0;
+          }
+        }
+        function readStr(key) {
+          try {
+            return localStorage.getItem(key);
+          } catch (e) {
+            return null;
+          }
+        }
+        function writeStr(key, val) {
+          try {
+            localStorage.setItem(key, String(val));
+          } catch (e) {}
+        }
+
+        /* ── だんかい しきい値（WORLD.md §3.4・正典）──
+       ぞうぶん 2,2,3,4,5,5,6,7,8,8（ごうけい50） */
+        var THRESHOLDS = [0, 2, 4, 7, 11, 16, 21, 27, 34, 42, 50];
+        var MAX_STAGE = 10;
+
+        function stageForFuel(f) {
+          var s = 0;
+          for (var i = 0; i < THRESHOLDS.length; i++) {
+            if (f >= THRESHOLDS[i]) s = i;
+            else break;
+          }
+          return Math.min(s, MAX_STAGE);
+        }
+
+        /* ── かざりの はいち（けっていてき・らんすう なし）──
        st=だんかい, x/y=%（scene きじゅん）, s=絵文字サイズpx, cls=うごき
        p=[x,y] は たてもち（しせつ 2＋1）での おきば。ない ものは x/y の まま。
        l=[x,y] は よこ持ちスマホ（よこなが・せが 480px いか）での おきば。lg=じめんの かざり（カードの した の おびに はいる おおきさに ちぢむ）。
@@ -710,634 +1266,1002 @@
          wl=[x,y] せの たかい よこなが（せが 481〜767px。800×500・1280×720 など。カードの れつが 45〜52% から はじまる）
        しせつカードの うらに かくれない ばしょ：そら（カードより うえ）／カードの した／
        たてもちの 2れつめ（やおやさん）の りょうわき */
-    var DECOS = [
-      // だんかい1: くさ・はな
-      { st: 1, img: 'kusa',      e: '🌱', x: 8,  y: 90, s: 34, cls: 'sway', l: [8, 94.5], lg: 1 },
-      { st: 1, img: 'hana',      e: '🌼', x: 22, y: 94, s: 32, cls: 'sway', l: [17, 94.5], lg: 1 },
-      { st: 1, img: 'chuurippu', e: '🌷', x: 58, y: 94, s: 32, cls: 'sway', p: [62, 94], sp: [63.5, 94], l: [65, 94.5], lg: 1 },
-      { st: 1, img: 'kusa',      e: '🌱', x: 92, y: 90, s: 34, cls: 'sway', l: [92, 94.5], lg: 1 },
-      // だんかい2: なかまの ひよこ
-      { st: 2, img: 'hiyoko', e: '🐤', x: 38, y: 89, s: 42, cls: 'friend', sp: [35.5, 89], l: [35, 94.5], lg: 1, wl: [38, 92] },
-      // だんかい3: き・ベンチ
-      { st: 3, img: 'ki',     e: '🌳', x: 30, y: 47, s: 58, cls: 'sway', p: [14, 80], l: [22, 28], wl: [22, 32] },
-      { st: 3, img: 'benchi', e: '🪑', x: 88, y: 89, s: 44, cls: '', p: [88, 86], l: [83, 94.5], lg: 1, wl: [88, 92.5] },
-      // だんかい4: ちいさな いえ＋けむり
-      { st: 4, img: 'ie', e: '🏠', x: 70, y: 47, s: 58, cls: '', smoke: true, p: [86, 76], l: [72, 28], wl: [72, 32] },
-      // だんかい5: どうぶつ（みちは べつ）
-      { st: 5, img: 'usagi', e: '🐰', x: 26, y: 92, s: 38, cls: 'hop', l: [26, 94.5], lg: 1 },
-      // だんかい6: ふんすい
-      { st: 6, img: 'funsui', e: '⛲', x: 70, y: 90, s: 52, cls: '', l: [74, 94.5], lg: 1, wl: [70, 92.5] },
-      // だんかい7: ひろば（メリーゴーラウンド）
-      { st: 7, img: 'mokuba', e: '🎠', x: 86, y: 36, s: 60, cls: 'wob', p: [86, 27], sp: [87, 24], spc: 11, sq: [86, 60], l: [89, 24] },
-      // だんかい8: にじ・かざり
-      { st: 8, img: 'niji',      e: '🌈', x: 50, y: 24, s: 92, cls: 'rainbow', sp: [50, 21], spc: 15, sq: [59.5, 10], l: [50, 21] },
-      { st: 8, img: 'koinobori', e: '🎏', x: 86, y: 49, s: 44, cls: 'sway', p: [16, 70], l: [34, 32], wl: [34, 32] },
-      // だんかい9: かんらんしゃ
-      { st: 9, img: 'kanransha', e: '🎡', x: 12, y: 32, s: 72, cls: 'wob', p: [12, 26], sp: [13, 22], spc: 13, sq: [14, 59], l: [9, 22] },
-      // だんかい10: まつり（＋ぴよに👑）
-      { st: 10, img: 'hanabi', e: '🎆', x: 26, y: 12, s: 56, cls: 'spark' },
-      { st: 10, img: 'hanabi', e: '🎆', x: 74, y: 10, s: 56, cls: 'spark' }
-    ];
-    // つねに でている そらの ようす（だんかい0）。たいよう↔つきは よるで きりかわる
-    var BASE = [
-      { img: 'taiyou', e: '☀️', x: 14, y: 14, s: 52, cls: 'float sun' },
-      { img: 'tsuki',  e: '🌙', x: 14, y: 14, s: 46, cls: 'float moon' },
-      { img: 'kumo',   e: '☁️', x: 44, y: 11, s: 52, cls: 'float slow' },
-      { img: 'kumo',   e: '☁️', x: 76, y: 17, s: 44, cls: 'float' }
-    ];
+        var DECOS = [
+          // だんかい1: くさ・はな
+          {
+            st: 1,
+            img: "kusa",
+            e: "🌱",
+            x: 8,
+            y: 90,
+            s: 34,
+            cls: "sway",
+            l: [8, 94.5],
+            lg: 1,
+          },
+          {
+            st: 1,
+            img: "hana",
+            e: "🌼",
+            x: 22,
+            y: 94,
+            s: 32,
+            cls: "sway",
+            l: [17, 94.5],
+            lg: 1,
+          },
+          {
+            st: 1,
+            img: "chuurippu",
+            e: "🌷",
+            x: 58,
+            y: 94,
+            s: 32,
+            cls: "sway",
+            p: [62, 94],
+            sp: [63.5, 94],
+            l: [65, 94.5],
+            lg: 1,
+          },
+          {
+            st: 1,
+            img: "kusa",
+            e: "🌱",
+            x: 92,
+            y: 90,
+            s: 34,
+            cls: "sway",
+            l: [92, 94.5],
+            lg: 1,
+          },
+          // だんかい2: なかまの ひよこ
+          {
+            st: 2,
+            img: "hiyoko",
+            e: "🐤",
+            x: 38,
+            y: 89,
+            s: 42,
+            cls: "friend",
+            sp: [35.5, 89],
+            l: [35, 94.5],
+            lg: 1,
+            wl: [38, 92],
+          },
+          // だんかい3: き・ベンチ
+          {
+            st: 3,
+            img: "ki",
+            e: "🌳",
+            x: 30,
+            y: 47,
+            s: 58,
+            cls: "sway",
+            p: [14, 80],
+            l: [22, 28],
+            wl: [22, 32],
+          },
+          {
+            st: 3,
+            img: "benchi",
+            e: "🪑",
+            x: 88,
+            y: 89,
+            s: 44,
+            cls: "",
+            p: [88, 86],
+            l: [83, 94.5],
+            lg: 1,
+            wl: [88, 92.5],
+          },
+          // だんかい4: ちいさな いえ＋けむり
+          {
+            st: 4,
+            img: "ie",
+            e: "🏠",
+            x: 70,
+            y: 47,
+            s: 58,
+            cls: "",
+            smoke: true,
+            p: [86, 76],
+            l: [72, 28],
+            wl: [72, 32],
+          },
+          // だんかい5: どうぶつ（みちは べつ）
+          {
+            st: 5,
+            img: "usagi",
+            e: "🐰",
+            x: 26,
+            y: 92,
+            s: 38,
+            cls: "hop",
+            l: [26, 94.5],
+            lg: 1,
+          },
+          // だんかい6: ふんすい
+          {
+            st: 6,
+            img: "funsui",
+            e: "⛲",
+            x: 70,
+            y: 90,
+            s: 52,
+            cls: "",
+            l: [74, 94.5],
+            lg: 1,
+            wl: [70, 92.5],
+          },
+          // だんかい7: ひろば（メリーゴーラウンド）
+          {
+            st: 7,
+            img: "mokuba",
+            e: "🎠",
+            x: 86,
+            y: 36,
+            s: 60,
+            cls: "wob",
+            p: [86, 27],
+            sp: [87, 24],
+            spc: 11,
+            sq: [86, 60],
+            l: [89, 24],
+          },
+          // だんかい8: にじ・かざり
+          {
+            st: 8,
+            img: "niji",
+            e: "🌈",
+            x: 50,
+            y: 24,
+            s: 92,
+            cls: "rainbow",
+            sp: [50, 21],
+            spc: 15,
+            sq: [59.5, 10],
+            l: [50, 21],
+          },
+          {
+            st: 8,
+            img: "koinobori",
+            e: "🎏",
+            x: 86,
+            y: 49,
+            s: 44,
+            cls: "sway",
+            p: [16, 70],
+            l: [34, 32],
+            wl: [34, 32],
+          },
+          // だんかい9: かんらんしゃ
+          {
+            st: 9,
+            img: "kanransha",
+            e: "🎡",
+            x: 12,
+            y: 32,
+            s: 72,
+            cls: "wob",
+            p: [12, 26],
+            sp: [13, 22],
+            spc: 13,
+            sq: [14, 59],
+            l: [9, 22],
+          },
+          // だんかい10: まつり（＋ぴよに👑）
+          { st: 10, img: "hanabi", e: "🎆", x: 26, y: 12, s: 56, cls: "spark" },
+          { st: 10, img: "hanabi", e: "🎆", x: 74, y: 10, s: 56, cls: "spark" },
+        ];
+        // つねに でている そらの ようす（だんかい0）。たいよう↔つきは よるで きりかわる
+        var BASE = [
+          { img: "taiyou", e: "☀️", x: 14, y: 14, s: 52, cls: "float sun" },
+          { img: "tsuki", e: "🌙", x: 14, y: 14, s: 46, cls: "float moon" },
+          { img: "kumo", e: "☁️", x: 44, y: 11, s: 52, cls: "float slow" },
+          { img: "kumo", e: "☁️", x: 76, y: 17, s: 44, cls: "float" },
+        ];
 
-    /* ── ぴよの ひとこと（WORLD.md §3.6・ひらがな みじかく やわらかく）── */
-    var SAY_TAP  = ['おはよー', 'みてみて！', 'たのしいね', 'えへへ', 'わーい', 'あそぼ！', 'げんき？'];
-    var SAY_GROW = 'わー ふえた！';
-    var SAY_POINT = 'こっちこっち';
-    var SAY_NEAR = 'もうすこし';
-    var SAY_MORNING = 'おはよー';
-    var SAY_NIGHT = 'またあしたね';
-    var SAY_SLEEPY = 'ねむいなあ';
+        /* ── ぴよの ひとこと（WORLD.md §3.6・ひらがな みじかく やわらかく）── */
+        var SAY_TAP = [
+          "おはよー",
+          "みてみて！",
+          "たのしいね",
+          "えへへ",
+          "わーい",
+          "あそぼ！",
+          "げんき？",
+        ];
+        var SAY_GROW = "わー ふえた！";
+        var SAY_POINT = "こっちこっち";
+        var SAY_NEAR = "もうすこし";
+        var SAY_MORNING = "おはよー";
+        var SAY_NIGHT = "またあしたね";
+        var SAY_SLEEPY = "ねむいなあ";
 
-    /* ── DOM ── */
-    var scene    = document.getElementById('scene');
-    var decoLayer= document.getElementById('decoLayer');
-    var piyo     = document.getElementById('piyo');
-    var bubble   = document.getElementById('bubble');
-    var meterEl  = document.getElementById('meter');
-    var pathEl   = document.getElementById('path');
-    var starsEl  = document.getElementById('stars');
-    var confetti = document.getElementById('confetti');
-    var moonBtn  = document.getElementById('moonBtn');
-    var bgmBtn   = document.getElementById('bgmBtn');
-    var nightveil= document.getElementById('nightveil');
-    var facPark  = document.getElementById('facPark');
-    var facCake  = document.getElementById('facCake');
-    var facShop  = document.getElementById('facShop');
-    var FAC = { park: facPark, cake: facCake, shop: facShop };
+        /* ── DOM ── */
+        var scene = document.getElementById("scene");
+        var decoLayer = document.getElementById("decoLayer");
+        var piyo = document.getElementById("piyo");
+        var bubble = document.getElementById("bubble");
+        var meterEl = document.getElementById("meter");
+        var pathEl = document.getElementById("path");
+        var starsEl = document.getElementById("stars");
+        var confetti = document.getElementById("confetti");
+        var moonBtn = document.getElementById("moonBtn");
+        var bgmBtn = document.getElementById("bgmBtn");
+        var nightveil = document.getElementById("nightveil");
+        var facPark = document.getElementById("facPark");
+        var facCake = document.getElementById("facCake");
+        var facShop = document.getElementById("facShop");
+        var FAC = { park: facPark, cake: facCake, shop: facShop };
 
-    /* ── ぴよの ひょうじょう（3態のみ・WORLD.md §1.4）──
+        /* ── ぴよの ひょうじょう（3態のみ・WORLD.md §1.4）──
        つうじょう piyo / よろこび piyo-yorokobi / ねむい piyo-nemui。
        <img>の src を さしかえるだけ。うごき・ロジックは 不変。SVGが なくても クラッシュしない */
-    var pBody = piyo.querySelector('.p-body');
-    function setPiyoFace(name) {
-      try { if (pBody && pBody.tagName === 'IMG') pBody.src = IMG + name + '.svg'; } catch (e) {}
-    }
+        var pBody = piyo.querySelector(".p-body");
+        function setPiyoFace(name) {
+          try {
+            if (pBody && pBody.tagName === "IMG")
+              pBody.src = IMG + name + ".svg";
+          } catch (e) {}
+        }
 
-    /* ── おと（Web Audio・みじかく やさしく・にん意）── */
-    var actx = null;
-    var suppressTapSfx = false;   // 初回タップ：タイトルよみあげと タップ音が かさならないように
-    // 効果音・声・BGM で 1つの AudioContext を共有する（ユーザー操作起点で ようい・resume）。
-    function ensureActx() {
-      try {
-        if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
-        if (actx && actx.state === 'suspended') actx.resume();
-      } catch (e) {}
-      return actx;
-    }
-    function tone(freq, dur, type, gain) {
-      try {
-        if (!ensureActx()) return;
-        var o = actx.createOscillator(), g = actx.createGain();
-        o.type = type || 'sine'; o.frequency.value = freq;
-        var t = actx.currentTime, gv = (gain == null ? 0.05 : gain);
-        g.gain.setValueAtTime(gv, t);
-        g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-        o.connect(g); g.connect(actx.destination);
-        o.start(t); o.stop(t + dur + 0.02);
-      } catch (e) {}
-    }
-    function sndTap()   { if (suppressTapSfx) return; tone(660, 0.12, 'sine', 0.05); }
-    function sndGo()    { if (suppressTapSfx) return; tone(520, 0.09, 'triangle', 0.05); setTimeout(function(){ tone(780, 0.12, 'triangle', 0.05); }, 90); }
-    function sndGrow()  { [523, 659, 784, 1047].forEach(function (f, i) { setTimeout(function(){ tone(f, 0.16, 'triangle', 0.05); }, i * 120); }); }
-    function sndSleep() { tone(440, 0.3, 'sine', 0.045); setTimeout(function(){ tone(294, 0.5, 'sine', 0.04); }, 260); }
+        /* ── おと（Web Audio・みじかく やさしく・にん意）── */
+        var actx = null;
+        var suppressTapSfx = false; // 初回タップ：タイトルよみあげと タップ音が かさならないように
+        // 効果音・声・BGM で 1つの AudioContext を共有する（ユーザー操作起点で ようい・resume）。
+        function ensureActx() {
+          try {
+            if (!actx)
+              actx = new (window.AudioContext || window.webkitAudioContext)();
+            if (actx && actx.state === "suspended") actx.resume();
+          } catch (e) {}
+          return actx;
+        }
+        function tone(freq, dur, type, gain) {
+          try {
+            if (!ensureActx()) return;
+            var o = actx.createOscillator(),
+              g = actx.createGain();
+            o.type = type || "sine";
+            o.frequency.value = freq;
+            var t = actx.currentTime,
+              gv = gain == null ? 0.05 : gain;
+            g.gain.setValueAtTime(gv, t);
+            g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+            o.connect(g);
+            g.connect(actx.destination);
+            o.start(t);
+            o.stop(t + dur + 0.02);
+          } catch (e) {}
+        }
+        function sndTap() {
+          if (suppressTapSfx) return;
+          tone(660, 0.12, "sine", 0.05);
+        }
+        function sndGo() {
+          if (suppressTapSfx) return;
+          tone(520, 0.09, "triangle", 0.05);
+          setTimeout(function () {
+            tone(780, 0.12, "triangle", 0.05);
+          }, 90);
+        }
+        function sndGrow() {
+          [523, 659, 784, 1047].forEach(function (f, i) {
+            setTimeout(function () {
+              tone(f, 0.16, "triangle", 0.05);
+            }, i * 120);
+          });
+        }
+        function sndSleep() {
+          tone(440, 0.3, "sine", 0.045);
+          setTimeout(function () {
+            tone(294, 0.5, "sine", 0.04);
+          }, 260);
+        }
 
-    /* ── BGM（オルゴール・16小節シームレスループ・初期ON・ひかえめ音量）──
+        /* ── BGM（オルゴール・16小節シームレスループ・初期ON・ひかえめ音量）──
        piyo-assets 共通エンジン（assets/bgm/engine.js＋songs.js の land 1曲）。
        声・効果音と おなじ AudioContext を共有（getCtx で actx を注入）。
        AudioContext 非対応・スクリプト未読込・localStorage 例外でも 無害（no-op・クラッシュ厳禁）。 */
-    var BGM_KEY = 'land.bgm';           // トグルの保存キー（WORLD.md §7・既定ON）
-    function bgmEnabledStored() {
-      try { return localStorage.getItem(BGM_KEY) !== '0'; }  // 未設定・壊れ値も ON
-      catch (e) { return true; }
-    }
-    var bgmReal = false;                // 共有エンジンが よみこめたか（no-op 保険と くべつ）
-    var bgm = (function () {
-      try {
-        if (window.PiyoBgm && typeof window.PiyoBgm.createEngine === 'function') {
-          // ctx 注入で 声・効果音と 同一 AudioContext を共有（別 ctx 乱立を さける）
-          var eng = window.PiyoBgm.createEngine({ getCtx: function () { return actx; } });
-          bgmReal = true;
-          return eng;
+        var BGM_KEY = "land.bgm"; // トグルの保存キー（WORLD.md §7・既定ON）
+        function bgmEnabledStored() {
+          try {
+            return localStorage.getItem(BGM_KEY) !== "0";
+          } catch (e) {
+            // 未設定・壊れ値も ON
+            return true;
+          }
         }
-      } catch (e) {}
-      // スクリプト未読込などの保険（すべて no-op）
-      return {
-        startBgm: function () {}, stopBgm: function () {},
-        setBgmEnabled: function () {}, isBgmEnabled: function () { return false; },
-        duckBgm: function () {}, unduckBgm: function () {},
-        getBgmState: function () { return { supported: false }; }
-      };
-    })();
-    // 検証・デバッグ用ハンドル（getBgmState 等の確認に使う。データは持たない・無害）
-    try { window.PIYO_BGM = bgm; } catch (e) {}
-    function bgmDuck()   { try { bgm.duckBgm(); }   catch (e) {} }
-    function bgmUnduck() { try { bgm.unduckBgm(); } catch (e) {} }
-    // ON/OFF の のぞみ（チップと localStorage の値）。よるの あいだに ON に されても、
-    // エンジンへは あさに もどる ときまで つたえない（よるは BGM を さいかいしない＝WORLD.md §5.1）。
-    var bgmWant = bgmEnabledStored();
-    // 最初のユーザー操作で BGM を開始（冪等・OFFなら鳴らさない・よるは鳴らさない）。ctx を用意してから start。
-    function startBgmSafe() {
-      try {
-        ensureActx();
-        if (isNight) return;
-        bgm.setBgmEnabled(bgmWant);
-        bgm.startBgm('land');
-      } catch (e) {}
-    }
-    // 起動時の ON/OFF を localStorage から反映（既定ON）。この時点では まだ鳴らさない（ジェスチャ待ち）。
-    try { bgm.setBgmEnabled(bgmWant); } catch (e) {}
+        var bgmReal = false; // 共有エンジンが よみこめたか（no-op 保険と くべつ）
+        var bgm = (function () {
+          try {
+            if (
+              window.PiyoBgm &&
+              typeof window.PiyoBgm.createEngine === "function"
+            ) {
+              // ctx 注入で 声・効果音と 同一 AudioContext を共有（別 ctx 乱立を さける）
+              var eng = window.PiyoBgm.createEngine({
+                getCtx: function () {
+                  return actx;
+                },
+              });
+              bgmReal = true;
+              return eng;
+            }
+          } catch (e) {}
+          // スクリプト未読込などの保険（すべて no-op）
+          return {
+            startBgm: function () {},
+            stopBgm: function () {},
+            setBgmEnabled: function () {},
+            isBgmEnabled: function () {
+              return false;
+            },
+            duckBgm: function () {},
+            unduckBgm: function () {},
+            getBgmState: function () {
+              return { supported: false };
+            },
+          };
+        })();
+        // 検証・デバッグ用ハンドル（getBgmState 等の確認に使う。データは持たない・無害）
+        try {
+          window.PIYO_BGM = bgm;
+        } catch (e) {}
+        function bgmDuck() {
+          try {
+            bgm.duckBgm();
+          } catch (e) {}
+        }
+        function bgmUnduck() {
+          try {
+            bgm.unduckBgm();
+          } catch (e) {}
+        }
+        // ON/OFF の のぞみ（チップと localStorage の値）。よるの あいだに ON に されても、
+        // エンジンへは あさに もどる ときまで つたえない（よるは BGM を さいかいしない＝WORLD.md §5.1）。
+        var bgmWant = bgmEnabledStored();
+        // 最初のユーザー操作で BGM を開始（冪等・OFFなら鳴らさない・よるは鳴らさない）。ctx を用意してから start。
+        function startBgmSafe() {
+          try {
+            ensureActx();
+            if (isNight) return;
+            bgm.setBgmEnabled(bgmWant);
+            bgm.startBgm("land");
+          } catch (e) {}
+        }
+        // 起動時の ON/OFF を localStorage から反映（既定ON）。この時点では まだ鳴らさない（ジェスチャ待ち）。
+        try {
+          bgm.setBgmEnabled(bgmWant);
+        } catch (e) {}
 
-    // BGM チップ（🔊/🔇）の みための こうしん
-    function renderBgmBtn() {
-      if (!bgmBtn) return;
-      var on = bgmReal && bgmWant;
-      bgmBtn.textContent = on ? '🔊' : '🔇';
-      bgmBtn.classList.toggle('off', !on);
-      bgmBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
-      bgmBtn.setAttribute('aria-label', on ? 'BGMを ながす' : 'BGMを ながさない');
-    }
+        // BGM チップ（🔊/🔇）の みための こうしん
+        function renderBgmBtn() {
+          if (!bgmBtn) return;
+          var on = bgmReal && bgmWant;
+          bgmBtn.textContent = on ? "🔊" : "🔇";
+          bgmBtn.classList.toggle("off", !on);
+          bgmBtn.setAttribute("aria-pressed", on ? "true" : "false");
+          bgmBtn.setAttribute(
+            "aria-label",
+            on ? "BGMを ながす" : "BGMを ながさない",
+          );
+        }
 
-    /* ── タイトル よみあげ（VOICEVOX ずんだもん・初回タップで 1セッション1回）──
+        /* ── タイトル よみあげ（VOICEVOX ずんだもん・初回タップで 1セッション1回）──
        ①同梱クリップ assets/voice/piyopiyo-land.m4a を Audio() で再生。
        ②再生できなければ speechSynthesis（日本語）。③それも無ければ 無音。
        ブラウザの自動再生制限に合わせ、かならず ユーザー操作起点。クラッシュ厳禁。 */
-    var TITLE_CLIP = 'assets/voice/piyopiyo-land.m4a';
-    var SESS_TITLE = 'land.titleVoicePlayed';
-    var titleAudio = null;
-    function titleAlreadyPlayed() {
-      try { return sessionStorage.getItem(SESS_TITLE) === '1'; } catch (e) { return false; }
-    }
-    function markTitlePlayed() {
-      try { sessionStorage.setItem(SESS_TITLE, '1'); } catch (e) {}
-    }
-    // onDone: 読み上げ終了（成功・失敗・非対応いずれも）で 1回だけ呼ぶ。BGM の復帰に使う。
-    function speakTitleTTS(onDone) {
-      try {
-        var ss = window.speechSynthesis;
-        if (!ss || typeof window.SpeechSynthesisUtterance !== 'function') { if (onDone) onDone(); return; }
-        var u = new window.SpeechSynthesisUtterance('ぴよぴよランド');
-        u.lang = 'ja-JP'; u.rate = 0.95; u.pitch = 1.2; u.volume = 1;
-        if (onDone) { u.onend = onDone; u.onerror = onDone; }
-        ss.cancel();
-        ss.speak(u);
-      } catch (e) { if (onDone) onDone(); }
-    }
-    // 初回だけ true を かえす（＝タイトルを 鳴らした）。以降・失敗しても false。
-    // 読み上げの あいだは BGM をダッキング（duckBgm）、終わったら unduckBgm（多段でも 1回だけ復帰）。
-    function playTitleVoice() {
-      if (titleAlreadyPlayed()) return false;
-      markTitlePlayed();
-      bgmDuck();                                   // 声のあいだ BGM を さげる
-      var restored = false;
-      function restore() { if (restored) return; restored = true; bgmUnduck(); }
-      setTimeout(restore, 10000);                  // 保険：万一 ended が来なくても 必ず復帰
-      var fellBack = false;
-      function fallback() {
-        if (fellBack) return; fellBack = true;
-        speakTitleTTS(restore);                    // TTS 中も ダッキング維持し、終わったら復帰
-      }
-      try {
-        titleAudio = new Audio(TITLE_CLIP);
-        titleAudio.addEventListener('ended', restore);    // クリップ再生おわり → BGM もどす
-        titleAudio.addEventListener('error', fallback);   // 未同梱・404 → speechSynthesis へ
-        var p = titleAudio.play();
-        if (p && typeof p.catch === 'function') { p.catch(function () { fallback(); }); }
-      } catch (e) { fallback(); }
-      return true;
-    }
-
-    /* ── ほしを うめこむ（けっていてき・らんすう なし）── */
-    var STAR_POS = [
-      [10,10],[22,20],[34,8],[46,16],[58,7],[70,18],[82,9],[90,22],
-      [16,30],[28,38],[40,28],[52,34],[64,26],[76,34],[88,40],[6,24]
-    ];
-    STAR_POS.forEach(function (p) {
-      var d = document.createElement('div');
-      d.className = 'star';
-      d.style.left = p[0] + '%';
-      d.style.top = p[1] + '%';
-      d.style.animationDelay = ((p[0] + p[1]) % 30) / 10 + 's';
-      starsEl.appendChild(d);
-    });
-
-    /* ── かざりを つくる ── */
-    function makeDeco(cfg, isBase) {
-      var el = document.createElement('div');
-      el.className = 'deco' + (cfg.cls ? ' ' + cfg.cls : '');
-      el.style.setProperty('--x', cfg.x + '%');
-      el.style.setProperty('--y', cfg.y + '%');
-      if (cfg.p) {
-        el.style.setProperty('--px', cfg.p[0] + '%');
-        el.style.setProperty('--py', cfg.p[1] + '%');
-      }
-      if (cfg.l) {
-        el.style.setProperty('--lx', cfg.l[0] + '%');
-        el.style.setProperty('--ly', cfg.l[1] + '%');
-      }
-      ['sp', 'sq', 'wl'].forEach(function (k) {
-        if (!cfg[k]) return;
-        el.style.setProperty('--' + k + 'x', cfg[k][0] + '%');
-        el.style.setProperty('--' + k + 'y', cfg[k][1] + '%');
-      });
-      if (cfg.spc) el.style.setProperty('--spc', String(cfg.spc));
-      if (cfg.lg) el.classList.add('lg');
-      if (cfg.img) {
-        // シールポップSVGを <img> で。よみこみ失敗（404等）なら 絵文字に フォールバック
-        var im = document.createElement('img');
-        im.className = 'deco-img';
-        im.src = IMG + cfg.img + '.svg';
-        im.width = cfg.s; im.height = cfg.s;
-        im.alt = ''; im.draggable = false; im.setAttribute('aria-hidden', 'true');
-        im.onerror = function () {
-          var t = document.createTextNode(cfg.e || '');
-          el.style.fontSize = cfg.s + 'px';
-          im.replaceWith(t);
-        };
-        el.appendChild(im);
-      } else {
-        el.style.fontSize = cfg.s + 'px';
-        el.textContent = cfg.e;
-      }
-      if (cfg.smoke) {
-        var sm = document.createElement('span');
-        sm.className = 'smoke';
-        var smi = document.createElement('img');
-        smi.className = 'deco-img';
-        smi.src = IMG + 'kemuri.svg';
-        smi.width = Math.round(cfg.s * 0.55); smi.height = Math.round(cfg.s * 0.55);
-        smi.alt = ''; smi.draggable = false; smi.setAttribute('aria-hidden', 'true');
-        smi.onerror = function () { smi.replaceWith(document.createTextNode('💨')); sm.style.fontSize = '0.5em'; };
-        sm.appendChild(smi);
-        el.appendChild(sm);
-      }
-      if (isBase) el.dataset.stage = '0';
-      else el.dataset.stage = String(cfg.st);
-      decoLayer.appendChild(el);
-      return el;
-    }
-    var decoEls = [];
-    BASE.forEach(function (c) { makeDeco(c, true).classList.add('on'); });
-    DECOS.forEach(function (c) { decoEls.push({ st: c.st, el: makeDeco(c, false) }); });
-
-    /* ── ぴよの ひとこと ── */
-    var bubbleTimer = null;
-    function say(text, ms) {
-      if (!text) return;
-      bubble.textContent = text;
-      bubble.classList.add('show');
-      if (bubbleTimer) clearTimeout(bubbleTimer);
-      bubbleTimer = setTimeout(function () { bubble.classList.remove('show'); }, ms || 1800);
-    }
-    function piyoHop() {
-      piyo.classList.remove('hop'); void piyo.offsetWidth; piyo.classList.add('hop');
-    }
-    function piyoCheer() {
-      piyo.classList.remove('cheer'); void piyo.offsetWidth; piyo.classList.add('cheer');
-    }
-
-    /* ── かみふぶき（まちが そだった おいわい）── */
-    function burstConfetti() {
-      var marks = ['⭐', '✨', '🌟'];
-      for (var i = 0; i < 16; i++) {
-        var s = document.createElement('span');
-        s.textContent = marks[i % marks.length];
-        s.style.left = (5 + Math.floor((i / 16) * 90) + (i % 3) * 3) + '%';
-        s.style.animationDelay = (i % 8) * 0.12 + 's';
-        s.style.fontSize = (18 + (i % 3) * 6) + 'px';
-        confetti.appendChild(s);
-      }
-      setTimeout(function () { confetti.innerHTML = ''; }, 3200);
-    }
-
-    /* ── すすみ ドット（つぎの へんかまで・さいだい5・かず よませない）── */
-    function renderMeter(displayStage, fuel) {
-      meterEl.innerHTML = '';
-      // さいだいだんかい：まちは かんせい。ドットは ださない（👑は ぴよの あたまに）
-      if (displayStage >= MAX_STAGE) return;
-      var lo = THRESHOLDS[displayStage];
-      var hi = THRESHOLDS[displayStage + 1];
-      var prog = hi > lo ? (fuel - lo) / (hi - lo) : 0;
-      if (prog < 0) prog = 0; if (prog > 1) prog = 1;
-      var filled = Math.round(prog * 5);
-      for (var i = 0; i < 5; i++) {
-        var d = document.createElement('span');
-        d.className = 'dot' + (i < filled ? ' f' : '');
-        meterEl.appendChild(d);
-      }
-    }
-
-    /* ── まちを えがく（reachedStage は たんちょう ぞうか＝たいこう禁止）── */
-    function paint() {
-      var meiro = readNum(K.meiro);
-      var sansu = readNum(K.sansu);
-      var kotoba = readNum(K.kotoba);
-      var fuel = meiro + sansu + kotoba;
-
-      var reachedPrev = readNum(K.reached);         // まえに ひらいていた だんかい
-      var byFuel = stageForFuel(fuel);
-      var displayStage = Math.max(reachedPrev, byFuel); // たいこう禁止：さがっても もどさない
-
-      // かざりの ひょうじ。まえに ひらいていた だんかい（reachedPrev）までは さいしょから みせる。
-      // こんかい あたらしく あいた ぶんは かくした まま はじめ、celebrate() が .on と .grow を
-      // いっしょに つけて ぽん と 1かいだけ だす（さきに みえてから ぽんで きえて でなおす ちらつきを ふせぐ）
-      decoEls.forEach(function (d) {
-        if (d.st <= reachedPrev) d.el.classList.add('on');
-        else d.el.classList.remove('on');
-      });
-      if (displayStage >= 5) pathEl.classList.add('on'); else pathEl.classList.remove('on');
-      // 👑の つけはずしで ぴよの たかさが かわる（よこなが）。よみこみ直後に すべって みえないよう いどうなしで
-      var piyoTr = piyo.style.transition;
-      piyo.style.transition = 'none';
-      if (displayStage >= MAX_STAGE) piyo.classList.add('king'); else piyo.classList.remove('king');
-      void piyo.offsetWidth;
-      piyo.style.transition = piyoTr;
-
-      renderMeter(displayStage, fuel);
-
-      // ほぞん（land.* のみ）
-      writeStr(K.reached, displayStage);
-      writeStr(K.lastSeen, fuel);
-
-      return { fuel: fuel, meiro: meiro, sansu: sansu, kotoba: kotoba,
-               displayStage: displayStage, reachedPrev: reachedPrev };
-    }
-
-    /* ── まちが そだった えんしゅつ（WORLD.md §3.5・またいだ ときだけ 1かい）── */
-    function celebrate(fromStage, toStage) {
-      // あたらしく あいた だんかいだけ .on と .grow を いっしょに つけて ぽん（paint() では かくした まま）。
-      // .on の フェード（transition）が ぽんの うえに かさならないよう、つける あいだだけ transition を きる。
-      // うごきを へらす せっていでは ぽんが ないので、ふつうに .on の フェードで でる
-      var reduceMotion = false;
-      try { reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
-      decoEls.forEach(function (d) {
-        if (d.st > fromStage && d.st <= toStage) {
-          var el = d.el;
-          el.classList.remove('grow');
-          if (!reduceMotion) el.style.transition = 'none';
-          el.classList.add('on');
-          el.classList.add('grow');
-          void el.offsetWidth;
-          el.style.transition = '';
-        }
-      });
-      // ぽんが おわったら .grow を はずして いつもの うごき（ゆらゆら等）へ。
-      // にじ（rbfade＝うすく でる）は もう いちど でなおさないよう .grown で うすさだけ そろえる
-      setTimeout(function () {
-        decoEls.forEach(function (d) {
-          if (!d.el.classList.contains('grow')) return;
-          if (d.el.classList.contains('rainbow')) d.el.classList.add('grown');
-          d.el.classList.remove('grow');
-        });
-      }, 750);
-      piyoCheer();
-      setPiyoFace('piyo-yorokobi');
-      setTimeout(function () {
-        if (!isNight && !piyo.classList.contains('sleep')) setPiyoFace('piyo');
-      }, 1100);
-      say(SAY_GROW, 2400);
-      burstConfetti();
-      sndGrow();
-    }
-
-    /* ── ぴよの ゆうどう（ひかえめ・いちどに ひとつだけ・WORLD.md §2.1）──
-       ⭐が いちばん すくない しせつを さす。ならんだら まえと ちがう しせつへ ── */
-    function pointTarget(vals) {
-      // vals: [{id:'park',v:meiro},{id:'cake',v:sansu},{id:'shop',v:kotoba}]
-      var min = vals[0].v;
-      for (var i = 1; i < vals.length; i++) if (vals[i].v < min) min = vals[i].v;
-      var cands = [];
-      for (var j = 0; j < vals.length; j++) if (vals[j].v === min) cands.push(vals[j].id);
-      var target;
-      if (cands.length === 1) {
-        target = cands[0];                         // すくない しせつが 1つ＝そこを さす
-      } else {
-        var last = readStr(K.lastPoint);           // ならんだ＝まえと ちがう しせつへ ローテーション
-        var idx = cands.indexOf(last);
-        target = (idx === -1) ? cands[0] : cands[(idx + 1) % cands.length];
-      }
-      writeStr(K.lastPoint, target);
-      return target;
-    }
-    /* しせつの よこ位置（scene基準%）を じっそくして かえす。
-       レイアウト（2＋1／よこ3れつ）が かわっても ぴよが ただしく さす */
-    function facCenterPct(card) {
-      try {
-        var sr = scene.getBoundingClientRect();
-        var cr = card.getBoundingClientRect();
-        if (!sr.width) return 50;
-        var cx = (cr.left + cr.width / 2 - sr.left) / sr.width * 100;
-        return Math.max(14, Math.min(86, cx));
-      } catch (e) { return 50; }
-    }
-    /* ぴよの よこ位置（scene基準%）。みぎはんぶんに いる ときは ふきだしを ひだりがわに だす */
-    function setPiyoX(pct) {
-      piyo.style.left = pct + '%';
-      piyo.classList.toggle('bub-l', pct > 55);
-    }
-    var pointTimer = null;
-    function clearPoint() {
-      facPark.classList.remove('point');
-      facCake.classList.remove('point');
-      facShop.classList.remove('point');
-    }
-    function doPoint(state) {
-      if (isNight) return;
-      var t = pointTarget([
-        { id: 'park', v: state.meiro },
-        { id: 'cake', v: state.sansu },
-        { id: 'shop', v: state.kotoba }
-      ]);
-      var card = FAC[t] || facPark;
-      clearPoint();
-      card.classList.add('point');
-      // ぴよが その しせつの ほうへ ちょっと よる（じっそくした よこ位置へ）
-      setPiyoX(facCenterPct(card));
-      piyoHop();
-
-      // つぎの へんかまで あと すこしなら「もうすこし」、ふだんは「こっちこっち」
-      var near = state.displayStage < MAX_STAGE &&
-                 (THRESHOLDS[state.displayStage + 1] - state.fuel) <= 2 &&
-                 (THRESHOLDS[state.displayStage + 1] - state.fuel) > 0;
-      say(near ? SAY_NEAR : SAY_POINT, 1800);
-
-      setTimeout(function () {
-        clearPoint();
-        setPiyoX(50);
-      }, 2400);
-    }
-
-    /* ── アイドル：たまに ゆうどう（そうさが ないとき）── */
-    var idleTimer = null;
-    var lastAct = Date.now();
-    function scheduleIdle(state) {
-      if (idleTimer) clearTimeout(idleTimer);
-      idleTimer = setTimeout(function tick() {
-        if (!isNight && Date.now() - lastAct > 9000) {
-          doPoint(state);
-        }
-        idleTimer = setTimeout(tick, 15000);
-      }, 15000);
-    }
-    function noteAct() { lastAct = Date.now(); }
-
-    /* ── よる モード（WORLD.md §5・こていシーケンス）── */
-    var isNight = false;
-    var nightTimers = [];
-    function clearNightTimers() { nightTimers.forEach(clearTimeout); nightTimers = []; }
-
-    function goNight() {
-      if (isNight) return;
-      isNight = true;
-      clearPoint();
-      if (idleTimer) clearTimeout(idleTimer);
-      bubble.classList.remove('show');
-      // 1) そらが よるへ・ほしが つく
-      scene.classList.add('night');
-      writeStr(K.night, todayStr());
-      sndSleep();
-      bgm.stopBgm(2);                 // BGM は 2秒かけて しずかにフェードアウト（おやすみ）
-      // 2) ぴよが すへ トコトコ
-      nightTimers.push(setTimeout(function () {
-        setPiyoX(50);
-        piyo.classList.add('to-nest');
-      }, 1200));
-      // 3) まるまって💤・「またあしたね」
-      nightTimers.push(setTimeout(function () {
-        piyo.classList.add('sleep');
-        setPiyoFace('piyo-nemui');
-        say(SAY_NIGHT, 6000);
-      }, 2500));
-      // 4) しずかに くらく（タップで すぐ あさへ）
-      nightTimers.push(setTimeout(function () {
-        scene.classList.add('slept');
-      }, 4000));
-    }
-
-    function goMorning() {
-      if (!isNight) return;
-      isNight = false;
-      clearNightTimers();
-      scene.classList.remove('night');
-      scene.classList.remove('slept');
-      piyo.classList.remove('sleep');
-      setPiyoFace('piyo');
-      piyo.classList.remove('to-nest');
-      setPiyoX(50);
-      say(SAY_MORNING, 1600);
-      piyoHop();
-      startBgmSafe();                 // あさに もどったら BGM 再開（このジェスチャ文脈で・OFFなら鳴らない）
-      noteAct();
-      scheduleIdle(currentState);
-    }
-
-    function todayStr() {
-      var d = new Date();
-      function p2(n) { return (n < 10 ? '0' : '') + n; }
-      return d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate());   // YYYY-MM-DD（WORLD.md §7）
-    }
-
-    /* ── そうさ カウント（ながく あそんだら やさしく あくび・WORLD.md §5）── */
-    var actCount = 0;
-    function bumpAct() {
-      noteAct();
-      actCount++;
-      if (actCount === 42 && !isNight) {
-        setTimeout(function () {
-          if (!isNight && !piyo.classList.contains('sleep')) {
-            say(SAY_SLEEPY, 1800);
-            setPiyoFace('piyo-nemui');
-            setTimeout(function () {
-              if (!isNight && !piyo.classList.contains('sleep')) setPiyoFace('piyo');
-            }, 2000);
+        var TITLE_CLIP = "assets/voice/piyopiyo-land.m4a";
+        var SESS_TITLE = "land.titleVoicePlayed";
+        var titleAudio = null;
+        function titleAlreadyPlayed() {
+          try {
+            return sessionStorage.getItem(SESS_TITLE) === "1";
+          } catch (e) {
+            return false;
           }
-        }, 800);
-      }
-    }
+        }
+        function markTitlePlayed() {
+          try {
+            sessionStorage.setItem(SESS_TITLE, "1");
+          } catch (e) {}
+        }
+        // onDone: 読み上げ終了（成功・失敗・非対応いずれも）で 1回だけ呼ぶ。BGM の復帰に使う。
+        function speakTitleTTS(onDone) {
+          try {
+            var ss = window.speechSynthesis;
+            if (!ss || typeof window.SpeechSynthesisUtterance !== "function") {
+              if (onDone) onDone();
+              return;
+            }
+            var u = new window.SpeechSynthesisUtterance("ぴよぴよランド");
+            u.lang = "ja-JP";
+            u.rate = 0.95;
+            u.pitch = 1.2;
+            u.volume = 1;
+            if (onDone) {
+              u.onend = onDone;
+              u.onerror = onDone;
+            }
+            ss.cancel();
+            ss.speak(u);
+          } catch (e) {
+            if (onDone) onDone();
+          }
+        }
+        // 初回だけ true を かえす（＝タイトルを 鳴らした）。以降・失敗しても false。
+        // 読み上げの あいだは BGM をダッキング（duckBgm）、終わったら unduckBgm（多段でも 1回だけ復帰）。
+        function playTitleVoice() {
+          if (titleAlreadyPlayed()) return false;
+          markTitlePlayed();
+          bgmDuck(); // 声のあいだ BGM を さげる
+          var restored = false;
+          function restore() {
+            if (restored) return;
+            restored = true;
+            bgmUnduck();
+          }
+          setTimeout(restore, 10000); // 保険：万一 ended が来なくても 必ず復帰
+          var fellBack = false;
+          function fallback() {
+            if (fellBack) return;
+            fellBack = true;
+            speakTitleTTS(restore); // TTS 中も ダッキング維持し、終わったら復帰
+          }
+          try {
+            titleAudio = new Audio(TITLE_CLIP);
+            titleAudio.addEventListener("ended", restore); // クリップ再生おわり → BGM もどす
+            titleAudio.addEventListener("error", fallback); // 未同梱・404 → speechSynthesis へ
+            var p = titleAudio.play();
+            if (p && typeof p.catch === "function") {
+              p.catch(function () {
+                fallback();
+              });
+            }
+          } catch (e) {
+            fallback();
+          }
+          return true;
+        }
 
-    /* ── イベント ── */
+        /* ── ほしを うめこむ（けっていてき・らんすう なし）── */
+        var STAR_POS = [
+          [10, 10],
+          [22, 20],
+          [34, 8],
+          [46, 16],
+          [58, 7],
+          [70, 18],
+          [82, 9],
+          [90, 22],
+          [16, 30],
+          [28, 38],
+          [40, 28],
+          [52, 34],
+          [64, 26],
+          [76, 34],
+          [88, 40],
+          [6, 24],
+        ];
+        STAR_POS.forEach(function (p) {
+          var d = document.createElement("div");
+          d.className = "star";
+          d.style.left = p[0] + "%";
+          d.style.top = p[1] + "%";
+          d.style.animationDelay = ((p[0] + p[1]) % 30) / 10 + "s";
+          starsEl.appendChild(d);
+        });
 
-    // 初回タップ（がめんの どこでも）で ①BGM を開始（冪等・OFFなら鳴らない）、
-    // ②タイトルを 1セッション1回 よみあげる。
-    // capture で 各ボタンの click より先に走らせ、初回だけ タップ音と かさならないよう抑制。
-    // BGM チップを おした ときは start しない（トグル側で 制御・二度がけ・ブリップ回避）。
-    // よるの あいだは どこを タップしても BGM は さいかいしない（あさに もどる タップで さいかい）。
-    document.addEventListener('click', function (e) {
-      var onBgmBtn = false;
-      try { onBgmBtn = !!(e && e.target && e.target.closest && e.target.closest('#bgmBtn')); } catch (e2) {}
-      if (!onBgmBtn) startBgmSafe();
-      if (playTitleVoice()) {
-        suppressTapSfx = true;
-        setTimeout(function () { suppressTapSfx = false; }, 80);
-      }
-    }, true);
+        /* ── かざりを つくる ── */
+        function makeDeco(cfg, isBase) {
+          var el = document.createElement("div");
+          el.className = "deco" + (cfg.cls ? " " + cfg.cls : "");
+          el.style.setProperty("--x", cfg.x + "%");
+          el.style.setProperty("--y", cfg.y + "%");
+          if (cfg.p) {
+            el.style.setProperty("--px", cfg.p[0] + "%");
+            el.style.setProperty("--py", cfg.p[1] + "%");
+          }
+          if (cfg.l) {
+            el.style.setProperty("--lx", cfg.l[0] + "%");
+            el.style.setProperty("--ly", cfg.l[1] + "%");
+          }
+          ["sp", "sq", "wl"].forEach(function (k) {
+            if (!cfg[k]) return;
+            el.style.setProperty("--" + k + "x", cfg[k][0] + "%");
+            el.style.setProperty("--" + k + "y", cfg[k][1] + "%");
+          });
+          if (cfg.spc) el.style.setProperty("--spc", String(cfg.spc));
+          if (cfg.lg) el.classList.add("lg");
+          if (cfg.img) {
+            // シールポップSVGを <img> で。よみこみ失敗（404等）なら 絵文字に フォールバック
+            var im = document.createElement("img");
+            im.className = "deco-img";
+            im.src = IMG + cfg.img + ".svg";
+            im.width = cfg.s;
+            im.height = cfg.s;
+            im.alt = "";
+            im.draggable = false;
+            im.setAttribute("aria-hidden", "true");
+            im.onerror = function () {
+              var t = document.createTextNode(cfg.e || "");
+              el.style.fontSize = cfg.s + "px";
+              im.replaceWith(t);
+            };
+            el.appendChild(im);
+          } else {
+            el.style.fontSize = cfg.s + "px";
+            el.textContent = cfg.e;
+          }
+          if (cfg.smoke) {
+            var sm = document.createElement("span");
+            sm.className = "smoke";
+            var smi = document.createElement("img");
+            smi.className = "deco-img";
+            smi.src = IMG + "kemuri.svg";
+            smi.width = Math.round(cfg.s * 0.55);
+            smi.height = Math.round(cfg.s * 0.55);
+            smi.alt = "";
+            smi.draggable = false;
+            smi.setAttribute("aria-hidden", "true");
+            smi.onerror = function () {
+              smi.replaceWith(document.createTextNode("💨"));
+              sm.style.fontSize = "0.5em";
+            };
+            sm.appendChild(smi);
+            el.appendChild(sm);
+          }
+          if (isBase) el.dataset.stage = "0";
+          else el.dataset.stage = String(cfg.st);
+          decoLayer.appendChild(el);
+          return el;
+        }
+        var decoEls = [];
+        BASE.forEach(function (c) {
+          makeDeco(c, true).classList.add("on");
+        });
+        DECOS.forEach(function (c) {
+          decoEls.push({ st: c.st, el: makeDeco(c, false) });
+        });
 
-    // ── BGM チップ：タップで ON/OFF（既定ON・key land.bgm・localStorage 永続）──
-    if (bgmBtn) {
-      bgmBtn.addEventListener('click', function () {
-        var next = !bgmWant;
-        bgmWant = next;
-        try {
-          if (next) ensureActx();       // ONは このジェスチャ文脈で ctx を用意してから
-          if (!next) {
-            bgm.setBgmEnabled(false);    // OFF→ すぐ stopBgm（よるでも）
-          } else if (!isNight) {
-            bgm.setBgmEnabled(true);     // ON→ 予定曲(land)を 即再開
-            bgm.startBgm('land');        // 最初のタップが チップでも 鳴らす（冪等）
-          }                              // よるの ON は あさに もどる ときに 反映（startBgmSafe）
-        } catch (e) {}
-        try { localStorage.setItem(BGM_KEY, next ? '1' : '0'); } catch (e) {}
-        renderBgmBtn();
-        noteAct();
-      });
-    }
+        /* ── ぴよの ひとこと ── */
+        var bubbleTimer = null;
+        function say(text, ms) {
+          if (!text) return;
+          bubble.textContent = text;
+          bubble.classList.add("show");
+          if (bubbleTimer) clearTimeout(bubbleTimer);
+          bubbleTimer = setTimeout(function () {
+            bubble.classList.remove("show");
+          }, ms || 1800);
+        }
+        function piyoHop() {
+          piyo.classList.remove("hop");
+          void piyo.offsetWidth;
+          piyo.classList.add("hop");
+        }
+        function piyoCheer() {
+          piyo.classList.remove("cheer");
+          void piyo.offsetWidth;
+          piyo.classList.add("cheer");
+        }
 
-    piyo.addEventListener('click', function () {
-      if (isNight) { goMorning(); return; }
-      piyoHop();
-      say(SAY_TAP[Math.floor(Math.random() * SAY_TAP.length)], 1500);
-      sndTap();
-      bumpAct();
-    });
-    piyo.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); piyo.click(); }
-    });
+        /* ── かみふぶき（まちが そだった おいわい）── */
+        function burstConfetti() {
+          var marks = ["⭐", "✨", "🌟"];
+          for (var i = 0; i < 16; i++) {
+            var s = document.createElement("span");
+            s.textContent = marks[i % marks.length];
+            s.style.left = 5 + Math.floor((i / 16) * 90) + (i % 3) * 3 + "%";
+            s.style.animationDelay = (i % 8) * 0.12 + "s";
+            s.style.fontSize = 18 + (i % 3) * 6 + "px";
+            confetti.appendChild(s);
+          }
+          setTimeout(function () {
+            confetti.innerHTML = "";
+          }, 3200);
+        }
 
-    moonBtn.addEventListener('click', function () { bumpAct(); goNight(); });
-    nightveil.addEventListener('click', function () { goMorning(); });
+        /* ── すすみ ドット（つぎの へんかまで・さいだい5・かず よませない）── */
+        function renderMeter(displayStage, fuel) {
+          meterEl.innerHTML = "";
+          // さいだいだんかい：まちは かんせい。ドットは ださない（👑は ぴよの あたまに）
+          if (displayStage >= MAX_STAGE) return;
+          var lo = THRESHOLDS[displayStage];
+          var hi = THRESHOLDS[displayStage + 1];
+          var prog = hi > lo ? (fuel - lo) / (hi - lo) : 0;
+          if (prog < 0) prog = 0;
+          if (prog > 1) prog = 1;
+          var filled = Math.round(prog * 5);
+          for (var i = 0; i < 5; i++) {
+            var d = document.createElement("span");
+            d.className = "dot" + (i < filled ? " f" : "");
+            meterEl.appendChild(d);
+          }
+        }
 
-    // しせつの タップ：おと＋そうさカウント（リンクせんいは そのまま）
-    facPark.addEventListener('click', function () { bumpAct(); sndGo(); });
-    facCake.addEventListener('click', function () { bumpAct(); sndGo(); });
-    facShop.addEventListener('click', function () { bumpAct(); sndGo(); });
+        /* ── まちを えがく（reachedStage は たんちょう ぞうか＝たいこう禁止）── */
+        function paint() {
+          var meiro = readNum(K.meiro);
+          var sansu = readNum(K.sansu);
+          var kotoba = readNum(K.kotoba);
+          var fuel = meiro + sansu + kotoba;
 
-    // ページを はなれて もどった とき（bfcache）＝あさに もどす
-    window.addEventListener('pageshow', function (e) {
-      if (e.persisted) { location.reload(); }
-    });
+          var reachedPrev = readNum(K.reached); // まえに ひらいていた だんかい
+          var byFuel = stageForFuel(fuel);
+          var displayStage = Math.max(reachedPrev, byFuel); // たいこう禁止：さがっても もどさない
 
-    /* ── しょきか ── */
-    renderBgmBtn();                    // BGM チップの みため（保存された ON/OFF を反映）
-    var currentState = paint();
+          // かざりの ひょうじ。まえに ひらいていた だんかい（reachedPrev）までは さいしょから みせる。
+          // こんかい あたらしく あいた ぶんは かくした まま はじめ、celebrate() が .on と .grow を
+          // いっしょに つけて ぽん と 1かいだけ だす（さきに みえてから ぽんで きえて でなおす ちらつきを ふせぐ）
+          decoEls.forEach(function (d) {
+            if (d.st <= reachedPrev) d.el.classList.add("on");
+            else d.el.classList.remove("on");
+          });
+          if (displayStage >= 5) pathEl.classList.add("on");
+          else pathEl.classList.remove("on");
+          // 👑の つけはずしで ぴよの たかさが かわる（よこなが）。よみこみ直後に すべって みえないよう いどうなしで
+          var piyoTr = piyo.style.transition;
+          piyo.style.transition = "none";
+          if (displayStage >= MAX_STAGE) piyo.classList.add("king");
+          else piyo.classList.remove("king");
+          void piyo.offsetWidth;
+          piyo.style.transition = piyoTr;
 
-    // まちが そだったか？（reachedPrev → displayStage を またいだら 1かい）
-    if (currentState.displayStage > currentState.reachedPrev) {
-      setTimeout(function () {
-        celebrate(currentState.reachedPrev, currentState.displayStage);
-      }, 650);
-    } else {
-      // ふだんの らいほう：あさの あいさつ
-      setTimeout(function () { say(SAY_MORNING, 1600); piyoHop(); }, 500);
-    }
+          renderMeter(displayStage, fuel);
 
-    scheduleIdle(currentState);
-  })();
-  </script>
-</body>
+          // ほぞん（land.* のみ）
+          writeStr(K.reached, displayStage);
+          writeStr(K.lastSeen, fuel);
+
+          return {
+            fuel: fuel,
+            meiro: meiro,
+            sansu: sansu,
+            kotoba: kotoba,
+            displayStage: displayStage,
+            reachedPrev: reachedPrev,
+          };
+        }
+
+        /* ── まちが そだった えんしゅつ（WORLD.md §3.5・またいだ ときだけ 1かい）── */
+        function celebrate(fromStage, toStage) {
+          // あたらしく あいた だんかいだけ .on と .grow を いっしょに つけて ぽん（paint() では かくした まま）。
+          // .on の フェード（transition）が ぽんの うえに かさならないよう、つける あいだだけ transition を きる。
+          // うごきを へらす せっていでは ぽんが ないので、ふつうに .on の フェードで でる
+          var reduceMotion = false;
+          try {
+            reduceMotion = window.matchMedia(
+              "(prefers-reduced-motion: reduce)",
+            ).matches;
+          } catch (e) {}
+          decoEls.forEach(function (d) {
+            if (d.st > fromStage && d.st <= toStage) {
+              var el = d.el;
+              el.classList.remove("grow");
+              if (!reduceMotion) el.style.transition = "none";
+              el.classList.add("on");
+              el.classList.add("grow");
+              void el.offsetWidth;
+              el.style.transition = "";
+            }
+          });
+          // ぽんが おわったら .grow を はずして いつもの うごき（ゆらゆら等）へ。
+          // にじ（rbfade＝うすく でる）は もう いちど でなおさないよう .grown で うすさだけ そろえる
+          setTimeout(function () {
+            decoEls.forEach(function (d) {
+              if (!d.el.classList.contains("grow")) return;
+              if (d.el.classList.contains("rainbow"))
+                d.el.classList.add("grown");
+              d.el.classList.remove("grow");
+            });
+          }, 750);
+          piyoCheer();
+          setPiyoFace("piyo-yorokobi");
+          setTimeout(function () {
+            if (!isNight && !piyo.classList.contains("sleep"))
+              setPiyoFace("piyo");
+          }, 1100);
+          say(SAY_GROW, 2400);
+          burstConfetti();
+          sndGrow();
+        }
+
+        /* ── ぴよの ゆうどう（ひかえめ・いちどに ひとつだけ・WORLD.md §2.1）──
+       ⭐が いちばん すくない しせつを さす。ならんだら まえと ちがう しせつへ ── */
+        function pointTarget(vals) {
+          // vals: [{id:'park',v:meiro},{id:'cake',v:sansu},{id:'shop',v:kotoba}]
+          var min = vals[0].v;
+          for (var i = 1; i < vals.length; i++)
+            if (vals[i].v < min) min = vals[i].v;
+          var cands = [];
+          for (var j = 0; j < vals.length; j++)
+            if (vals[j].v === min) cands.push(vals[j].id);
+          var target;
+          if (cands.length === 1) {
+            target = cands[0]; // すくない しせつが 1つ＝そこを さす
+          } else {
+            var last = readStr(K.lastPoint); // ならんだ＝まえと ちがう しせつへ ローテーション
+            var idx = cands.indexOf(last);
+            target = idx === -1 ? cands[0] : cands[(idx + 1) % cands.length];
+          }
+          writeStr(K.lastPoint, target);
+          return target;
+        }
+        /* しせつの よこ位置（scene基準%）を じっそくして かえす。
+       レイアウト（2＋1／よこ3れつ）が かわっても ぴよが ただしく さす */
+        function facCenterPct(card) {
+          try {
+            var sr = scene.getBoundingClientRect();
+            var cr = card.getBoundingClientRect();
+            if (!sr.width) return 50;
+            var cx = ((cr.left + cr.width / 2 - sr.left) / sr.width) * 100;
+            return Math.max(14, Math.min(86, cx));
+          } catch (e) {
+            return 50;
+          }
+        }
+        /* ぴよの よこ位置（scene基準%）。みぎはんぶんに いる ときは ふきだしを ひだりがわに だす */
+        function setPiyoX(pct) {
+          piyo.style.left = pct + "%";
+          piyo.classList.toggle("bub-l", pct > 55);
+        }
+        var pointTimer = null;
+        function clearPoint() {
+          facPark.classList.remove("point");
+          facCake.classList.remove("point");
+          facShop.classList.remove("point");
+        }
+        function doPoint(state) {
+          if (isNight) return;
+          var t = pointTarget([
+            { id: "park", v: state.meiro },
+            { id: "cake", v: state.sansu },
+            { id: "shop", v: state.kotoba },
+          ]);
+          var card = FAC[t] || facPark;
+          clearPoint();
+          card.classList.add("point");
+          // ぴよが その しせつの ほうへ ちょっと よる（じっそくした よこ位置へ）
+          setPiyoX(facCenterPct(card));
+          piyoHop();
+
+          // つぎの へんかまで あと すこしなら「もうすこし」、ふだんは「こっちこっち」
+          var near =
+            state.displayStage < MAX_STAGE &&
+            THRESHOLDS[state.displayStage + 1] - state.fuel <= 2 &&
+            THRESHOLDS[state.displayStage + 1] - state.fuel > 0;
+          say(near ? SAY_NEAR : SAY_POINT, 1800);
+
+          setTimeout(function () {
+            clearPoint();
+            setPiyoX(50);
+          }, 2400);
+        }
+
+        /* ── アイドル：たまに ゆうどう（そうさが ないとき）── */
+        var idleTimer = null;
+        var lastAct = Date.now();
+        function scheduleIdle(state) {
+          if (idleTimer) clearTimeout(idleTimer);
+          idleTimer = setTimeout(function tick() {
+            if (!isNight && Date.now() - lastAct > 9000) {
+              doPoint(state);
+            }
+            idleTimer = setTimeout(tick, 15000);
+          }, 15000);
+        }
+        function noteAct() {
+          lastAct = Date.now();
+        }
+
+        /* ── よる モード（WORLD.md §5・こていシーケンス）── */
+        var isNight = false;
+        var nightTimers = [];
+        function clearNightTimers() {
+          nightTimers.forEach(clearTimeout);
+          nightTimers = [];
+        }
+
+        function goNight() {
+          if (isNight) return;
+          isNight = true;
+          clearPoint();
+          if (idleTimer) clearTimeout(idleTimer);
+          bubble.classList.remove("show");
+          // 1) そらが よるへ・ほしが つく
+          scene.classList.add("night");
+          writeStr(K.night, todayStr());
+          sndSleep();
+          bgm.stopBgm(2); // BGM は 2秒かけて しずかにフェードアウト（おやすみ）
+          // 2) ぴよが すへ トコトコ
+          nightTimers.push(
+            setTimeout(function () {
+              setPiyoX(50);
+              piyo.classList.add("to-nest");
+            }, 1200),
+          );
+          // 3) まるまって💤・「またあしたね」
+          nightTimers.push(
+            setTimeout(function () {
+              piyo.classList.add("sleep");
+              setPiyoFace("piyo-nemui");
+              say(SAY_NIGHT, 6000);
+            }, 2500),
+          );
+          // 4) しずかに くらく（タップで すぐ あさへ）
+          nightTimers.push(
+            setTimeout(function () {
+              scene.classList.add("slept");
+            }, 4000),
+          );
+        }
+
+        function goMorning() {
+          if (!isNight) return;
+          isNight = false;
+          clearNightTimers();
+          scene.classList.remove("night");
+          scene.classList.remove("slept");
+          piyo.classList.remove("sleep");
+          setPiyoFace("piyo");
+          piyo.classList.remove("to-nest");
+          setPiyoX(50);
+          say(SAY_MORNING, 1600);
+          piyoHop();
+          startBgmSafe(); // あさに もどったら BGM 再開（このジェスチャ文脈で・OFFなら鳴らない）
+          noteAct();
+          scheduleIdle(currentState);
+        }
+
+        function todayStr() {
+          var d = new Date();
+          function p2(n) {
+            return (n < 10 ? "0" : "") + n;
+          }
+          return (
+            d.getFullYear() + "-" + p2(d.getMonth() + 1) + "-" + p2(d.getDate())
+          ); // YYYY-MM-DD（WORLD.md §7）
+        }
+
+        /* ── そうさ カウント（ながく あそんだら やさしく あくび・WORLD.md §5）── */
+        var actCount = 0;
+        function bumpAct() {
+          noteAct();
+          actCount++;
+          if (actCount === 42 && !isNight) {
+            setTimeout(function () {
+              if (!isNight && !piyo.classList.contains("sleep")) {
+                say(SAY_SLEEPY, 1800);
+                setPiyoFace("piyo-nemui");
+                setTimeout(function () {
+                  if (!isNight && !piyo.classList.contains("sleep"))
+                    setPiyoFace("piyo");
+                }, 2000);
+              }
+            }, 800);
+          }
+        }
+
+        /* ── イベント ── */
+
+        // 初回タップ（がめんの どこでも）で ①BGM を開始（冪等・OFFなら鳴らない）、
+        // ②タイトルを 1セッション1回 よみあげる。
+        // capture で 各ボタンの click より先に走らせ、初回だけ タップ音と かさならないよう抑制。
+        // BGM チップを おした ときは start しない（トグル側で 制御・二度がけ・ブリップ回避）。
+        // よるの あいだは どこを タップしても BGM は さいかいしない（あさに もどる タップで さいかい）。
+        document.addEventListener(
+          "click",
+          function (e) {
+            var onBgmBtn = false;
+            try {
+              onBgmBtn = !!(
+                e &&
+                e.target &&
+                e.target.closest &&
+                e.target.closest("#bgmBtn")
+              );
+            } catch (e2) {}
+            if (!onBgmBtn) startBgmSafe();
+            if (playTitleVoice()) {
+              suppressTapSfx = true;
+              setTimeout(function () {
+                suppressTapSfx = false;
+              }, 80);
+            }
+          },
+          true,
+        );
+
+        // ── BGM チップ：タップで ON/OFF（既定ON・key land.bgm・localStorage 永続）──
+        if (bgmBtn) {
+          bgmBtn.addEventListener("click", function () {
+            var next = !bgmWant;
+            bgmWant = next;
+            try {
+              if (next) ensureActx(); // ONは このジェスチャ文脈で ctx を用意してから
+              if (!next) {
+                bgm.setBgmEnabled(false); // OFF→ すぐ stopBgm（よるでも）
+              } else if (!isNight) {
+                bgm.setBgmEnabled(true); // ON→ 予定曲(land)を 即再開
+                bgm.startBgm("land"); // 最初のタップが チップでも 鳴らす（冪等）
+              } // よるの ON は あさに もどる ときに 反映（startBgmSafe）
+            } catch (e) {}
+            try {
+              localStorage.setItem(BGM_KEY, next ? "1" : "0");
+            } catch (e) {}
+            renderBgmBtn();
+            noteAct();
+          });
+        }
+
+        piyo.addEventListener("click", function () {
+          if (isNight) {
+            goMorning();
+            return;
+          }
+          piyoHop();
+          say(SAY_TAP[Math.floor(Math.random() * SAY_TAP.length)], 1500);
+          sndTap();
+          bumpAct();
+        });
+        piyo.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            piyo.click();
+          }
+        });
+
+        moonBtn.addEventListener("click", function () {
+          bumpAct();
+          goNight();
+        });
+        nightveil.addEventListener("click", function () {
+          goMorning();
+        });
+
+        // しせつの タップ：おと＋そうさカウント（リンクせんいは そのまま）
+        facPark.addEventListener("click", function () {
+          bumpAct();
+          sndGo();
+        });
+        facCake.addEventListener("click", function () {
+          bumpAct();
+          sndGo();
+        });
+        facShop.addEventListener("click", function () {
+          bumpAct();
+          sndGo();
+        });
+
+        // ページを はなれて もどった とき（bfcache）＝あさに もどす
+        window.addEventListener("pageshow", function (e) {
+          if (e.persisted) {
+            location.reload();
+          }
+        });
+
+        /* ── しょきか ── */
+        renderBgmBtn(); // BGM チップの みため（保存された ON/OFF を反映）
+        var currentState = paint();
+
+        // まちが そだったか？（reachedPrev → displayStage を またいだら 1かい）
+        if (currentState.displayStage > currentState.reachedPrev) {
+          setTimeout(function () {
+            celebrate(currentState.reachedPrev, currentState.displayStage);
+          }, 650);
+        } else {
+          // ふだんの らいほう：あさの あいさつ
+          setTimeout(function () {
+            say(SAY_MORNING, 1600);
+            piyoHop();
+          }, 500);
+        }
+
+        scheduleIdle(currentState);
+      })();
+    </script>
+  </body>
 </html>
