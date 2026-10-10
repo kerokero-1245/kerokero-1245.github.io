@@ -1,5 +1,6 @@
-# push（main）と PR で、HTML の書き方（htmlhint）とリンク切れ（lychee）を検査する。配信（GitHub Pages）には関与しない。
-name: 検査（HTML・リンク切れ）
+# push（main）と PR で、整形（Prettier）・テスト（node --test）・HTML の書き方（htmlhint）・リンク切れ（lychee）を検査する。
+# 配信（GitHub Pages）には関与しない。
+name: 検査（整形・テスト・HTML・リンク切れ）
 
 on:
   push:
@@ -48,8 +49,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      # ルールはリポジトリ直下の .htmlhintrc（htmlhint の既定ルールと同じ 10 本）
-      - run: npx --yes htmlhint "**/*.html"
+      # ルールはリポジトリ直下の .htmlhintrc（htmlhint の既定ルールと同じ 10 本）。
+      # htmlhint はローカル（npx）で使っている版に固定する（新しい版でルールが変わって CI だけ落ちるのを防ぐ）
+      - run: npx --yes htmlhint@1.9.2 "**/*.html"
 
   links:
     name: リンク切れの検査（lychee）

@@ -44,7 +44,8 @@
     <style>
       /* ═══════════════════════════════════════════════════════════
        ぴよぴよランド ―「⭐で そだつ まち」（街MVP）
-       ・ビルド不要の静的 index.html 1枚（インラインCSS/JS/絵文字/SVG）
+       ・ビルド不要の静的ページ（CSS と 画面まわりの JS は index.html に インライン、進行ロジックは assets/js/land-core.js、
+         絵は assets/img/*.svg を <img> で ひょうじ。絵文字は よみこめない ときの かわり）
        ・外部CDN・外部送信ゼロ。保存は localStorage（タイトル よみあげ済みの しるし land.titleVoicePlayed だけ sessionStorage）
        ・設計の正典は docs/WORLD.md。数値・キー・文言はそこに従う
        ─ いろ・かたちは3アプリ（otsukai-meiro / piyopiyo-sansu / piyopiyo-kotoba）と統一

@@ -1,0 +1,3 @@
+# 依存と OS のごみ（npm ci で入れる node_modules は公開物（GitHub Pages）に混ぜない）
+node_modules/
+.DS_Store

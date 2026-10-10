@@ -8,7 +8,8 @@
 **公開URL: https://kerokero-1245.github.io/**
 
 GitHub Pages がこのリポジトリをそのまま配信しています（ビルドなし）。main への push と PR では
-`.github/workflows/check.yml` が HTML の検査（htmlhint・ルールは `.htmlhintrc`）とリンク切れの検査（lychee）を回します。
+`.github/workflows/check.yml` が整形の検査（Prettier）・テスト（`node --test`）・HTML の検査（htmlhint・ルールは `.htmlhintrc`）・
+リンク切れの検査（lychee）を回します。コードの書き方の方針は WORLD.md の §12 です。
 
 ## 世界観の正典（必読）
 
