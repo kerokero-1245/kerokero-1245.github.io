@@ -1,0 +1,4 @@
+# 生成物・依存・ロックファイルは整形しない
+node_modules
+package-lock.json
+*.min.*
