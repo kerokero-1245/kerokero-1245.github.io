@@ -1039,7 +1039,8 @@
       /* よこ持ちスマホ（よこなが・せが 480px いか）での かざりの おきば。
        カードの れつが シーンの 42〜89% を よこいっぱいに つかうので、
        そらの かざりは カードより うえ（--lx/--ly）、じめんの かざり（.lg）は カードの した の おび（89〜100%）へ。
-       おびは シーンの たかさの 11%（568×320 で 26px）しか ないので、じめんの かざりは おびに はいる おおきさまで ちぢめる */
+       おびは シーンの たかさの 11%（568×320 で 26px）しか ないので、じめんの かざりは おびに はいる おおきさまで ちぢめる。
+       おびの まんなか y=94.5%（＝100−11/2）は JS の GROUND_BAND_Y（DECOS の l: [x, GROUND_BAND_Y]）。11% を かえたら そろえる */
       @media (orientation: landscape) and (max-height: 480px) {
         .scene {
           container-type: size;
@@ -1226,32 +1227,42 @@
           lastPoint: "land.lastPointed",
         };
 
-        /* こわれた値・けつじょは かならず 0 あつかい（WORLD.md §3.2 / §7。かずの よみかたは L.parseCount） */
-        function readNum(key) {
+        /* ほぞんの よみかき。localStorage が ふつう、sessionStorage は だい3引数に STORE_SESSION。
+       storage へ さわる こと自体が れいがいに なる ブラウザ（プライベート・ブロック）でも とまらないよう、
+       名前で うけとり、try の なかで window[…] を ひく。よめない ときは null（かく ときは なにも しない） */
+        var STORE_LOCAL = "localStorage";
+        var STORE_SESSION = "sessionStorage";
+        function readStr(key, store) {
           try {
-            return L.parseCount(localStorage.getItem(key));
-          } catch (e) {
-            return 0;
-          }
-        }
-        function readStr(key) {
-          try {
-            return localStorage.getItem(key);
+            return window[store || STORE_LOCAL].getItem(key);
           } catch (e) {
             return null;
           }
         }
-        function writeStr(key, val) {
+        function writeStr(key, val, store) {
           try {
-            localStorage.setItem(key, String(val));
+            window[store || STORE_LOCAL].setItem(key, String(val));
           } catch (e) {}
+        }
+        /* こわれた値・けつじょは かならず 0 あつかい（WORLD.md §3.2 / §7。かずの よみかたは L.parseCount） */
+        function readNum(key) {
+          return L.parseCount(readStr(key));
         }
 
         /* ── だんかい しきい値（WORLD.md §3.4・正典）・たいこう禁止・ドット・ぴよの ゆうどうの けいさんは
        assets/js/land-core.js（L = window.PiyoLand）。ここには ほぞんの よみかき・えがく・おと・タイマーを おく ── */
 
+        /* ── じかん・いち・おとの 名前つきの 値（CSS と そろえて おく もの）── */
+        var GROUND_BAND_Y = 94.5; // よこ持ちスマホの じめんの おびの まんなか y(%) ＝100 − 11/2（CSS の .facilities bottom: 11% の おび 89〜100%）
+        var PIYO_HOME_X = 50; // ぴよの いつもの いち x(%)（CSS .piyo left: 50% と おなじ・がめんの まんなか）
+        var POP_MS = 750; // かざりの ぽん（CSS pop 0.7s）が おわって .grow を はずす まで（0.7s ＋ 50ms の よゆう）
+        var CONFETTI_MS = 3200; // かみふぶきを けす まで（CSS fall 2.4s ＋ さいだいの おくれ 0.84s ＝ 3.24s より 40ms はやく）
+        var YAWN_ACTS = 42; // この かいすうの そうさで ぴよが あくび（WORLD.md §5 の 7〜8分の めやす）
+        var SAY_MS = 1800; // ぴよの ひとことの ひょうじ じかん（say の ばあいの しょきち）
+        var TONE_GAIN = 0.05; // こうかおんの おんりょう（tone の しょきち）
+
         /* ── かざりの はいち（けっていてき・らんすう なし）──
-       st=だんかい, x/y=%（scene きじゅん）, s=絵文字サイズpx, cls=うごき
+       st=だんかい, x/y=%（scene きじゅん）, s=がぞうの おおきさ px（<img> の width/height。え が よめない ときの 絵文字では font-size）, cls=うごき
        p=[x,y] は たてもち（しせつ 2＋1）での おきば。ない ものは x/y の まま。
        l=[x,y] は よこ持ちスマホ（よこなが・せが 480px いか）での おきば。lg=じめんの かざり（カードの した の おびに はいる おおきさに ちぢむ）。
        カードや ぴよに かかる がめんだけの おきば（ない ものは 上の おきばの まま）:
@@ -1259,7 +1270,9 @@
          sq=[x,y] せの ひくい しかくい たてもち（515×684 など。カードが 大きく、そらに すきまが ない＝2れつ目の りょうわきへ）
          wl=[x,y] せの たかい よこなが（せが 481〜767px。800×500・1280×720 など。カードの れつが 45〜52% から はじまる）
        しせつカードの うらに かくれない ばしょ：そら（カードより うえ）／カードの した／
-       たてもちの 2れつめ（やおやさん）の りょうわき */
+       たてもちの 2れつめ（やおやさん）の りょうわき
+       キー: st=だんかい／img=assets/img/<img>.svg／e=絵文字の だいたい／x,y=いつもの おきば／s=おおきさ／cls=うごきの クラス／smoke=けむり／
+         p・l・sp・sq・wl・spc・lg は うえの せつめい（DECO_POS_KEYS の ごとに --<キー>x / --<キー>y） */
         var DECOS = [
           // だんかい1: くさ・はな
           {
@@ -1270,7 +1283,7 @@
             y: 90,
             s: 34,
             cls: "sway",
-            l: [8, 94.5],
+            l: [8, GROUND_BAND_Y],
             lg: 1,
           },
           {
@@ -1281,7 +1294,7 @@
             y: 94,
             s: 32,
             cls: "sway",
-            l: [17, 94.5],
+            l: [17, GROUND_BAND_Y],
             lg: 1,
           },
           {
@@ -1294,7 +1307,7 @@
             cls: "sway",
             p: [62, 94],
             sp: [63.5, 94],
-            l: [65, 94.5],
+            l: [65, GROUND_BAND_Y],
             lg: 1,
           },
           {
@@ -1305,7 +1318,7 @@
             y: 90,
             s: 34,
             cls: "sway",
-            l: [92, 94.5],
+            l: [92, GROUND_BAND_Y],
             lg: 1,
           },
           // だんかい2: なかまの ひよこ
@@ -1318,7 +1331,7 @@
             s: 42,
             cls: "friend",
             sp: [35.5, 89],
-            l: [35, 94.5],
+            l: [35, GROUND_BAND_Y],
             lg: 1,
             wl: [38, 92],
           },
@@ -1344,7 +1357,7 @@
             s: 44,
             cls: "",
             p: [88, 86],
-            l: [83, 94.5],
+            l: [83, GROUND_BAND_Y],
             lg: 1,
             wl: [88, 92.5],
           },
@@ -1371,7 +1384,7 @@
             y: 92,
             s: 38,
             cls: "hop",
-            l: [26, 94.5],
+            l: [26, GROUND_BAND_Y],
             lg: 1,
           },
           // だんかい6: ふんすい
@@ -1383,7 +1396,7 @@
             y: 90,
             s: 52,
             cls: "",
-            l: [74, 94.5],
+            l: [74, GROUND_BAND_Y],
             lg: 1,
             wl: [70, 92.5],
           },
@@ -1484,10 +1497,18 @@
         var moonBtn = document.getElementById("moonBtn");
         var bgmBtn = document.getElementById("bgmBtn");
         var nightveil = document.getElementById("nightveil");
-        var facPark = document.getElementById("facPark");
-        var facCake = document.getElementById("facCake");
-        var facShop = document.getElementById("facShop");
-        var FAC = { park: facPark, cake: facCake, shop: facShop };
+        /* しせつ ⇔ カードの よう素 ⇔ ⭐の ほぞんキー（fuel は この 3つの ごうけい。HTML の 3まいの カードは
+       JS が なくても どうせんが のこる よう 静的な まま） */
+        var FACILITIES = [
+          { id: "park", el: document.getElementById("facPark"), key: K.meiro },
+          { id: "cake", el: document.getElementById("facCake"), key: K.sansu },
+          { id: "shop", el: document.getElementById("facShop"), key: K.kotoba },
+        ];
+        function facilityEl(id) {
+          for (var i = 0; i < FACILITIES.length; i++)
+            if (FACILITIES[i].id === id) return FACILITIES[i].el;
+          return FACILITIES[0].el;
+        }
 
         /* ── ぴよの ひょうじょう（3態のみ・WORLD.md §1.4）──
        つうじょう piyo / よろこび piyo-yorokobi / ねむい piyo-nemui。
@@ -1520,7 +1541,7 @@
             o.type = type || "sine";
             o.frequency.value = freq;
             var t = actx.currentTime,
-              gv = gain == null ? 0.05 : gain;
+              gv = gain == null ? TONE_GAIN : gain;
             g.gain.setValueAtTime(gv, t);
             g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
             o.connect(g);
@@ -1531,19 +1552,19 @@
         }
         function sndTap() {
           if (suppressTapSfx) return;
-          tone(660, 0.12, "sine", 0.05);
+          tone(660, 0.12, "sine");
         }
         function sndGo() {
           if (suppressTapSfx) return;
-          tone(520, 0.09, "triangle", 0.05);
+          tone(520, 0.09, "triangle");
           setTimeout(function () {
-            tone(780, 0.12, "triangle", 0.05);
+            tone(780, 0.12, "triangle");
           }, 90);
         }
         function sndGrow() {
           [523, 659, 784, 1047].forEach(function (f, i) {
             setTimeout(function () {
-              tone(f, 0.16, "triangle", 0.05);
+              tone(f, 0.16, "triangle");
             }, i * 120);
           });
         }
@@ -1560,12 +1581,8 @@
        AudioContext 非対応・スクリプト未読込・localStorage 例外でも 無害（no-op・クラッシュ厳禁）。 */
         var BGM_KEY = "land.bgm"; // トグルの保存キー（WORLD.md §7・既定ON）
         function bgmEnabledStored() {
-          try {
-            return localStorage.getItem(BGM_KEY) !== "0";
-          } catch (e) {
-            // 未設定・壊れ値も ON
-            return true;
-          }
+          // 未設定・壊れ値・storage が よめない ときも ON（"0" だけ OFF。readStr は よめないと null）
+          return readStr(BGM_KEY) !== "0";
         }
         var bgmReal = false; // 共有エンジンが よみこめたか（no-op 保険と くべつ）
         var bgm = (function () {
@@ -1584,7 +1601,8 @@
               return eng;
             }
           } catch (e) {}
-          // スクリプト未読込などの保険（すべて no-op）
+          // スクリプト未読込などの保険（すべて no-op）。エンジンの API と おなじ 形に そろえて おく
+          // （index.html は isBgmEnabled・getBgmState を よばないが、検証用ハンドル window.PIYO_BGM から 呼ばれても 落ちない）
           return {
             startBgm: function () {},
             stopBgm: function () {},
@@ -1651,16 +1669,10 @@
         var SESS_TITLE = "land.titleVoicePlayed";
         var titleAudio = null;
         function titleAlreadyPlayed() {
-          try {
-            return sessionStorage.getItem(SESS_TITLE) === "1";
-          } catch (e) {
-            return false;
-          }
+          return readStr(SESS_TITLE, STORE_SESSION) === "1"; // よめない ときは false（まだ）
         }
         function markTitlePlayed() {
-          try {
-            sessionStorage.setItem(SESS_TITLE, "1");
-          } catch (e) {}
+          writeStr(SESS_TITLE, "1", STORE_SESSION);
         }
         // onDone: 読み上げ終了（成功・失敗・非対応いずれも）で 1回だけ呼ぶ。BGM の復帰に使う。
         function speakTitleTTS(onDone) {
@@ -1749,20 +1761,14 @@
         });
 
         /* ── かざりを つくる ── */
+        // DECOS の おきば [x,y] を CSS 変数 --<キー>x / --<キー>y に いれる キー（たてもち・よこ持ち・がめんごとの おきば）
+        var DECO_POS_KEYS = ["p", "l", "sp", "sq", "wl"];
         function makeDeco(cfg, isBase) {
           var el = document.createElement("div");
           el.className = "deco" + (cfg.cls ? " " + cfg.cls : "");
           el.style.setProperty("--x", cfg.x + "%");
           el.style.setProperty("--y", cfg.y + "%");
-          if (cfg.p) {
-            el.style.setProperty("--px", cfg.p[0] + "%");
-            el.style.setProperty("--py", cfg.p[1] + "%");
-          }
-          if (cfg.l) {
-            el.style.setProperty("--lx", cfg.l[0] + "%");
-            el.style.setProperty("--ly", cfg.l[1] + "%");
-          }
-          ["sp", "sq", "wl"].forEach(function (k) {
+          DECO_POS_KEYS.forEach(function (k) {
             if (!cfg[k]) return;
             el.style.setProperty("--" + k + "x", cfg[k][0] + "%");
             el.style.setProperty("--" + k + "y", cfg[k][1] + "%");
@@ -1801,8 +1807,7 @@
             smi.draggable = false;
             smi.setAttribute("aria-hidden", "true");
             smi.onerror = function () {
-              smi.replaceWith(document.createTextNode("💨"));
-              sm.style.fontSize = "0.5em";
+              smi.replaceWith(document.createTextNode("💨")); // おおきさは CSS .smoke の font-size: 0.5em
             };
             sm.appendChild(smi);
             el.appendChild(sm);
@@ -1829,17 +1834,30 @@
           if (bubbleTimer) clearTimeout(bubbleTimer);
           bubbleTimer = setTimeout(function () {
             bubble.classList.remove("show");
-          }, ms || 1800);
+          }, ms || SAY_MS);
+        }
+        // クラスを いったん はずして つけなおす（reflow で CSS アニメを はじめから やりなおす）
+        function restartClass(el, cls) {
+          el.classList.remove(cls);
+          void el.offsetWidth;
+          el.classList.add(cls);
         }
         function piyoHop() {
-          piyo.classList.remove("hop");
-          void piyo.offsetWidth;
-          piyo.classList.add("hop");
+          restartClass(piyo, "hop");
         }
         function piyoCheer() {
-          piyo.classList.remove("cheer");
-          void piyo.offsetWidth;
-          piyo.classList.add("cheer");
+          restartClass(piyo, "cheer");
+        }
+        // ぴよが おきて いるか（よるでも ねむってもいない）。ひょうじょうを もとに もどして いい ときの はんてい
+        function isAwake() {
+          return !(isNight || piyo.classList.contains("sleep"));
+        }
+        // ひょうじょうを ms だけ かえて、おきて いれば もとの かお（piyo）に もどす
+        function flashFace(name, ms) {
+          setPiyoFace(name);
+          setTimeout(function () {
+            if (isAwake()) setPiyoFace("piyo");
+          }, ms);
         }
 
         /* ── かみふぶき（まちが そだった おいわい）── */
@@ -1855,7 +1873,7 @@
           }
           setTimeout(function () {
             confetti.innerHTML = "";
-          }, 3200);
+          }, CONFETTI_MS);
         }
 
         /* ── すすみ ドット（つぎの へんかまで・さいだい5・かず よませない）── */
@@ -1871,10 +1889,12 @@
 
         /* ── まちを えがく（reachedStage は たんちょう ぞうか＝たいこう禁止）── */
         function paint() {
-          var meiro = readNum(K.meiro);
-          var sansu = readNum(K.sansu);
-          var kotoba = readNum(K.kotoba);
-          var fuel = meiro + sansu + kotoba;
+          var vals = FACILITIES.map(function (f) {
+            return { id: f.id, v: readNum(f.key) };
+          });
+          var fuel = vals.reduce(function (sum, x) {
+            return sum + x.v;
+          }, 0);
 
           var reachedPrev = readNum(K.reached); // まえに ひらいていた だんかい
           var displayStage = L.displayStageFor(reachedPrev, fuel); // たいこう禁止：さがっても もどさない
@@ -1904,9 +1924,7 @@
 
           return {
             fuel: fuel,
-            meiro: meiro,
-            sansu: sansu,
-            kotoba: kotoba,
+            vals: vals, // [{id, v}] しせつごとの ⭐（ぴよの ゆうどうに つかう）
             displayStage: displayStage,
             reachedPrev: reachedPrev,
           };
@@ -1943,13 +1961,9 @@
                 d.el.classList.add("grown");
               d.el.classList.remove("grow");
             });
-          }, 750);
+          }, POP_MS);
           piyoCheer();
-          setPiyoFace("piyo-yorokobi");
-          setTimeout(function () {
-            if (!isNight && !piyo.classList.contains("sleep"))
-              setPiyoFace("piyo");
-          }, 1100);
+          flashFace("piyo-yorokobi", 1100);
           say(SAY_GROW, 2400);
           burstConfetti();
           sndGrow();
@@ -1971,11 +1985,11 @@
           try {
             var sr = scene.getBoundingClientRect();
             var cr = card.getBoundingClientRect();
-            if (!sr.width) return 50;
+            if (!sr.width) return PIYO_HOME_X;
             var cx = ((cr.left + cr.width / 2 - sr.left) / sr.width) * 100;
             return Math.max(14, Math.min(86, cx));
           } catch (e) {
-            return 50;
+            return PIYO_HOME_X;
           }
         }
         /* ぴよの よこ位置（scene基準%）。みぎはんぶんに いる ときは ふきだしを ひだりがわに だす */
@@ -1985,18 +1999,14 @@
         }
         var pointTimer = null;
         function clearPoint() {
-          facPark.classList.remove("point");
-          facCake.classList.remove("point");
-          facShop.classList.remove("point");
+          FACILITIES.forEach(function (f) {
+            f.el.classList.remove("point");
+          });
         }
         function doPoint(state) {
           if (isNight) return;
-          var t = pointTarget([
-            { id: "park", v: state.meiro },
-            { id: "cake", v: state.sansu },
-            { id: "shop", v: state.kotoba },
-          ]);
-          var card = FAC[t] || facPark;
+          var t = pointTarget(state.vals);
+          var card = facilityEl(t);
           clearPoint();
           card.classList.add("point");
           // ぴよが その しせつの ほうへ ちょっと よる（じっそくした よこ位置へ）
@@ -2005,11 +2015,11 @@
 
           // つぎの へんかまで あと すこしなら「もうすこし」、ふだんは「こっちこっち」
           var near = L.isNearNextStage(state.displayStage, state.fuel);
-          say(near ? SAY_NEAR : SAY_POINT, 1800);
+          say(near ? SAY_NEAR : SAY_POINT);
 
           setTimeout(function () {
             clearPoint();
-            setPiyoX(50);
+            setPiyoX(PIYO_HOME_X);
           }, 2400);
         }
 
@@ -2051,7 +2061,7 @@
           // 2) ぴよが すへ トコトコ
           nightTimers.push(
             setTimeout(function () {
-              setPiyoX(50);
+              setPiyoX(PIYO_HOME_X);
               piyo.classList.add("to-nest");
             }, 1200),
           );
@@ -2080,7 +2090,7 @@
           piyo.classList.remove("sleep");
           setPiyoFace("piyo");
           piyo.classList.remove("to-nest");
-          setPiyoX(50);
+          setPiyoX(PIYO_HOME_X);
           say(SAY_MORNING, 1600);
           piyoHop();
           startBgmSafe(); // あさに もどったら BGM 再開（このジェスチャ文脈で・OFFなら鳴らない）
@@ -2093,15 +2103,11 @@
         function bumpAct() {
           noteAct();
           actCount++;
-          if (actCount === 42 && !isNight) {
+          if (actCount === YAWN_ACTS && !isNight) {
             setTimeout(function () {
-              if (!isNight && !piyo.classList.contains("sleep")) {
-                say(SAY_SLEEPY, 1800);
-                setPiyoFace("piyo-nemui");
-                setTimeout(function () {
-                  if (!isNight && !piyo.classList.contains("sleep"))
-                    setPiyoFace("piyo");
-                }, 2000);
+              if (isAwake()) {
+                say(SAY_SLEEPY);
+                flashFace("piyo-nemui", 2000);
               }
             }, 800);
           }
@@ -2151,9 +2157,7 @@
                 bgm.startBgm("land"); // 最初のタップが チップでも 鳴らす（冪等）
               } // よるの ON は あさに もどる ときに 反映（startBgmSafe）
             } catch (e) {}
-            try {
-              localStorage.setItem(BGM_KEY, next ? "1" : "0");
-            } catch (e) {}
+            writeStr(BGM_KEY, next ? "1" : "0");
             renderBgmBtn();
             noteAct();
           });
@@ -2185,17 +2189,11 @@
         });
 
         // しせつの タップ：おと＋そうさカウント（リンクせんいは そのまま）
-        facPark.addEventListener("click", function () {
-          bumpAct();
-          sndGo();
-        });
-        facCake.addEventListener("click", function () {
-          bumpAct();
-          sndGo();
-        });
-        facShop.addEventListener("click", function () {
-          bumpAct();
-          sndGo();
+        FACILITIES.forEach(function (f) {
+          f.el.addEventListener("click", function () {
+            bumpAct();
+            sndGo();
+          });
         });
 
         // ページを はなれて もどった とき（bfcache）＝あさに もどす
