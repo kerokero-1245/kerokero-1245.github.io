@@ -53,16 +53,35 @@
         --bg: #fff6e5; /* やわらかいクリーム背景（額縁） */
         --surface: #ffffff; /* カード */
         --text: #5b3a1e; /* こげ茶 */
+        /* ↓ --text の RGB。こげ茶の かげは rgba(var(--text-rgb), α) で つくる */
+        --text-rgb: 91, 58, 30;
         --subtext: #9b7b57;
         --border: #f0d9a8; /* やさしい枠線 */
         --orange: #ff9f45; /* メインのオレンジ */
         --green: #5fbf7a; /* 前向きなグリーン（こうえん） */
         --veg: #7cb342; /* やおやさんの はっぱグリーン（こうえんと べつ色） */
         --yellow: #ffd23f; /* アクセント黄 */
-        --shadow: 0 10px 26px rgba(214, 158, 78, 0.28);
-        --shadow-soft: 0 8px 20px rgba(91, 58, 30, 0.15);
-        --shadow-press: 0 4px 12px rgba(214, 158, 78, 0.3);
+        --on-accent: #ffffff; /* いろじ（--accent）の うえの しろい もじ */
+        --warm-rgb: 214, 158, 78; /* あたたかい かげの RGB */
+        --shadow: 0 10px 26px rgba(var(--warm-rgb), 0.28);
+        --shadow-soft: 0 8px 20px rgba(var(--text-rgb), 0.15);
+        --shadow-press: 0 4px 12px rgba(var(--warm-rgb), 0.3);
         --radius: 28px;
+        --focus-ring-width: 4px; /* キーボードの フォーカスの わ */
+        --focus-ring-offset: 3px;
+        --night-fade: 1.4s; /* そらと じめんが よるへ かわる はやさ（.scene・.ground） */
+        /* かさなりの じゅんじょ（.scene の なか。ちいさい ほうが うしろ） */
+        --z-stars: 1;
+        --z-ground: 2;
+        --z-path: 3;
+        --z-deco: 4;
+        --z-facilities: 12; /* どうせん（しせつ）は ぜったいに かくさない */
+        --z-meter: 15;
+        --z-nest: 19;
+        --z-piyo: 20;
+        --z-bubble: 21; /* ぴよの なか（.piyo が かさなりの たんい） */
+        --z-confetti: 30;
+        --z-veil: 40; /* よるの くらがり（いちばん うえ） */
       }
 
       * {
@@ -105,18 +124,39 @@
         gap: 8px;
         padding: 0 4px;
       }
-      .brand {
+      /* チップ（.brand・.moon-btn・.bgm-btn に きょうつうの みため）。
+       .chip-btn は おせる チップ（ボタン）。おおきさ・じの おおきさは それぞれの ルールで きめる */
+      .chip {
         display: inline-flex;
         align-items: center;
-        gap: 0.25em;
         background: var(--surface);
         color: var(--text);
         border: 2px solid var(--border);
         border-radius: 999px;
+        box-shadow: var(--shadow-soft);
+      }
+      .chip-btn {
+        appearance: none;
+        justify-content: center;
+        line-height: 1;
+        cursor: pointer;
+        transition:
+          transform 0.1s ease,
+          box-shadow 0.1s ease;
+      }
+      .chip-btn:active {
+        transform: scale(0.92);
+        box-shadow: var(--shadow-press);
+      }
+      .chip-btn:focus-visible {
+        outline: var(--focus-ring-width) solid var(--orange);
+        outline-offset: var(--focus-ring-offset);
+      }
+      .brand {
+        gap: 0.25em;
         padding: 5px 14px;
         font-weight: 800;
         font-size: clamp(15px, 4.2vw, 20px);
-        box-shadow: var(--shadow-soft);
         white-space: nowrap;
       }
       .brand .b-chick {
@@ -124,31 +164,9 @@
       }
 
       .moon-btn {
-        appearance: none;
-        border: 2px solid var(--border);
-        background: var(--surface);
-        color: var(--text);
         width: 46px;
         height: 46px;
-        border-radius: 999px;
         font-size: 24px;
-        line-height: 1;
-        cursor: pointer;
-        box-shadow: var(--shadow-soft);
-        transition:
-          transform 0.1s ease,
-          box-shadow 0.1s ease;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .moon-btn:active {
-        transform: scale(0.92);
-        box-shadow: var(--shadow-press);
-      }
-      .moon-btn:focus-visible {
-        outline: 4px solid var(--orange);
-        outline-offset: 3px;
       }
 
       /* うえの おびの みぎがわ（BGM チップ＋🌙 を まとめる） */
@@ -161,32 +179,13 @@
       /* ── BGM チップ（🔊/🔇・タップで ON/OFF・key land.bgm・既定ON）──
        シールポップの みための じゃまを しないよう ひかえめ。でも 子どもが おせる おおきさ */
       .bgm-btn {
-        appearance: none;
-        border: 2px solid var(--border);
-        background: var(--surface);
-        color: var(--text);
         width: 42px;
         height: 42px;
-        border-radius: 999px;
         font-size: 21px;
-        line-height: 1;
-        cursor: pointer;
-        box-shadow: var(--shadow-soft);
         transition:
           transform 0.1s ease,
           box-shadow 0.1s ease,
           opacity 0.15s ease;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .bgm-btn:active {
-        transform: scale(0.92);
-        box-shadow: var(--shadow-press);
-      }
-      .bgm-btn:focus-visible {
-        outline: 4px solid var(--orange);
-        outline-offset: 3px;
       }
       .bgm-btn.off {
         opacity: 0.55;
@@ -210,7 +209,7 @@
           #eaf7ea 58%,
           #eaf7ea 60%
         );
-        transition: background 1.4s ease;
+        transition: background var(--night-fade) ease;
         touch-action: manipulation;
       }
       /* ── よる ── */
@@ -234,9 +233,9 @@
         border-top-left-radius: 60% 22px;
         border-top-right-radius: 60% 22px;
         transition:
-          filter 1.4s ease,
-          background 1.4s ease;
-        z-index: 2;
+          filter var(--night-fade) ease,
+          background var(--night-fade) ease;
+        z-index: var(--z-ground);
       }
       .scene.night .ground {
         background: linear-gradient(#2f5a49 0%, #274c40 100%);
@@ -247,7 +246,7 @@
       .stars {
         position: absolute;
         inset: 0;
-        z-index: 1;
+        z-index: var(--z-stars);
         pointer-events: none;
       }
       .star {
@@ -279,7 +278,7 @@
         background: linear-gradient(#f3e2b8, #ebd3a0);
         clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%);
         opacity: 0;
-        z-index: 3;
+        z-index: var(--z-path);
         transition: opacity 0.8s ease;
       }
       .path.on {
@@ -303,9 +302,9 @@
         transform: translate(-50%, -50%) scale(0.2);
         opacity: 0;
         line-height: 1;
-        z-index: 4;
+        z-index: var(--z-deco);
         pointer-events: none;
-        filter: drop-shadow(0 4px 4px rgba(91, 58, 30, 0.18));
+        filter: drop-shadow(0 4px 4px rgba(var(--text-rgb), 0.18));
         transition:
           opacity 0.5s ease,
           transform 0.5s ease;
@@ -314,9 +313,6 @@
       .deco.on {
         opacity: 1;
         transform: translate(-50%, -50%) scale(1);
-      }
-      .deco.grow {
-        animation: pop 0.7s cubic-bezier(0.2, 1.4, 0.5, 1) both;
       }
       .scene.night .deco {
         filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.3)) brightness(0.82);
@@ -348,7 +344,7 @@
         animation: hopdeco 3s ease-in-out infinite;
       }
       /* あたらしく あいた ものは まず ぽん（上の こまかい うごきより つよく あてる）。
-       ぽんが おわったら JS が .grow を はずし、いつもの うごきに もどる */
+       ぽんが おわったら JS が .grow を はずし、いつもの うごきに もどる（JS の POP_MS = 750ms は この 0.7s ＋ 50ms） */
       .deco-layer .deco.on.grow {
         animation: pop 0.7s cubic-bezier(0.2, 1.4, 0.5, 1) both;
       }
@@ -378,7 +374,7 @@
         left: 0;
         right: 0;
         bottom: 15%;
-        z-index: 12;
+        z-index: var(--z-facilities);
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
@@ -411,8 +407,8 @@
         box-shadow: var(--shadow-press);
       }
       .facility:focus-visible {
-        outline: 4px solid var(--accent);
-        outline-offset: 3px;
+        outline: var(--focus-ring-width) solid var(--accent);
+        outline-offset: var(--focus-ring-offset);
       }
       .fac--park {
         --accent: var(--green);
@@ -425,14 +421,12 @@
       }
 
       .facility .f-emoji {
-        font-size: clamp(48px, 15vmin, 104px);
-        line-height: 1;
-        filter: drop-shadow(0 4px 6px rgba(91, 58, 30, 0.16));
+        filter: drop-shadow(0 4px 6px rgba(var(--text-rgb), 0.16));
       }
       .facility .f-name {
         display: inline-block;
         background: var(--accent);
-        color: #fff;
+        color: var(--on-accent);
         font-weight: 800;
         font-size: clamp(17px, 4.6vmin, 30px);
         line-height: 1.1;
@@ -480,7 +474,7 @@
         left: 50%;
         bottom: 4%;
         transform: translateX(-50%);
-        z-index: 20;
+        z-index: var(--z-piyo);
         cursor: pointer;
         user-select: none;
         transition:
@@ -489,10 +483,8 @@
         touch-action: manipulation;
       }
       .piyo .p-body {
-        font-size: clamp(40px, 12vmin, 76px);
-        line-height: 1;
         display: block;
-        filter: drop-shadow(0 5px 5px rgba(91, 58, 30, 0.22));
+        filter: drop-shadow(0 5px 5px rgba(var(--text-rgb), 0.22));
         animation: bob 2.8s ease-in-out infinite;
         transform-origin: 50% 90%;
       }
@@ -510,7 +502,7 @@
         font-size: clamp(22px, 6vmin, 40px);
         opacity: 0;
         transition: opacity 0.5s ease 0.2s;
-        filter: drop-shadow(0 2px 2px rgba(91, 58, 30, 0.25));
+        filter: drop-shadow(0 2px 2px rgba(var(--text-rgb), 0.25));
       }
       .piyo.to-nest {
         bottom: 2%;
@@ -543,7 +535,7 @@
         bottom: 30%;
         transform: translateY(6px) scale(0.8);
         transform-origin: 0 50%;
-        background: #fff;
+        background: var(--surface);
         color: var(--text);
         border: 2px solid var(--border);
         border-radius: 16px;
@@ -557,7 +549,7 @@
         transition:
           opacity 0.18s ease,
           transform 0.18s ease;
-        z-index: 21;
+        z-index: var(--z-bubble);
       }
       .bubble::after {
         content: "";
@@ -566,7 +558,7 @@
         top: 50%;
         transform: translateY(-50%);
         border: 7px solid transparent;
-        border-right-color: #fff;
+        border-right-color: var(--surface);
         margin-right: -1px;
       }
       .bubble.show {
@@ -582,7 +574,7 @@
         right: auto;
         left: 100%;
         border-right-color: transparent;
-        border-left-color: #fff;
+        border-left-color: var(--surface);
         margin-right: 0;
         margin-left: -1px;
       }
@@ -600,9 +592,8 @@
         left: 50%;
         bottom: 2%;
         transform: translateX(-50%) scale(0.6);
-        font-size: clamp(30px, 9vmin, 54px);
         opacity: 0;
-        z-index: 19;
+        z-index: var(--z-nest);
         transition:
           opacity 1s ease,
           transform 1s ease;
@@ -622,7 +613,7 @@
         transform: translateX(-50%);
         display: flex;
         gap: 5px;
-        z-index: 15;
+        z-index: var(--z-meter);
         opacity: 0.9;
         transition: opacity 0.5s ease;
       }
@@ -631,14 +622,14 @@
         height: 9px;
         border-radius: 50%;
         background: rgba(255, 255, 255, 0.55);
-        border: 1.5px solid rgba(91, 58, 30, 0.28);
+        border: 1.5px solid rgba(var(--text-rgb), 0.28);
         transition:
           background 0.3s ease,
           transform 0.3s ease;
       }
       .meter .dot.f {
         background: var(--yellow);
-        border-color: rgba(214, 158, 78, 0.6);
+        border-color: rgba(var(--warm-rgb), 0.6);
         transform: scale(1.05);
       }
       .scene.night .meter {
@@ -649,7 +640,7 @@
       .confetti {
         position: absolute;
         inset: 0;
-        z-index: 30;
+        z-index: var(--z-confetti);
         pointer-events: none;
         overflow: hidden;
       }
@@ -664,7 +655,7 @@
       .nightveil {
         position: absolute;
         inset: 0;
-        z-index: 40;
+        z-index: var(--z-veil);
         background: rgba(10, 12, 30, 0);
         opacity: 1;
         pointer-events: none;
@@ -1059,10 +1050,12 @@
   <body>
     <main class="app">
       <div class="topbar">
-        <span class="brand"><span class="b-chick">🐥</span>ぴよぴよランド</span>
+        <span class="brand chip"
+          ><span class="b-chick">🐥</span>ぴよぴよランド</span
+        >
         <div class="topbar-actions">
           <button
-            class="bgm-btn"
+            class="bgm-btn chip chip-btn"
             id="bgmBtn"
             type="button"
             aria-label="BGMを ながす"
@@ -1071,7 +1064,7 @@
             🔊
           </button>
           <button
-            class="moon-btn"
+            class="moon-btn chip chip-btn"
             id="moonBtn"
             type="button"
             aria-label="おやすみ"

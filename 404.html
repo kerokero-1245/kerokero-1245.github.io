@@ -20,13 +20,16 @@
         --bg: #fff6e5;
         --surface: #ffffff;
         --text: #5b3a1e;
+        --text-rgb: 91, 58, 30; /* ＝ --text の RGB（かげに つかう） */
         --subtext: #9b7b57;
         --border: #f0d9a8;
         --orange: #ff9f45;
         --green: #5fbf7a;
         --shadow: 0 10px 26px rgba(214, 158, 78, 0.28);
-        --shadow-soft: 0 8px 20px rgba(91, 58, 30, 0.15);
+        --shadow-soft: 0 8px 20px rgba(var(--text-rgb), 0.15);
         --radius: 28px;
+        --focus-ring-width: 4px; /* キーボードの フォーカスの わ（index.html と おなじ） */
+        --focus-ring-offset: 3px;
       }
       * {
         box-sizing: border-box;
@@ -99,11 +102,11 @@
         width: 120px;
         height: auto;
         margin: 36px auto 4px;
-        filter: drop-shadow(0 5px 5px rgba(91, 58, 30, 0.22));
+        filter: drop-shadow(0 5px 5px rgba(var(--text-rgb), 0.22));
       }
       .bubble {
         display: inline-block;
-        background: #fff;
+        background: var(--surface);
         border: 2px solid var(--border);
         border-radius: 16px;
         padding: 6px 16px;
@@ -143,8 +146,8 @@
         transform: translateY(2px) scale(0.98);
       }
       a.home:focus-visible {
-        outline: 4px solid var(--orange);
-        outline-offset: 3px;
+        outline: var(--focus-ring-width) solid var(--orange);
+        outline-offset: var(--focus-ring-offset);
       }
       a.home img {
         width: 34px;
