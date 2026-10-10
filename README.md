@@ -19,7 +19,9 @@ GitHub Pages がこのリポジトリをそのまま配信しています（ビ�
 
 ## このページの役割（街MVP）
 
-ビルド不要の静的ページです。画面の CSS と街の JS は `index.html` 1枚にインラインで書き、
+ビルド不要の静的ページです。画面の CSS と、描画・保存・音まわりの JS は `index.html` にインラインで書き、
+街の進行ロジック（段階表・退行禁止・すすみドット・ぴよの誘導。DOM に触れない純関数）は
+`assets/js/land-core.js` に分けて、`npm test`（`node --test`・`tests/`）でテストしています。
 素材は同じリポジトリに同梱しています（シールポップSVG は `assets/img/`、BGM のエンジンと曲は
 `assets/bgm/engine.js`・`assets/bgm/songs.js`、タイトルの声は `assets/voice/piyopiyo-land.m4a`）。
 **外部CDN・外部送信はゼロ**、保存は **localStorage**（タイトル読み上げ済みの印 `land.titleVoicePlayed` だけは sessionStorage）。GitHub Pages のユーザーサイトとして、
@@ -83,8 +85,8 @@ fuel = Number(localStorage['meiro.totalStars']  || 0)
 
 - 配色は `index.html` の `:root` の CSS変数（`--bg` / `--orange` / `--green` など）。
   既存3アプリ（`otsukai-meiro` / `piyopiyo-sansu` / `piyopiyo-kotoba` の `theme.ts`）に合わせています。
-- ⭐しきい値・段階の飾りは `index.html` 内の `THRESHOLDS` / `DECOS`、ぴよのセリフは `SAY_*`。
-  **必ず WORLD.md の表と一字一句そろえて**変更してください。
+- ⭐しきい値は `assets/js/land-core.js` の `THRESHOLDS`、段階の飾りは `index.html` 内の `DECOS`、ぴよのセリフは `SAY_*`。
+  **必ず WORLD.md の表と一字一句そろえて**変更してください（`THRESHOLDS` は `npm test` が WORLD.md §3.4 の表と照らします）。
 
 ## 音声（タイトルよみあげ）
 

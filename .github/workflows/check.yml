@@ -27,6 +27,18 @@ jobs:
       - run: npm ci
       - run: npm run format:check
 
+  test:
+    name: テスト（node --test）
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # 依存なし（node の組み込みテストランナーだけ）。tests/ の *.test.js を流す
+      - run: npm test
+
   html:
     name: HTML の検査（htmlhint）
     runs-on: ubuntu-latest

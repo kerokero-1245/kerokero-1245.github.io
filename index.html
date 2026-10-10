@@ -1200,10 +1200,18 @@
        songs.js（window.PIYO_SONGS）→ engine.js（window.PiyoBgm）の順。外部参照なし。 -->
     <script src="assets/bgm/songs.js"></script>
     <script src="assets/bgm/engine.js"></script>
+    <!-- 街の進行ロジック（だんかいの しきい値・たいこう禁止・ドット・ぴよの ゆうどう。DOM に ふれない 純関数。window.PiyoLand）。
+       tests/land-core.test.js を node --test で テストする。下の インライン script より さきに よむ。 -->
+    <script src="assets/js/land-core.js"></script>
 
     <script>
       (function () {
         "use strict";
+
+        /* 進行ロジックが よめなかった ときは なにも せず ぬける（れいがいで とまらない）。
+       しせつカードは 静的な <a href> なので、どうせんは のこる */
+        var L = window.PiyoLand;
+        if (!L) return;
 
         /* ── localStorage キー台帳（WORLD.md §7）。よむのは meiro/sansu/kotoba、
        かくのは land.* だけ ── */
@@ -1218,13 +1226,10 @@
           lastPoint: "land.lastPointed",
         };
 
-        /* こわれた値・けつじょは かならず 0 あつかい（WORLD.md §3.2 / §7） */
+        /* こわれた値・けつじょは かならず 0 あつかい（WORLD.md §3.2 / §7。かずの よみかたは L.parseCount） */
         function readNum(key) {
           try {
-            var v = localStorage.getItem(key);
-            if (v == null) return 0;
-            var n = Number(v);
-            return Number.isFinite(n) && n > 0 ? Math.floor(n) : 0;
+            return L.parseCount(localStorage.getItem(key));
           } catch (e) {
             return 0;
           }
@@ -1242,19 +1247,8 @@
           } catch (e) {}
         }
 
-        /* ── だんかい しきい値（WORLD.md §3.4・正典）──
-       ぞうぶん 2,2,3,4,5,5,6,7,8,8（ごうけい50） */
-        var THRESHOLDS = [0, 2, 4, 7, 11, 16, 21, 27, 34, 42, 50];
-        var MAX_STAGE = 10;
-
-        function stageForFuel(f) {
-          var s = 0;
-          for (var i = 0; i < THRESHOLDS.length; i++) {
-            if (f >= THRESHOLDS[i]) s = i;
-            else break;
-          }
-          return Math.min(s, MAX_STAGE);
-        }
+        /* ── だんかい しきい値（WORLD.md §3.4・正典）・たいこう禁止・ドット・ぴよの ゆうどうの けいさんは
+       assets/js/land-core.js（L = window.PiyoLand）。ここには ほぞんの よみかき・えがく・おと・タイマーを おく ── */
 
         /* ── かざりの はいち（けっていてき・らんすう なし）──
        st=だんかい, x/y=%（scene きじゅん）, s=絵文字サイズpx, cls=うごき
@@ -1867,19 +1861,12 @@
         /* ── すすみ ドット（つぎの へんかまで・さいだい5・かず よませない）── */
         function renderMeter(displayStage, fuel) {
           meterEl.innerHTML = "";
-          // さいだいだんかい：まちは かんせい。ドットは ださない（👑は ぴよの あたまに）
-          if (displayStage >= MAX_STAGE) return;
-          var lo = THRESHOLDS[displayStage];
-          var hi = THRESHOLDS[displayStage + 1];
-          var prog = hi > lo ? (fuel - lo) / (hi - lo) : 0;
-          if (prog < 0) prog = 0;
-          if (prog > 1) prog = 1;
-          var filled = Math.round(prog * 5);
-          for (var i = 0; i < 5; i++) {
+          // さいだいだんかい：まちは かんせい。L.meterDots が からの はいれつ＝ドットを ださない（👑は ぴよの あたまに）
+          L.meterDots(displayStage, fuel).forEach(function (filled) {
             var d = document.createElement("span");
-            d.className = "dot" + (i < filled ? " f" : "");
+            d.className = "dot" + (filled ? " f" : "");
             meterEl.appendChild(d);
-          }
+          });
         }
 
         /* ── まちを えがく（reachedStage は たんちょう ぞうか＝たいこう禁止）── */
@@ -1890,8 +1877,7 @@
           var fuel = meiro + sansu + kotoba;
 
           var reachedPrev = readNum(K.reached); // まえに ひらいていた だんかい
-          var byFuel = stageForFuel(fuel);
-          var displayStage = Math.max(reachedPrev, byFuel); // たいこう禁止：さがっても もどさない
+          var displayStage = L.displayStageFor(reachedPrev, fuel); // たいこう禁止：さがっても もどさない
 
           // かざりの ひょうじ。まえに ひらいていた だんかい（reachedPrev）までは さいしょから みせる。
           // こんかい あたらしく あいた ぶんは かくした まま はじめ、celebrate() が .on と .grow を
@@ -1900,12 +1886,12 @@
             if (d.st <= reachedPrev) d.el.classList.add("on");
             else d.el.classList.remove("on");
           });
-          if (displayStage >= 5) pathEl.classList.add("on");
+          if (displayStage >= L.PATH_STAGE) pathEl.classList.add("on");
           else pathEl.classList.remove("on");
           // 👑の つけはずしで ぴよの たかさが かわる（よこなが）。よみこみ直後に すべって みえないよう いどうなしで
           var piyoTr = piyo.style.transition;
           piyo.style.transition = "none";
-          if (displayStage >= MAX_STAGE) piyo.classList.add("king");
+          if (displayStage >= L.MAX_STAGE) piyo.classList.add("king");
           else piyo.classList.remove("king");
           void piyo.offsetWidth;
           piyo.style.transition = piyoTr;
@@ -1973,20 +1959,9 @@
        ⭐が いちばん すくない しせつを さす。ならんだら まえと ちがう しせつへ ── */
         function pointTarget(vals) {
           // vals: [{id:'park',v:meiro},{id:'cake',v:sansu},{id:'shop',v:kotoba}]
-          var min = vals[0].v;
-          for (var i = 1; i < vals.length; i++)
-            if (vals[i].v < min) min = vals[i].v;
-          var cands = [];
-          for (var j = 0; j < vals.length; j++)
-            if (vals[j].v === min) cands.push(vals[j].id);
-          var target;
-          if (cands.length === 1) {
-            target = cands[0]; // すくない しせつが 1つ＝そこを さす
-          } else {
-            var last = readStr(K.lastPoint); // ならんだ＝まえと ちがう しせつへ ローテーション
-            var idx = cands.indexOf(last);
-            target = idx === -1 ? cands[0] : cands[(idx + 1) % cands.length];
-          }
+          // えらびかた（⭐が いちばん すくない・ならんだら まえと ちがう しせつへ ローテーション）は L.pickPointTarget。
+          // ここは ほぞん（land.lastPointed）の よみかきだけ
+          var target = L.pickPointTarget(vals, readStr(K.lastPoint));
           writeStr(K.lastPoint, target);
           return target;
         }
@@ -2029,10 +2004,7 @@
           piyoHop();
 
           // つぎの へんかまで あと すこしなら「もうすこし」、ふだんは「こっちこっち」
-          var near =
-            state.displayStage < MAX_STAGE &&
-            THRESHOLDS[state.displayStage + 1] - state.fuel <= 2 &&
-            THRESHOLDS[state.displayStage + 1] - state.fuel > 0;
+          var near = L.isNearNextStage(state.displayStage, state.fuel);
           say(near ? SAY_NEAR : SAY_POINT, 1800);
 
           setTimeout(function () {
@@ -2073,7 +2045,7 @@
           bubble.classList.remove("show");
           // 1) そらが よるへ・ほしが つく
           scene.classList.add("night");
-          writeStr(K.night, todayStr());
+          writeStr(K.night, L.todayStr());
           sndSleep();
           bgm.stopBgm(2); // BGM は 2秒かけて しずかにフェードアウト（おやすみ）
           // 2) ぴよが すへ トコトコ
@@ -2114,16 +2086,6 @@
           startBgmSafe(); // あさに もどったら BGM 再開（このジェスチャ文脈で・OFFなら鳴らない）
           noteAct();
           scheduleIdle(currentState);
-        }
-
-        function todayStr() {
-          var d = new Date();
-          function p2(n) {
-            return (n < 10 ? "0" : "") + n;
-          }
-          return (
-            d.getFullYear() + "-" + p2(d.getMonth() + 1) + "-" + p2(d.getDate())
-          ); // YYYY-MM-DD（WORLD.md §7）
         }
 
         /* ── そうさ カウント（ながく あそんだら やさしく あくび・WORLD.md §5）── */
