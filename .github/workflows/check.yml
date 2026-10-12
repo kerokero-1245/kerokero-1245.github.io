@@ -1,6 +1,6 @@
-# push（main）と PR で、整形（Prettier）・テスト（node --test）・HTML の書き方（htmlhint）・リンク切れ（lychee）を検査する。
+# push（main）と PR で、整形（Prettier）・lint（eslint）・テスト（node --test）・HTML の書き方（htmlhint）・リンク切れ（lychee）を検査する。
 # 配信（GitHub Pages）には関与しない。
-name: 検査（整形・テスト・HTML・リンク切れ）
+name: 検査（整形・lint・テスト・HTML・リンク切れ）
 
 on:
   push:
