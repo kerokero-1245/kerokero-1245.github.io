@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: .nvmrc
           cache: npm
       - run: npm ci
       - run: npm run format:check
@@ -36,7 +36,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: .nvmrc
       # 依存なし（node の組み込みテストランナーだけ）。tests/ の *.test.js を流す
       - run: npm test
 
@@ -48,7 +48,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: .nvmrc
       # ルールはリポジトリ直下の .htmlhintrc（htmlhint の既定ルールと同じ 10 本）。
       # htmlhint はローカル（npx）で使っている版に固定する（新しい版でルールが変わって CI だけ落ちるのを防ぐ）
       - run: npx --yes htmlhint@1.9.2 "**/*.html"
