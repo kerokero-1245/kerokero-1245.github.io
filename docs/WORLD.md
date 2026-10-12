@@ -254,7 +254,7 @@ fuel =
 | `land.lastSeenStars`    | 数値文字列                             | 街       | **前回訪問時の fuel** の控え（記録用。退行防止は `land.reachedStage` が担う）                                                       |
 | `land.lastNightDate`    | `YYYY-MM-DD`                           | 街       | 🌙にした日付。朝戻し判定（日付が変われば朝へ）                                                                                      |
 | `land.lastPointed`      | `park`/`cake`/`shop`                   | 街       | ぴよが**前回指した施設**。最少⭐が並んだときの誘導ローテーション（§2.1）に使う                                                      |
-| `land.bgm`              | `'on'`/`'off'`                         | 街       | 街BGMの ON/OFF トグル。**既定ON**（未設定・壊れ値も ON）。旧値 `'1'`/`'0'` は読んだ時に書き直す。🔊/🔇チップで切替                  |
+| `land.bgm`              | `'on'`/`'off'`                         | 街       | 街BGMの ON/OFF。**既定ON**（未設定・壊れ値も ON）。旧値 `'1'`/`'0'` は読んだ時に書き直す（旧版へ戻すと `'off'` が ON）。🔊/🔇で切替 |
 | `meiro.bgm`             | `'1'`/`'0'`                            | めいろ   | おつかいめいろBGMの ON/OFF。**既定ON**。おとなモードのトグルで切替（各アプリが自分の `<app>.bgm` を所有）                           |
 | `sansu.bgm`             | `'on'`/`'off'`                         | さんすう | ぴよぴよさんすうBGMの ON/OFF。**既定ON**。おとなモードのトグルで切替                                                                |
 | `kotoba.bgm`            | `'on'`/`'off'`                         | ことば   | ぴよぴよことばBGMの ON/OFF。**既定ON**。おとなモードのトグルで切替                                                                  |

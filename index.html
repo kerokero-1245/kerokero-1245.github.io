@@ -1577,6 +1577,8 @@
         function bgmEnabledStored() {
           // よみかたは L.parseBgm（"off"/旧値 "0" だけ OFF。未設定・壊れ値・storage が よめない ときも ON。readStr は よめないと null）。
           // 旧値 "1"/"0" は ここで "on"/"off" に かきなおす（かけなくても writeStr は なにも しない）
+          // index.html だけ あたらしく land-core.js が キャッシュの 旧版（parseBgm が ない）でも とまらないよう、そのときは 既定の ON
+          if (typeof L.parseBgm !== "function") return true;
           var b = L.parseBgm(readStr(BGM_KEY));
           if (b.rewrite) writeStr(BGM_KEY, b.rewrite);
           return b.on;

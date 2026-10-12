@@ -435,7 +435,7 @@ test("todayStr: 引数なしは いま（形だけ確かめる）", () => {
 });
 
 // ── parseBgm / bgmValue（land.bgm の保存値。WORLD.md §7）──────────
-// 期待値は WORLD.md §7 と 横断設計の裁定 ⑰（on/off に揃える・旧値 "1"/"0" は読んだときに書き直す）から。
+// 期待値は WORLD.md §7 から（保存値を on/off に揃えた。旧値 "1"/"0" は読んだときに書き直す）。
 
 test('parseBgm: 旧値 "0" は OFF で、"off" に書き直す', () => {
   assert.deepEqual(L.parseBgm("0"), { on: false, rewrite: "off" });
