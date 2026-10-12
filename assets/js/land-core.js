@@ -12,6 +12,7 @@
  *   - すすみドット（§2.3・最大 5 つ）
  *   - ぴよが さす施設（§2.1・最少 + ローテーション）と「もうすこし」の判定（§3.6）
  *   - 夜にした日付 YYYY-MM-DD（§7）
+ *   - BGM の ON/OFF の保存値 land.bgm の読み方と書く値（§7・旧値 "1"/"0" の移行）
  * 保存の読み書き・描画・音・タイマーは index.html 側に置く（ここには入れない）。
  *
  * 使い方（街）:
@@ -98,6 +99,25 @@
     return d.getFullYear() + "-" + p2(d.getMonth() + 1) + "-" + p2(d.getDate());
   }
 
+  /* BGM の ON/OFF の ほぞん値（§7 land.bgm）。かくのは "on" / "off" だけ */
+  var BGM_ON = "on";
+  var BGM_OFF = "off";
+  function bgmValue(on) {
+    return on ? BGM_ON : BGM_OFF;
+  }
+
+  /* land.bgm の よみかた（§7）。"off" と 旧値 "0" → OFF、"on" と 旧値 "1" → ON、
+   それ以外（未設定 null・壊れ値）→ 既定 ON。
+   rewrite は 旧値を よんだときだけ 新しい値（"on"/"off"）。index.html が その場で かきなおす（かけなくても あそびは こわさない）。
+   新しい値・未設定・壊れ値は null（かきなおさない） */
+  function parseBgm(raw) {
+    if (raw === BGM_OFF) return { on: false, rewrite: null };
+    if (raw === BGM_ON) return { on: true, rewrite: null };
+    if (raw === "0") return { on: false, rewrite: BGM_OFF };
+    if (raw === "1") return { on: true, rewrite: BGM_ON };
+    return { on: true, rewrite: null };
+  }
+
   var api = {
     THRESHOLDS: THRESHOLDS,
     MAX_STAGE: MAX_STAGE,
@@ -111,6 +131,8 @@
     isNearNextStage: isNearNextStage,
     pickPointTarget: pickPointTarget,
     todayStr: todayStr,
+    bgmValue: bgmValue,
+    parseBgm: parseBgm,
   };
 
   if (typeof module !== "undefined" && module.exports) {

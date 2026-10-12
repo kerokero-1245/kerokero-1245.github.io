@@ -1575,8 +1575,11 @@
        AudioContext 非対応・スクリプト未読込・localStorage 例外でも 無害（no-op・クラッシュ厳禁）。 */
         var BGM_KEY = "land.bgm"; // トグルの保存キー（WORLD.md §7・既定ON）
         function bgmEnabledStored() {
-          // 未設定・壊れ値・storage が よめない ときも ON（"0" だけ OFF。readStr は よめないと null）
-          return readStr(BGM_KEY) !== "0";
+          // よみかたは L.parseBgm（"off"/旧値 "0" だけ OFF。未設定・壊れ値・storage が よめない ときも ON。readStr は よめないと null）。
+          // 旧値 "1"/"0" は ここで "on"/"off" に かきなおす（かけなくても writeStr は なにも しない）
+          var b = L.parseBgm(readStr(BGM_KEY));
+          if (b.rewrite) writeStr(BGM_KEY, b.rewrite);
+          return b.on;
         }
         var bgmReal = false; // 共有エンジンが よみこめたか（no-op 保険と くべつ）
         var bgm = (function () {
@@ -2151,7 +2154,7 @@
                 bgm.startBgm("land"); // 最初のタップが チップでも 鳴らす（冪等）
               } // よるの ON は あさに もどる ときに 反映（startBgmSafe）
             } catch (e) {}
-            writeStr(BGM_KEY, next ? "1" : "0");
+            writeStr(BGM_KEY, L.bgmValue(next)); // "on" / "off"
             renderBgmBtn();
             noteAct();
           });

@@ -74,6 +74,8 @@ test("ブラウザ向けの公開名 window.PiyoLand（globalThis.PiyoLand）が
     "isNearNextStage",
     "pickPointTarget",
     "todayStr",
+    "bgmValue",
+    "parseBgm",
   ]) {
     assert.equal(typeof L[name], "function", name);
   }
@@ -430,4 +432,66 @@ test("todayStr: YYYY-MM-DD（ゼロうめ・端末ローカルの日付）", () 
 
 test("todayStr: 引数なしは いま（形だけ確かめる）", () => {
   assert.match(L.todayStr(), /^\d{4}-\d{2}-\d{2}$/);
+});
+
+// ── parseBgm / bgmValue（land.bgm の保存値。WORLD.md §7）──────────
+// 期待値は WORLD.md §7 と 横断設計の裁定 ⑰（on/off に揃える・旧値 "1"/"0" は読んだときに書き直す）から。
+
+test('parseBgm: 旧値 "0" は OFF で、"off" に書き直す', () => {
+  assert.deepEqual(L.parseBgm("0"), { on: false, rewrite: "off" });
+});
+
+test('parseBgm: 旧値 "1" は ON で、"on" に書き直す', () => {
+  assert.deepEqual(L.parseBgm("1"), { on: true, rewrite: "on" });
+});
+
+test('parseBgm: 新しい値 "on" は ON・"off" は OFF（書き直さない）', () => {
+  assert.deepEqual(L.parseBgm("on"), { on: true, rewrite: null });
+  assert.deepEqual(L.parseBgm("off"), { on: false, rewrite: null });
+});
+
+test("parseBgm: 未設定（null・undefined）は既定の ON（書き直さない）", () => {
+  assert.deepEqual(L.parseBgm(null), { on: true, rewrite: null });
+  assert.deepEqual(L.parseBgm(undefined), { on: true, rewrite: null });
+});
+
+test("parseBgm: 壊れ値は既定の ON（書き直さない）", () => {
+  for (const raw of [
+    "",
+    "abc",
+    "ON",
+    "OFF",
+    " off",
+    "off ",
+    "2",
+    "-1",
+    "00",
+    "true",
+    "false",
+    "null",
+  ]) {
+    assert.deepEqual(
+      L.parseBgm(raw),
+      { on: true, rewrite: null },
+      JSON.stringify(raw),
+    );
+  }
+});
+
+test("parseBgm / bgmValue: 書き直すのは旧値だけ・書く値は on/off で、読み直すと同じ ON/OFF（もう書き直さない）", () => {
+  assert.equal(L.bgmValue(true), "on");
+  assert.equal(L.bgmValue(false), "off");
+  const rewritten = [];
+  for (const raw of [null, "", "abc", "on", "off", "0", "1"]) {
+    const r = L.parseBgm(raw);
+    if (r.rewrite !== null) {
+      rewritten.push(raw);
+      assert.equal(r.rewrite, L.bgmValue(r.on), JSON.stringify(raw));
+      assert.deepEqual(L.parseBgm(r.rewrite), { on: r.on, rewrite: null });
+    }
+  }
+  assert.deepEqual(rewritten, ["0", "1"]);
+  for (const on of [true, false]) {
+    assert.deepEqual(L.parseBgm(L.bgmValue(on)), { on, rewrite: null });
+  }
 });

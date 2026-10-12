@@ -38,3 +38,13 @@ test("施設カードの導線 3 つは JS が無くても残る静的な <a hre
     assert.ok(html.includes(`href="${url}"`), url);
   }
 });
+
+test("land.bgm の読み書きは land-core.js の parseBgm / bgmValue を通し、旧値はその場で書き直す", () => {
+  const inline = html.slice(html.indexOf("<script>"));
+  assert.match(inline, /L\.parseBgm\(readStr\(BGM_KEY\)\)/);
+  assert.match(inline, /if \(b\.rewrite\) writeStr\(BGM_KEY, b\.rewrite\);/);
+  assert.match(inline, /writeStr\(BGM_KEY, L\.bgmValue\(next\)\)/);
+  // 旧形式の直書き（"1"/"0" を書く・"0" とだけ比べる）が残っていない
+  assert.doesNotMatch(inline, /BGM_KEY, next \? "1" : "0"/);
+  assert.doesNotMatch(inline, /readStr\(BGM_KEY\) !== "0"/);
+});
