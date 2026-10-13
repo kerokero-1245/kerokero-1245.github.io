@@ -8,8 +8,10 @@
 **公開URL: https://kerokero-1245.github.io/**
 
 GitHub Pages がこのリポジトリをそのまま配信しています（ビルドなし）。main への push と PR では
-`.github/workflows/check.yml` が整形の検査（Prettier）・テスト（`node --test`）・HTML の検査（htmlhint・ルールは `.htmlhintrc`）・
-リンク切れの検査（lychee）を回します。コードの書き方の方針は WORLD.md の §12 です。
+`.github/workflows/check.yml` が整形の検査（Prettier）・lint の検査（eslint）・テスト（`node --test`）・HTML の検査（htmlhint・ルールは `.htmlhintrc`）・
+リンク切れの検査（lychee）を回します。
+
+作り方の規則と、この repo で違うこと: [docs/DESIGN.md](docs/DESIGN.md#この-repo-での適用)
 
 ## 世界観の正典（必読）
 

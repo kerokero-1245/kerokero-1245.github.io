@@ -328,10 +328,9 @@ fuel =
 
 ## 12. 実装の方針（コードの書き方）
 
-世界観・数値・キーの正典は §1〜§11。ここは「どう書くか」。
+世界観・数値・キーの正典は §1〜§11。ここは「どう書くか」のうち、このリポジトリ固有のこと。規則の全文と例外は [docs/DESIGN.md](DESIGN.md#この-repo-での適用)。
 
-- **整形**：Prettier の既定設定（`.prettierrc.json` は空の `{}`）。`npm run format` で整え、CI の `format` ジョブ（`npm run format:check`）が通ること。
-- **共通化**：同じ意味の値・処理が **3 回以上**出たら 1 か所へまとめる（2 回までは直書きしてよい。偶然同じ値は分けたままにする）。CSS は `:root` のトークンと共通クラス、JS は定数・helper・対応表（`FACILITIES` など）へ。リポジトリをまたぐ共通化は、piyo-assets の版つきパッケージとして配る形に限る（`assets/bgm/` は `piyo-assets` の写しで、一致は検査で確かめる）。
+- **共通化の寄せ先**：CSS は `:root` のトークンと共通クラス、JS は定数・helper・対応表（`FACILITIES` など）。リポジトリをまたぐ共通化は piyo-assets の版つきパッケージから取る（`assets/bgm/` と `assets/js/keys.js` はその写しで、一致は `tests/copies.test.js` が見る）。
 - **純関数とテスト**：DOM・保存・音・タイマーに触れない計算は `assets/js/land-core.js` に置き、`tests/` を `node --test`（`npm test`）で流す。段階表 `THRESHOLDS` は、本書 §3.4 の表と一致することもテストが見る。
 - **見た目・挙動・保存キーを変えない整理（リファクタ）**：§10 の 8 サイズ × 3 状態の撮影で、前後の画素差 0 を確かめる。
 
