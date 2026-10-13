@@ -268,6 +268,7 @@ fuel =
 **規約**
 
 - 街用キーは必ず `land.` プレフィックス。読むのは `meiro`/`sansu`/`kotoba` の `totalStars`、書くのは `land.*` のみ。
+- `<app>.totalStars` のキー名の値は piyo-assets/keys から読む（写し `assets/js/keys.js`。一致検査 `tests/copies.test.js`）。
 - **街から他アプリのキーへ書き込み禁止（読むだけ）**。書いてよいのは `land.*` のみ。
 - 読み取りは常に try/catch ＋ `|| 0`。キーが無い/壊れている場合も**必ず安全に0扱いでレンダリング**する。
 - 燃料の定義（再掲）：`fuel = Number(meiro.totalStars||0) + Number(sansu.totalStars||0) + Number(kotoba.totalStars||0)`。

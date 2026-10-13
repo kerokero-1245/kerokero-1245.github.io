@@ -16,6 +16,36 @@ test("index.html は land-core.js を 1 回だけ読み込み、ファイルが�
   );
 });
 
+// 保存キーの定数（piyo-assets/keys の写し）。読めないと ⭐の キーが決まらず 街の ロジックは 動かない。
+const KEYS_TAG = '<script src="assets/js/keys.js"></script>';
+
+test("index.html は keys.js を 1 回だけ読み込み、ファイルが実在する", () => {
+  assert.equal(html.split(KEYS_TAG).length - 1, 1);
+  assert.ok(fs.statSync(path.join(root, "assets", "js", "keys.js")).isFile());
+});
+
+test("keys.js の script は、land-core.js とインライン script より前にある", () => {
+  const keys = html.indexOf(KEYS_TAG);
+  const core = html.indexOf(CORE_TAG);
+  const inline = html.indexOf("<script>");
+  assert.ok(keys >= 0 && core >= 0 && inline >= 0);
+  assert.ok(keys < core, "keys.js が land-core.js より後");
+  assert.ok(keys < inline, "keys.js がインライン script より後");
+});
+
+test("インライン script は ⭐の キーを window.PIYO_KEYS から読み、無いときは何もせず抜ける（例外で止まらない）", () => {
+  const inline = html.slice(html.indexOf("<script>"));
+  assert.match(inline, /window\.PIYO_KEYS/);
+  assert.match(inline, /if \(!KEYS \|\| !KEYS\.TOTAL_STARS\) return;/);
+  for (const app of ["meiro", "sansu", "kotoba"]) {
+    assert.match(
+      inline,
+      new RegExp(app + ": KEYS\\.TOTAL_STARS\\." + app + ","),
+    );
+  }
+  assert.doesNotMatch(inline, /"(meiro|sansu|kotoba)\.totalStars"/);
+});
+
 test("land-core.js の script は、それを使うインライン script より前にある", () => {
   const core = html.indexOf(CORE_TAG);
   const inline = html.indexOf("<script>");

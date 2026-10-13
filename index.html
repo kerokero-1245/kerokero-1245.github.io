@@ -1195,6 +1195,9 @@
        songs.js（window.PIYO_SONGS）→ engine.js（window.PiyoBgm）の順。外部参照なし。 -->
     <script src="assets/bgm/songs.js"></script>
     <script src="assets/bgm/engine.js"></script>
+    <!-- 保存キーの定数（window.PIYO_KEYS。piyo-assets/keys/keys.js の写し。tests/copies.test.js が正本との一致を見る）。
+       下の インライン script より さきに よむ。 -->
+    <script src="assets/js/keys.js"></script>
     <!-- 街の進行ロジック（だんかいの しきい値・たいこう禁止・ドット・ぴよの ゆうどう。DOM に ふれない 純関数。window.PiyoLand）。
        tests/land-core.test.js を node --test で テストする。下の インライン script より さきに よむ。 -->
     <script src="assets/js/land-core.js"></script>
@@ -1211,10 +1214,14 @@
         /* ── localStorage キー台帳（WORLD.md §7）。よむのは meiro/sansu/kotoba、
        かくのは land.* だけ ── */
         var IMG = "assets/img/"; // シールポップSVGの ばしょ（同一オリジン・クロスオリジン参照なし）
+        /* ほかの アプリの ⭐の キーは piyo-assets/keys の 写し（assets/js/keys.js）から よむ。
+       よめなかった ときは なにも せず ぬける（れいがいで とまらない） */
+        var KEYS = window.PIYO_KEYS;
+        if (!KEYS || !KEYS.TOTAL_STARS) return;
         var K = {
-          meiro: "meiro.totalStars",
-          sansu: "sansu.totalStars",
-          kotoba: "kotoba.totalStars",
+          meiro: KEYS.TOTAL_STARS.meiro,
+          sansu: KEYS.TOTAL_STARS.sansu,
+          kotoba: KEYS.TOTAL_STARS.kotoba,
           reached: "land.reachedStage",
           lastSeen: "land.lastSeenStars",
           night: "land.lastNightDate",
