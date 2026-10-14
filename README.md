@@ -19,12 +19,14 @@ GitHub Pages がこのリポジトリをそのまま配信しています（ビ�
 世界観・ぴよ・街の育ち方・⭐しきい値表・localStorageキー台帳・演出・禁止事項の
 **単一の情報源（正典）**は [`docs/WORLD.md`](docs/WORLD.md) です。実装は必ずこれに従います。
 数値・キー・文言を変えるときは、**WORLD.md と `index.html` を同時に**更新します。
+⭐累計の保存キー（`meiro.totalStars` / `sansu.totalStars` / `kotoba.totalStars`）の値の正本は piyo-assets の `keys/` に移りました。街は写し `assets/js/keys.js` を読むので、正本の版を上げたら写しも更新します（`tests/copies.test.js` が正本との一致を見ます）。
 
 ## このページの役割（街MVP）
 
 ビルド不要の静的ページです。画面の CSS と、描画・保存・音まわりの JS は `index.html` にインラインで書き、
 街の進行ロジック（段階表・退行禁止・すすみドット・ぴよの誘導。DOM に触れない純関数）は
-`assets/js/land-core.js` に分けて、`npm test`（`node --test`・`tests/`）でテストしています。
+`assets/js/land-core.js` に分けて、`npm ci` で依存（piyo-assets）を入れてから `npm test`（`node --test`・`tests/`）でテストしています（`tests/copies.test.js` は node_modules の正本と写しを比べます）。
+他アプリの保存キーの定数は `assets/js/keys.js`（piyo-assets の写し。index.html が `<script src>` で読む）に置きます。
 素材は同じリポジトリに同梱しています（シールポップSVG は `assets/img/`、BGM のエンジンと曲は
 `assets/bgm/engine.js`・`assets/bgm/songs.js`、タイトルの声は `assets/voice/piyopiyo-land.m4a`）。
 **外部CDN・外部送信はゼロ**、保存は **localStorage**（タイトル読み上げ済みの印 `land.titleVoicePlayed` だけは sessionStorage）。GitHub Pages のユーザーサイトとして、
@@ -65,6 +67,8 @@ fuel = Number(localStorage['meiro.totalStars']  || 0)
 - **街は読まない**（各アプリの中だけで使う）: `sansu.starsResetAt` / `kotoba.starsResetAt`（おとなモードで表示を 0 に もどした時点の累計の控え）
 
 台帳の正典は WORLD.md §7。
+
+⭐累計は `assets/js/keys.js` から読みます。keys.js が読めないときは街の進行（飾り・すすみドット・🌙 の切替・BGM の開始）が止まり、施設カードの静的な導線だけ残ります（index.html は何もせず抜けます）。
 
 ## 3つのアプリへのリンク（巨大導線・URLは不変）
 

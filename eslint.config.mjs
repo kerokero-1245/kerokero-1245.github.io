@@ -9,7 +9,7 @@ export default [
 
   js.configs.recommended,
 
-  // assets/ の .js（bgm/engine.js・bgm/songs.js・js/land-core.js）は index.html が <script src> で読む通常のスクリプト。
+  // assets/ の .js（bgm/engine.js・bgm/songs.js・js/keys.js・js/land-core.js）は index.html が <script src> で読む通常のスクリプト。
   // 末尾の `typeof module !== "undefined" && module.exports` は Node から require されたときだけ効く
   // （land-core.js は tests/ が require する）。その `module` を宣言する（規則は切らず、実行環境のほうを書く）
   {

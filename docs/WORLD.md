@@ -331,7 +331,7 @@ fuel =
 世界観・数値・キーの正典は §1〜§11。ここは「どう書くか」のうち、このリポジトリ固有のこと。規則の全文と例外は [docs/DESIGN.md](DESIGN.md#この-repo-での適用)。
 
 - **共通化の寄せ先**：CSS は `:root` のトークンと共通クラス、JS は定数・helper・対応表（`FACILITIES` など）。リポジトリをまたぐ共通化は piyo-assets の版つきパッケージから取る（`assets/bgm/` と `assets/js/keys.js` はその写しで、一致は `tests/copies.test.js` が見る）。
-- **純関数とテスト**：DOM・保存・音・タイマーに触れない計算は `assets/js/land-core.js` に置き、`tests/` を `node --test`（`npm test`）で流す。段階表 `THRESHOLDS` は、本書 §3.4 の表と一致することもテストが見る。
+- **純関数とテスト**：DOM・保存・音・タイマーに触れない計算は `assets/js/land-core.js` に置き、`tests/` を `npm test`（`node --test`）で流す。実行前に `npm ci` で依存（piyo-assets）を入れる（`copies.test.js` が node_modules の正本と写しを比べるため）。段階表 `THRESHOLDS` は、本書 §3.4 の表と一致することもテストが見る。
 - **見た目・挙動・保存キーを変えない整理（リファクタ）**：§10 の 8 サイズ × 3 状態の撮影で、前後の画素差 0 を確かめる。
 
 ---
