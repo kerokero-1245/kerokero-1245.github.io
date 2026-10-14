@@ -25,7 +25,7 @@ GitHub Pages がこのリポジトリをそのまま配信しています（ビ�
 
 ビルド不要の静的ページです。画面の CSS と、描画・保存・音まわりの JS は `index.html` にインラインで書き、
 街の進行ロジック（段階表・退行禁止・すすみドット・ぴよの誘導。DOM に触れない純関数）は
-`assets/js/land-core.js` に分けて、`npm ci` で依存（piyo-assets）を入れてから `npm test`（`node --test`・`tests/`）でテストしています（`tests/copies.test.js` は node_modules の正本と写しを比べます）。
+`assets/js/land-core.js` に分けて、`npm ci` で依存（piyo-assets）を入れてから `npm test`（`node --test`・`tests/`）でテストしています（`tests/copies.test.js` は node_modules の正本と写し（BGM・保存キー・`assets/img/` の svg）を比べます）。
 他アプリの保存キーの定数は `assets/js/keys.js`（piyo-assets の写し。index.html が `<script src>` で読む）に置きます。
 素材は同じリポジトリに同梱しています（シールポップSVG は `assets/img/`、BGM のエンジンと曲は
 `assets/bgm/engine.js`・`assets/bgm/songs.js`、タイトルの声は `assets/voice/piyopiyo-land.m4a`）。
