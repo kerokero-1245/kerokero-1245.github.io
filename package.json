@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
-    "@kerokero-1245/piyo-assets": "github:kerokero-1245/piyo-assets#v0.2.0",
+    "@kerokero-1245/piyo-assets": "github:kerokero-1245/piyo-assets#v0.3.0",
     "eslint": "10.12.0",
     "globals": "17.13.0",
     "prettier": "3.9.9"
