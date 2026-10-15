@@ -182,3 +182,78 @@ test("land.reachedStage は L.parseStage（上限で丸める）を通して読�
   assert.match(inline, /typeof L\.parseStage === "function"/);
   assert.doesNotMatch(inline, /var reachedPrev = readNum\(K\.reached\);/);
 });
+
+// ── 起動時の「街が変わった」演出と land.reachedStage の保存の順序（WORLD.md §3.5「表示後、land.reachedStage を更新」）──
+// index.html の しょきか と celebrateThenSave を そのまま 切り出し、paint・celebrate・保存・タイマーを 偽物にして 動かす。
+// 演出（650ms 後）の前に保存すると、その前に ページを離れた子は 二度と 演出を見られない。
+function bootInit(state, opts = {}) {
+  const events = [];
+  const timers = [];
+  const fakeSetTimeout = (fn, ms) => {
+    timers.push({ fn, ms });
+    return timers.length;
+  };
+  const stubs = {
+    K: { reached: "land.reachedStage", night: "land.lastNightDate" },
+    L: opts.core || L,
+    renderBgmBtn() {},
+    paint: () => state,
+    celebrate: (from, to) => events.push(`celebrate ${from}→${to}`),
+    say: (t) => events.push(`say ${t}`),
+    piyoHop() {},
+    scheduleIdle() {},
+    writeStr: (k, v) => events.push(`write ${k}=${v}`),
+    readStr: (k) => (opts.stored && k in opts.stored ? opts.stored[k] : null),
+    restNight: () => events.push("restNight"),
+    setTimeout: fakeSetTimeout,
+    SAY_MORNING: "おはよう",
+  };
+  const helper = grab("function celebrateThenSave", "/* ── ぴよの ゆうどう");
+  const init = grab("/* ── しょきか ── */", "scheduleIdle(currentState);");
+  const names = Object.keys(stubs);
+  const run = new Function(
+    ...names,
+    "var pendingGrow = false;\n" +
+      helper +
+      init +
+      "\nreturn { pendingGrow: pendingGrow };",
+  );
+  const out = run(...names.map((n) => stubs[n]));
+  const beforeTimers = events.slice();
+  // タイマーを 時間の順に 走らせる（中で足されたものも）
+  while (timers.length) {
+    timers.sort((a, b) => a.ms - b.ms);
+    timers.shift().fn();
+  }
+  return { beforeTimers, events, pendingGrow: out.pendingGrow };
+}
+
+test("land.reachedStage は 街が変わった演出（celebrate）の あとに 保存する", () => {
+  const r = bootInit({ displayStage: 10, reachedPrev: 9, fuel: 50 });
+  assert.deepEqual(
+    r.beforeTimers,
+    [],
+    "演出の前（650ms より前）には 何も保存しない",
+  );
+  assert.deepEqual(r.events, ["celebrate 9→10", "write land.reachedStage=10"]);
+});
+
+test("街が変わらない 来訪では すぐ land.reachedStage を保存し、演出は出さない", () => {
+  const r = bootInit({ displayStage: 4, reachedPrev: 4, fuel: 11 });
+  assert.deepEqual(r.beforeTimers, ["write land.reachedStage=4"]);
+  assert.ok(!r.events.some((e) => e.startsWith("celebrate")));
+});
+
+test("paint() は land.reachedStage を書かない（保存は しょきか の 演出の あと だけ）", () => {
+  const paintCode = grab(
+    "function paint()",
+    "/* ── まちが そだった えんしゅつ",
+  );
+  assert.doesNotMatch(paintCode, /writeStr\(K\.reached/);
+  const inline = html.slice(html.indexOf("<script>"));
+  assert.equal(
+    (inline.match(/writeStr\(K\.reached,/g) || []).length,
+    2,
+    "書くのは celebrateThenSave と 街が変わらない来訪の 2 か所だけ",
+  );
+});

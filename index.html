@@ -1929,8 +1929,7 @@
 
           renderMeter(displayStage, fuel);
 
-          // ほぞん（land.* のみ）
-          writeStr(K.reached, displayStage);
+          // ほぞん（land.* のみ）。land.reachedStage は ここでは かかない（しょきか で、まちが かわった えんしゅつの あとに かく）
           writeStr(K.lastSeen, fuel);
 
           return {
@@ -1978,6 +1977,15 @@
           say(SAY_GROW, 2400);
           burstConfetti();
           sndGrow();
+        }
+
+        /* まちが かわった えんしゅつを 650ms ごに 1かい だして、その あとで land.reachedStage を ほぞん（WORLD.md §3.5「表示後に更新」）。
+       さきに ほぞんすると、650ms より まえに ページを はなれた 子は にどと えんしゅつを みられない */
+        function celebrateThenSave(state) {
+          setTimeout(function () {
+            celebrate(state.reachedPrev, state.displayStage);
+            writeStr(K.reached, state.displayStage);
+          }, 650);
         }
 
         /* ── ぴよの ゆうどう（ひかえめ・いちどに ひとつだけ・WORLD.md §2.1）──
@@ -2218,12 +2226,11 @@
         renderBgmBtn(); // BGM チップの みため（保存された ON/OFF を反映）
         var currentState = paint();
 
-        // まちが そだったか？（reachedPrev → displayStage を またいだら 1かい）
+        // まちが そだったか？（reachedPrev → displayStage を またいだら 1かい。ほぞんは えんしゅつの あと）
         if (currentState.displayStage > currentState.reachedPrev) {
-          setTimeout(function () {
-            celebrate(currentState.reachedPrev, currentState.displayStage);
-          }, 650);
+          celebrateThenSave(currentState);
         } else {
+          writeStr(K.reached, currentState.displayStage);
           // ふだんの らいほう：あさの あいさつ
           setTimeout(function () {
             say(SAY_MORNING, 1600);
