@@ -11,7 +11,7 @@
  *   - 退行禁止の表示段階（§3.3 / §3.5）
  *   - すすみドット（§2.3・最大 5 つ）
  *   - ぴよが さす施設（§2.1・最少 + ローテーション）と「もうすこし」の判定（§3.6）
- *   - 夜にした日付 YYYY-MM-DD（§7）
+ *   - 夜にした日付 YYYY-MM-DD と、起動時に夜のままか朝か（§5 / §7）
  *   - BGM の ON/OFF の保存値 land.bgm の読み方と書く値（§7・旧値 "1"/"0" の移行）
  * 保存の読み書き・描画・音・タイマーは index.html 側に置く（ここには入れない）。
  *
@@ -105,6 +105,16 @@
     return d.getFullYear() + "-" + p2(d.getMonth() + 1) + "-" + p2(d.getDate());
   }
 
+  /* きどう した ときの あさ/よる（§5）。🌙に した ひ（land.lastNightDate）が きょうと おなじ なら "night"（よるの まま）、
+   ちがう ひ・みほぞん・から・こわれた値 なら "morning"（ひづけが かわれば あさへ）。today は todayStr() の 値 */
+  function wakeState(savedDate, today) {
+    return typeof savedDate === "string" &&
+      savedDate !== "" &&
+      savedDate === today
+      ? "night"
+      : "morning";
+  }
+
   /* BGM の ON/OFF の ほぞん値（§7 land.bgm）。かくのは "on" / "off" だけ */
   var BGM_ON = "on";
   var BGM_OFF = "off";
@@ -138,6 +148,7 @@
     isNearNextStage: isNearNextStage,
     pickPointTarget: pickPointTarget,
     todayStr: todayStr,
+    wakeState: wakeState,
     bgmValue: bgmValue,
     parseBgm: parseBgm,
   };

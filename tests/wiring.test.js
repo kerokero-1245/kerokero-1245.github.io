@@ -257,3 +257,54 @@ test("paint() は land.reachedStage を書かない（保存は しょきか の
     "書くのは celebrateThenSave と 街が変わらない来訪の 2 か所だけ",
   );
 });
+
+// ── 起動時の 朝/夜（land.lastNightDate・WORLD.md §5）──
+
+test("land.lastNightDate が今日なら 夜のまま起動する（あいさつ・演出・到達段階の保存は朝に回す）", () => {
+  const r = bootInit(
+    { displayStage: 10, reachedPrev: 9, fuel: 50 },
+    { stored: { "land.lastNightDate": L.todayStr() } },
+  );
+  assert.deepEqual(r.events, ["restNight"]);
+  assert.equal(r.pendingGrow, true, "朝に戻ったときに 演出 → 保存");
+  const same = bootInit(
+    { displayStage: 4, reachedPrev: 4, fuel: 11 },
+    { stored: { "land.lastNightDate": L.todayStr() } },
+  );
+  assert.deepEqual(same.events, ["restNight", "write land.reachedStage=4"]);
+  assert.equal(same.pendingGrow, false);
+});
+
+test("land.lastNightDate が昨日・未保存なら 朝で起動する（日付が変われば朝へ）", () => {
+  const y = new Date();
+  y.setDate(y.getDate() - 1);
+  for (const stored of [{ "land.lastNightDate": L.todayStr(y) }, {}]) {
+    const r = bootInit(
+      { displayStage: 4, reachedPrev: 4, fuel: 11 },
+      { stored },
+    );
+    assert.ok(!r.events.includes("restNight"), JSON.stringify(stored));
+    assert.deepEqual(r.events, ["write land.reachedStage=4", "say おはよう"]);
+  }
+});
+
+test("land.lastNightDate: キャッシュの 旧い land-core.js（wakeState が無い）では止まらず 朝で起動する", () => {
+  const oldCore = Object.assign({}, L);
+  delete oldCore.wakeState;
+  const r = bootInit(
+    { displayStage: 4, reachedPrev: 4, fuel: 11 },
+    { core: oldCore, stored: { "land.lastNightDate": L.todayStr() } },
+  );
+  assert.ok(!r.events.includes("restNight"));
+});
+
+test("land.lastNightDate: 朝に戻すと 空にし（開き直しても朝）、夜のあいだに 回した演出を出す", () => {
+  const morning = grab("function goMorning()", "/* ── そうさ カウント");
+  assert.match(morning, /writeStr\(K\.night, ""\)/);
+  assert.match(
+    morning,
+    /if \(pendingGrow\) \{\s*pendingGrow = false;\s*celebrateThenSave\(currentState\);/,
+  );
+  const night = grab("function goNight()", "function restNight()");
+  assert.match(night, /writeStr\(K\.night, L\.todayStr\(\)\)/);
+});

@@ -2061,6 +2061,7 @@
         /* ── よる モード（WORLD.md §5・こていシーケンス）── */
         var isNight = false;
         var nightTimers = [];
+        var pendingGrow = false; // よるの まま ひらいた ひに まちが そだって いた＝あさに もどった ときに えんしゅつ → ほぞん
         function clearNightTimers() {
           nightTimers.forEach(clearTimeout);
           nightTimers = [];
@@ -2100,9 +2101,29 @@
           );
         }
 
+        /* よるに した ひの うちに ひらきなおした とき：よるの おわりの すがた（くらがり・すで ねむる ぴよ）で はじめる。
+       おとも ふきだしも ださない（タップで あさへ。BGM は あさに もどる まで ならない＝startBgmSafe） */
+        function restNight() {
+          isNight = true;
+          // script の よみこみ まちの あいだに あさの がめんが いちど えがかれて いるので、
+          // その まま クラスを つけると あさ → よるへ フェードする。つける あいだだけ transition を とめる
+          var still = document.createElement("style");
+          still.textContent = "*,*::before,*::after{transition:none!important}";
+          document.head.appendChild(still);
+          scene.classList.add("night");
+          scene.classList.add("slept");
+          setPiyoX(PIYO_HOME_X);
+          piyo.classList.add("to-nest");
+          piyo.classList.add("sleep");
+          setPiyoFace("piyo-nemui");
+          void scene.offsetWidth;
+          document.head.removeChild(still);
+        }
+
         function goMorning() {
           if (!isNight) return;
           isNight = false;
+          writeStr(K.night, ""); // あさに もどしたら からに（その ひの うちに ひらきなおしても あさ）
           clearNightTimers();
           scene.classList.remove("night");
           scene.classList.remove("slept");
@@ -2115,6 +2136,11 @@
           startBgmSafe(); // あさに もどったら BGM 再開（このジェスチャ文脈で・OFFなら鳴らない）
           noteAct();
           scheduleIdle(currentState);
+          // よるの あいだに まちが そだって いたら、ここで えんしゅつ → ほぞん
+          if (pendingGrow) {
+            pendingGrow = false;
+            celebrateThenSave(currentState);
+          }
         }
 
         /* ── そうさ カウント（ながく あそんだら やさしく あくび・WORLD.md §5）── */
@@ -2215,7 +2241,7 @@
           });
         });
 
-        // ページを はなれて もどった とき（bfcache）＝あさに もどす
+        // ページを はなれて もどった とき（bfcache）＝よみなおす（よるに した ひの うちは よる、あさに もどして いれば あさ）
         window.addEventListener("pageshow", function (e) {
           if (e.persisted) {
             location.reload();
@@ -2224,13 +2250,24 @@
 
         /* ── しょきか ── */
         renderBgmBtn(); // BGM チップの みため（保存された ON/OFF を反映）
+        // 🌙に した ひ（land.lastNightDate）が きょう なら よるの まま ひらく。ひづけが かわれば あさ（WORLD.md §5・L.wakeState）。
+        // paint() より まえに つける（あさが うつってから よるへ フェードしない）。旧い land-core.js（wakeState が ない）では あさ
+        var startNight =
+          typeof L.wakeState === "function" &&
+          L.wakeState(readStr(K.night), L.todayStr()) === "night";
+        if (startNight) restNight();
         var currentState = paint();
 
         // まちが そだったか？（reachedPrev → displayStage を またいだら 1かい。ほぞんは えんしゅつの あと）
-        if (currentState.displayStage > currentState.reachedPrev) {
-          celebrateThenSave(currentState);
-        } else {
+        var grew = currentState.displayStage > currentState.reachedPrev;
+        if (!grew) {
           writeStr(K.reached, currentState.displayStage);
+        } else if (startNight) {
+          pendingGrow = true; // よるの あいだは だまって、あさに もどった とき（goMorning）に えんしゅつ → ほぞん
+        } else {
+          celebrateThenSave(currentState);
+        }
+        if (!grew && !startNight) {
           // ふだんの らいほう：あさの あいさつ
           setTimeout(function () {
             say(SAY_MORNING, 1600);

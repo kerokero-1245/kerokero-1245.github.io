@@ -451,6 +451,38 @@ test("todayStr: 引数なしは いま（形だけ確かめる）", () => {
   assert.match(L.todayStr(), /^\d{4}-\d{2}-\d{2}$/);
 });
 
+// ── wakeState（land.lastNightDate から 起動時の 朝/夜。WORLD.md §5「日付が変われば朝へ」）──
+
+test("wakeState: land.lastNightDate が今日と同じ日付なら 夜のまま（night）", () => {
+  assert.equal(typeof L.wakeState, "function");
+  assert.equal(L.wakeState("2026-10-15", "2026-10-15"), "night");
+  assert.equal(
+    L.wakeState(
+      L.todayStr(new Date(2026, 0, 5)),
+      L.todayStr(new Date(2026, 0, 5, 23, 59)),
+    ),
+    "night",
+  );
+});
+
+test("wakeState: land.lastNightDate が 違う日・未保存・空・壊れ値なら 朝（morning）", () => {
+  for (const saved of [
+    "2026-10-14",
+    "2026-10-16",
+    "2025-10-15",
+    null,
+    undefined,
+    "",
+    "abc",
+  ])
+    assert.equal(L.wakeState(saved, "2026-10-15"), "morning", String(saved));
+  assert.equal(
+    L.wakeState("", ""),
+    "morning",
+    "今日が分からない（空）ときも朝",
+  );
+});
+
 // ── parseBgm / bgmValue（land.bgm の保存値。WORLD.md §7）──────────
 // 期待値は WORLD.md §7 から（保存値を on/off に揃えた。旧値 "1"/"0" は読んだときに書き直す）。
 
