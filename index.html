@@ -644,6 +644,7 @@
         z-index: var(--z-confetti);
         pointer-events: none;
         overflow: hidden;
+        container-type: size; /* cqh＝シーンの たかさ（つぶが おちる きょりの きじゅん） */
       }
       .confetti span {
         position: absolute;
@@ -902,7 +903,10 @@
           opacity: 1;
         }
         100% {
+          /* translateY の % は つぶ じしんの たかさ きじゅんで、たてもちでは うえの はしから ほとんど おりない。
+             シーンの たかさ（cqh）で おとす。cqh が つかえない ブラウザは まえの % の まま */
           transform: translateY(115%) rotate(320deg);
+          transform: translateY(115cqh) rotate(320deg);
           opacity: 0.9;
         }
       }
