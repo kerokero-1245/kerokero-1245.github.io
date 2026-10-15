@@ -194,6 +194,23 @@ test("displayStageFor: ⭐が 50 → 0 と下がっても 10 のまま", () => {
   }
 });
 
+// ── 到達段階の読み取り（parseStage・WORLD.md §7「到達済み最大段階（0〜10）」）──
+
+test('parseStage: 到達段階を上限で丸める（壊れた保存値 "99" は MAX_STAGE）', () => {
+  assert.equal(typeof L.parseStage, "function");
+  assert.equal(L.parseStage("99"), 10);
+  assert.equal(L.parseStage("11"), 10);
+  assert.equal(L.parseStage("123456"), 10);
+  assert.equal(L.parseStage("Infinity"), 0); // parseCount と同じく 有限で ない 値は 0
+});
+
+test('parseStage: 負・NaN・欠損は 0、0〜10 は そのまま（"2.9" は 2）', () => {
+  for (const raw of ["-1", "-99", "NaN", "abc", "", null, undefined])
+    assert.equal(L.parseStage(raw), 0, String(raw));
+  for (let s = 0; s <= 10; s++) assert.equal(L.parseStage(String(s)), s);
+  assert.equal(L.parseStage("2.9"), 2);
+});
+
 // ── すすみドット（meterDots）────────────────────────────
 
 const filledCount = (dots) => dots.filter(Boolean).length;

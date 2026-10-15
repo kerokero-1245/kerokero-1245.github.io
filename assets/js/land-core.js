@@ -7,7 +7,7 @@
  *
  * ここに置くもの（正典は docs/WORLD.md）:
  *   - 段階表 THRESHOLDS と、そこから決まる定数（§3.4）
- *   - 壊れた保存値の 0 扱い（§3.2 / §7）
+ *   - 壊れた保存値の 0 扱い（§3.2 / §7）と、到達段階の上限での丸め（§7）
  *   - 退行禁止の表示段階（§3.3 / §3.5）
  *   - すすみドット（§2.3・最大 5 つ）
  *   - ぴよが さす施設（§2.1・最少 + ローテーション）と「もうすこし」の判定（§3.6）
@@ -35,6 +35,12 @@
     if (raw == null) return 0;
     var n = Number(raw);
     return Number.isFinite(n) && n > 0 ? Math.floor(n) : 0;
+  }
+
+  /* ほぞんされた とうたつ だんかい（land.reachedStage）の よみかた（§7「0〜10」）。
+   こわれた値は parseCount と おなじく 0、MAX_STAGE より 大きい値（"99" など）は MAX_STAGE に まるめる */
+  function parseStage(raw) {
+    return Math.min(MAX_STAGE, parseCount(raw));
   }
 
   /* fuel（⭐の ごうけい）から きまる だんかい（0〜MAX_STAGE） */
@@ -125,6 +131,7 @@
     METER_DOTS: METER_DOTS,
     NEAR_FUEL: NEAR_FUEL,
     parseCount: parseCount,
+    parseStage: parseStage,
     stageForFuel: stageForFuel,
     displayStageFor: displayStageFor,
     meterDots: meterDots,

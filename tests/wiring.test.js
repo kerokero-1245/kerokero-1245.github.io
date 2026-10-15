@@ -175,3 +175,10 @@ test("land.bgm に書く値は land-core.js の bgmValue（on/off）を通し、
   assert.doesNotMatch(inline, /BGM_KEY, next \? "1" : "0"/);
   assert.doesNotMatch(inline, /readStr\(BGM_KEY\) !== "0"/);
 });
+
+test("land.reachedStage は L.parseStage（上限で丸める）を通して読み、旧い land-core.js では丸めずに読む", () => {
+  const inline = html.slice(html.indexOf("<script>"));
+  assert.match(inline, /L\.parseStage\(readStr\(K\.reached\)\)/);
+  assert.match(inline, /typeof L\.parseStage === "function"/);
+  assert.doesNotMatch(inline, /var reachedPrev = readNum\(K\.reached\);/);
+});

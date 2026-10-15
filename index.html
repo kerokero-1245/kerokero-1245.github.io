@@ -1902,7 +1902,12 @@
             return sum + x.v;
           }, 0);
 
-          var reachedPrev = readNum(K.reached); // まえに ひらいていた だんかい
+          // まえに ひらいていた だんかい。こわれた値は 0、"99" などは MAX_STAGE に まるめる（L.parseStage・WORLD.md §7 の 0〜10）。
+          // キャッシュの 旧い land-core.js（parseStage が ない）でも とまらないよう、そのときは まるめずに よむ
+          var reachedPrev =
+            typeof L.parseStage === "function"
+              ? L.parseStage(readStr(K.reached))
+              : readNum(K.reached);
           var displayStage = L.displayStageFor(reachedPrev, fuel); // たいこう禁止：さがっても もどさない
 
           // かざりの ひょうじ。まえに ひらいていた だんかい（reachedPrev）までは さいしょから みせる。
