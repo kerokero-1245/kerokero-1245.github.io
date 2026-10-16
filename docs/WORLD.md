@@ -338,11 +338,11 @@ fuel =
 
 ## 付録A. リポジトリと配信
 
-| 対象             | リポジトリ / ローカル                                                                        | 配信                                                   |
-| ---------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| 街（ランチャー） | `kerokero-1245/kerokero-1245.github.io` ／ `/Users/uinozomu/Desktop/kerokero-1245.github.io` | 静的、`main` へ push で**即配信**（Actions不要）       |
-| めいろ           | `otsukai-meiro` ／ `/Users/uinozomu/Desktop/otsukai-meiro`                                   | Expo SDK57 / RN Web、push で Actions 自動デプロイ約1分 |
-| さんすう         | `piyopiyo-sansu` ／ `/Users/uinozomu/Desktop/piyopiyo-sansu`                                 | 同スタック                                             |
-| ことば           | `piyopiyo-kotoba` ／ `/Users/uinozomu/Desktop/piyopiyo-kotoba`                               | Expo SDK57 / RN Web、push で Actions 自動デプロイ約1分 |
+| 対象             | リポジトリ / ローカル                                                          | 配信                                                   |
+| ---------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------ |
+| 街（ランチャー） | `kerokero-1245/kerokero-1245.github.io` ／ `~/Desktop/kerokero-1245.github.io` | 静的、`main` へ push で**即配信**（Actions不要）       |
+| めいろ           | `otsukai-meiro` ／ `~/Desktop/otsukai-meiro`                                   | Expo SDK57 / RN Web、push で Actions 自動デプロイ約1分 |
+| さんすう         | `piyopiyo-sansu` ／ `~/Desktop/piyopiyo-sansu`                                 | 同スタック                                             |
+| ことば           | `piyopiyo-kotoba` ／ `~/Desktop/piyopiyo-kotoba`                               | Expo SDK57 / RN Web、push で Actions 自動デプロイ約1分 |
 
 4サイトは**同一オリジン**で localStorage を共有。街はバックエンド無しで各アプリの⭐を直接読む。
